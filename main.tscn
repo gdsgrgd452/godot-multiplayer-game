@@ -1,0 +1,37 @@
+[gd_scene format=3 uid="uid://d0hn1wbn7lp3l"]
+
+[ext_resource type="Script" uid="uid://cmbq4w4ddh6xs" path="res://main.gd" id="1_ig7tw"]
+[ext_resource type="Script" uid="uid://t8h5v33i1exp" path="res://spawning_food.gd" id="2_0xm2m"]
+
+[node name="Main" type="Node2D" unique_id=769039100]
+script = ExtResource("1_ig7tw")
+
+[node name="Polygon2D" type="Polygon2D" parent="." unique_id=1540580453]
+color = Color(0.49433076, 0.49433076, 0.4943307, 1)
+polygon = PackedVector2Array(-2500, -2500, 2500, -2500, 2500, 2500, -2500, 2500)
+
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=1275093181]
+
+[node name="HostButton" type="Button" parent="CanvasLayer" unique_id=1692954295]
+offset_right = 8.0
+offset_bottom = 8.0
+text = "Host"
+
+[node name="JoinButton" type="Button" parent="CanvasLayer" unique_id=496051306]
+offset_left = 58.0
+offset_right = 96.0
+offset_bottom = 31.0
+text = "Join"
+
+[node name="SpawnedPlayers" type="Node2D" parent="." unique_id=380994455]
+
+[node name="PlayerSpawner" type="MultiplayerSpawner" parent="." unique_id=721109747]
+_spawnable_scenes = PackedStringArray("uid://datkho1onaiuj")
+spawn_path = NodePath("../SpawnedPlayers")
+
+[node name="SpawnedFood" type="Node2D" parent="." unique_id=249340547]
+
+[node name="FoodSpawner" type="MultiplayerSpawner" parent="." unique_id=56989496]
+_spawnable_scenes = PackedStringArray("uid://b7d2a506v42a6")
+spawn_path = NodePath("../SpawnedFood")
+script = ExtResource("2_0xm2m")

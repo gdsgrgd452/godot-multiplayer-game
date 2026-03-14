@@ -1,0 +1,51 @@
+[gd_scene format=3 uid="uid://datkho1onaiuj"]
+
+[ext_resource type="Script" uid="uid://51d52vfdc3ev" path="res://player.gd" id="1_onrkg"]
+[ext_resource type="Texture2D" uid="uid://ccoeeojnrk0t3" path="res://pawn.png" id="2_onrkg"]
+
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_sweqy"]
+properties/0/path = NodePath(".:position")
+properties/0/spawn = true
+properties/0/replication_mode = 1
+properties/1/path = NodePath(".:knockback")
+properties/1/spawn = true
+properties/1/replication_mode = 2
+properties/2/path = NodePath(".:damage")
+properties/2/spawn = true
+properties/2/replication_mode = 2
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_onrkg"]
+size = Vector2(130.81761, 199.04309)
+
+[node name="Player" type="CharacterBody2D" unique_id=328923263 groups=["player"]]
+scale = Vector2(0.25, 0.25)
+script = ExtResource("1_onrkg")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1635438858]
+modulate = Color(0.50431156, 0.14319322, 0.46227157, 1)
+scale = Vector2(0.195, 0.195)
+texture = ExtResource("2_onrkg")
+
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="." unique_id=1956268638]
+process_priority = 1
+replication_config = SubResource("SceneReplicationConfig_sweqy")
+
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="." unique_id=1881785656]
+position = Vector2(0, -3.9339066e-06)
+scale = Vector2(0.795, 1.045)
+shape = SubResource("RectangleShape2D_onrkg")
+
+[node name="Camera2D" type="Camera2D" parent="." unique_id=436632609]
+position_smoothing_enabled = true
+
+[node name="HUD" type="CanvasLayer" parent="." unique_id=298534784]
+
+[node name="StatsLabel" type="Label" parent="HUD" unique_id=1120118620]
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -47.0
+offset_top = 8.0
+offset_right = -7.0
+offset_bottom = 31.0
+grow_horizontal = 0
