@@ -2,8 +2,10 @@ extends Node2D
 
 var peer = ENetMultiplayerPeer.new()
 @export var player_scene: PackedScene = preload("res://player.tscn")
+@export var bullet_scene: PackedScene = preload("res://bullet.tscn")
 
 @export var max_food = 0
+var bullet_counter = 0 # NEW: Keeps bullet names strictly unique
 @export var is_hosting: bool = false 
 
 func _ready():
@@ -64,3 +66,18 @@ func _add_player(id):
 	
 	# Update the max food
 	max_food = $SpawnedPlayers.get_child_count()*250
+
+# --- NEW FUNCTION FOR BULLETS ---
+func spawn_bullet(spawn_pos: Vector2, dir: Vector2, shooter_id: String):
+	if multiplayer.is_server():
+		var bullet = bullet_scene.instantiate()
+		
+		bullet_counter += 1
+		bullet.name = "Bullet_" + str(bullet_counter)
+		
+		# Spawn it slightly in front of the player so it doesn't get stuck inside them
+		bullet.position = spawn_pos + (dir * 30) 
+		bullet.direction = dir
+		bullet.shooter_id = shooter_id
+		
+		$SpawnedBullets.add_child(bullet, true)

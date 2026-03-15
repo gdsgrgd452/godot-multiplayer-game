@@ -5,6 +5,8 @@
 
 [node name="Main" type="Node2D" unique_id=769039100]
 script = ExtResource("1_ig7tw")
+max_food = null
+is_hosting = null
 
 [node name="Polygon2D" type="Polygon2D" parent="." unique_id=1540580453]
 color = Color(0.49433076, 0.49433076, 0.4943307, 1)
@@ -30,8 +32,14 @@ _spawnable_scenes = PackedStringArray("uid://datkho1onaiuj")
 spawn_path = NodePath("../SpawnedPlayers")
 
 [node name="SpawnedFood" type="Node2D" parent="." unique_id=249340547]
+script = ExtResource("2_0xm2m")
 
 [node name="FoodSpawner" type="MultiplayerSpawner" parent="." unique_id=56989496]
 _spawnable_scenes = PackedStringArray("uid://b7d2a506v42a6")
 spawn_path = NodePath("../SpawnedFood")
-script = ExtResource("2_0xm2m")
+
+[node name="SpawnedBullets" type="Node2D" parent="." unique_id=864186805]
+
+[node name="BulletSpawner" type="MultiplayerSpawner" parent="." unique_id=348082235]
+_spawnable_scenes = PackedStringArray("uid://cgmgag6o33ogd")
+spawn_path = NodePath("../SpawnedBullets")

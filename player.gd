@@ -4,11 +4,12 @@ const SPEED = 300.0
 var input_dir = Vector2.ZERO
 var knockback = Vector2.ZERO
 var damage: int = 0
+var shooting = false
 
 func _ready():
 	# Color ourselves green and enemies red
 	if name == str(multiplayer.get_unique_id()):
-		$Sprite2D.modulate = Color(0, 0, 1)
+		$Sprite2D.modulate = Color(0, 1, 0)
 		$Camera2D.make_current()
 		$HUD.show()
 	else:
@@ -21,9 +22,11 @@ func _process(_delta):
 		var pos_text = "Position: " + str(Vector2(int(position.x), int(position.y)))
 		var kb_text = "Knockback: " + str(Vector2(int(knockback.x), int(knockback.y)))
 		var dmg_text = "Damage: " + str(damage)
+		var shoot_text = "Shooting: " + str(shooting)
 		
-		$HUD/StatsLabel.text = pos_text + "\n" + kb_text + "\n" + dmg_text
+		$HUD/StatsLabel.text = pos_text + "\n" + kb_text + "\n" + dmg_text + "\n" + shoot_text
 		
+			
 func _physics_process(delta):
 	if name == str(multiplayer.get_unique_id()):
 		var x = Input.get_axis("move_left", "move_right")
@@ -58,9 +61,31 @@ func _physics_process(delta):
 					collider.take_damage(2)
 					damage += 2 # Increment damage when we eat!
 
+
 func apply_bounce(force: Vector2):
 	if multiplayer.is_server():
 		knockback = force
+
+# Add these new functions at the bottom of player.gd:
+func _input(event):
+	# Only the local client window detects their own mouse clicks
+	if name == str(multiplayer.get_unique_id()):
+		if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+			
+			# Get the direction from our pawn to the mouse cursor
+			var click_pos = get_global_mouse_position()
+			var shoot_dir = (click_pos - global_position).normalized()
+			shooting = true
+			# Tell the server we want to shoot!
+			rpc_id(1, "request_shoot", shoot_dir)
+
+@rpc("any_peer", "call_local", "reliable")
+func request_shoot(dir: Vector2):
+	if multiplayer.is_server():
+		# Security check: verify the person sending the RPC is actually this player
+		if str(multiplayer.get_remote_sender_id()) == name:
+			# Call the spawn function on the Main scene
+			get_tree().current_scene.spawn_bullet(global_position, dir, name)
 
 # 3. THIS FUNCTION RUNS ON THE SERVER WHEN A CLIENT PRESSES A KEY
 @rpc("any_peer", "call_remote", "unreliable")
