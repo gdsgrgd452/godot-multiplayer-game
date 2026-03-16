@@ -3,6 +3,7 @@ extends CharacterBody2D
 @export var health: int = 100
 var max_health: int = 100
 var knockback: Vector2 = Vector2.ZERO
+@export var points_value: int = randi_range(1, 25)
 
 @export var shape_type: int = 0:
 	set(value):
@@ -10,10 +11,10 @@ var knockback: Vector2 = Vector2.ZERO
 		queue_redraw()
 
 func _ready():
-	add_to_group("food") # Tag it so the player knows what it's bumping into
+	add_to_group("food") # Tagged for collisions
 	queue_redraw()
 
-# This built-in function draws shapes directly to the screen
+# Draws the shape
 func _draw():
 	if shape_type == 0:
 		draw_circle(Vector2.ZERO, 15, Color.WHITE)
@@ -44,8 +45,18 @@ func apply_bounce(force: Vector2):
 	if multiplayer.is_server():
 		knockback = force
 
-func take_damage(amount: int):
+func take_damage(amount: int, attacker_id: String = ""):
 	if multiplayer.is_server():
 		health -= amount
 		if health <= 0:
+			give_points_on_death(attacker_id)
 			queue_free()
+
+# Gives points to the attacker (There should be one unless 2 foods bump into each other)
+func give_points_on_death(attacker_id: String):
+	if attacker_id != "":
+		var attacker = get_tree().current_scene.get_node_or_null("SpawnedPlayers/" + attacker_id)
+		if attacker and attacker.has_method("get_points_from_kill"):
+			attacker.get_points_from_kill(points_value)
+		else:
+			printerr("No attacker id")

@@ -8,7 +8,7 @@
 [node name="Main" type="Node2D" unique_id=769039100]
 script = ExtResource("1_ig7tw")
 
-[node name="Polygon2D" type="Polygon2D" parent="." unique_id=1540580453]
+[node name="Map" type="Polygon2D" parent="." unique_id=1540580453]
 color = Color(0.49433076, 0.49433076, 0.4943307, 1)
 polygon = PackedVector2Array(-2500, -2500, 2500, -2500, 2500, 2500, -2500, 2500)
 

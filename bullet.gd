@@ -30,9 +30,8 @@ func _on_body_entered(body):
 			body.apply_bounce(direction * 250)
 			
 			# Optional: Make the bullet do damage if they have a take_damage method
-			if body.is_in_group("food") or body.is_in_group("player"):
-				body.take_damage(damage)
-				print("Damage done by bullet: " + str(damage))
+			if body.has_method("take_damage"):
+				body.take_damage(damage, shooter_id)
 		
 		# Destroy the bullet after it hits anything (including walls)
 		queue_free()

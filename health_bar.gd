@@ -13,3 +13,5 @@ func _process(_delta):
 	# Continuously update the bar to match the parent's current health
 	if "health" in parent:
 		value = parent.health
+	if "max_health" in parent:
+		max_value = parent.max_health

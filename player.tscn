@@ -2,7 +2,9 @@
 
 [ext_resource type="Script" uid="uid://51d52vfdc3ev" path="res://player.gd" id="1_onrkg"]
 [ext_resource type="Texture2D" uid="uid://ccoeeojnrk0t3" path="res://pawn.png" id="2_onrkg"]
+[ext_resource type="PackedScene" uid="uid://77qhp5s4b2wv" path="res://level_bar.tscn" id="3_hqtel"]
 [ext_resource type="PackedScene" uid="uid://b0tv68ilswjsh" path="res://health_bar.tscn" id="3_i3pqv"]
+[ext_resource type="PackedScene" uid="uid://bxfwklemd5f4o" path="res://stat_button.tscn" id="4_sweqy"]
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_sweqy"]
 properties/0/path = NodePath(".:position")
@@ -17,6 +19,21 @@ properties/2/replication_mode = 2
 properties/3/path = NodePath(".:health")
 properties/3/spawn = true
 properties/3/replication_mode = 2
+properties/4/path = NodePath(".:points")
+properties/4/spawn = true
+properties/4/replication_mode = 2
+properties/5/path = NodePath("HUD/LevelBar:value")
+properties/5/spawn = true
+properties/5/replication_mode = 2
+properties/6/path = NodePath(".:player_level")
+properties/6/spawn = true
+properties/6/replication_mode = 2
+properties/7/path = NodePath("HUD/LevelBar:max_value")
+properties/7/spawn = true
+properties/7/replication_mode = 2
+properties/8/path = NodePath(".:total_points_incl_next_level")
+properties/8/spawn = true
+properties/8/replication_mode = 2
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_onrkg"]
 size = Vector2(130.81761, 199.04309)
@@ -48,11 +65,50 @@ position_smoothing_enabled = true
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = -47.0
+offset_left = -46.0
 offset_top = 8.0
-offset_right = -7.0
+offset_right = -6.0
 offset_bottom = 31.0
 grow_horizontal = 0
+
+[node name="LevelBar" parent="HUD" unique_id=1244872040 instance=ExtResource("3_hqtel")]
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -75.0
+offset_top = 10.0
+offset_right = 75.0
+offset_bottom = 25.0
+grow_horizontal = 2
+metadata/_edit_use_anchors_ = true
+
+[node name="LevelLabel" type="Label" parent="HUD" unique_id=1665485200]
+offset_left = 432.0
+offset_top = 40.0
+offset_right = 472.0
+offset_bottom = 63.0
+
+[node name="UpgradeUI" type="HBoxContainer" parent="HUD" unique_id=1761934495]
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -36.5
+offset_top = -48.0
+offset_right = 38.5
+offset_bottom = -8.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="StatButton" parent="HUD/UpgradeUI" unique_id=802052301 instance=ExtResource("4_sweqy")]
+layout_mode = 2
+
+[node name="StatButton2" parent="HUD/UpgradeUI" unique_id=1369310281 instance=ExtResource("4_sweqy")]
+layout_mode = 2
+
+[node name="StatButton3" parent="HUD/UpgradeUI" unique_id=246827500 instance=ExtResource("4_sweqy")]
+layout_mode = 2
 
 [node name="HealthBar" parent="." unique_id=1748738400 instance=ExtResource("3_i3pqv")]
 offset_left = -60.0

@@ -1,0 +1,9 @@
+[gd_scene format=3 uid="uid://bxfwklemd5f4o"]
+
+[ext_resource type="Script" uid="uid://cmui42tdnn0ob" path="res://stat_button.gd" id="1_xcqn4"]
+
+[node name="StatButton" type="Button" unique_id=802052301]
+offset_right = 40.0
+offset_bottom = 40.0
+text = "Upgrade"
+script = ExtResource("1_xcqn4")
