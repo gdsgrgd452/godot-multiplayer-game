@@ -3,16 +3,17 @@ extends Button
 var stat_id: String = ""
 @export var display_text: String = "Upgrade: "
 
-# We will send this signal to the player script when clicked
 signal stat_chosen(stat_id: String)
 
-func _ready():
+# Initializes the button text and connects the press event
+func _ready() -> void:
 	text = display_text + stat_id
 	pressed.connect(_on_pressed)
 
-func refresh_text():
+# Updates the visual text to match the currently assigned stat_id
+func refresh_text() -> void:
 	text = display_text + stat_id
 
-func _on_pressed():
-	# Tell whoever is listening (the player) which stat we picked
+# Emits the selected stat_id to the listening components
+func _on_pressed() -> void:
 	stat_chosen.emit(stat_id)

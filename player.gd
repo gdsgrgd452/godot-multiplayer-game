@@ -1,29 +1,15 @@
 extends CharacterBody2D
 
-var player_speed: int = 300
+@onready var movement_component: Node = $Components/MovementComponent
+@onready var health_component: Node = $Components/HealthComponent
+@onready var leveling_component: Node = $Components/LevelingComponent
+@onready var ranged_w_component: Node = $Components/RangedWeaponComponent
 
-var input_dir: Vector2 = Vector2.ZERO
 var knockback: Vector2 = Vector2.ZERO
-var max_health: int = 500
-var health: int = 500
 var body_damage: int = 5
 
-var shooting: bool = false
-var reload_speed: float = 0.2
-var shot_cooldown: float = reload_speed
-var bullet_speed: int = 500
-var bullet_damage: int = 10
-
-var player_level: int = 0
-var next_level_points: int = 25
-var total_points_incl_next_level: int = 25
-var points: int = 0
-
-var pending_upgrades: int = 0
-var upgradeable_stats: Dictionary = {"max_health": 50, "body_damage": 2, "bullet_damage": 2, "bullet_speed": 50, "reload_speed": -0.01}
-
-func _ready():
-	# Color ourselves green and enemies red
+# Initializes UI, colors, and connects component signals
+func _ready() -> void:
 	if name == str(multiplayer.get_unique_id()):
 		$Sprite2D.modulate = Color(0, 1, 0)
 		$Camera2D.make_current()
@@ -32,226 +18,129 @@ func _ready():
 		$HUD/UpgradeUI.hide()
 		for button in $HUD/UpgradeUI.get_children():
 			button.stat_chosen.connect(_on_stat_chosen)
+			
+		leveling_component.update_ui_points.connect(func(val: int): $HUD/LevelBar.queue_points(val))
+		leveling_component.show_upgrade_menu.connect(_show_upgrade_menu)
 	else:
 		$Sprite2D.modulate = Color(1, 0, 0)
 		$HUD.hide()
+		
+	ranged_w_component.apply_recoil.connect(_on_apply_recoil)
 
-func _process(_delta):
+# Updates the debug info display
+func _process(_delta: float) -> void:
 	if name == str(multiplayer.get_unique_id()): 
 		show_debug_info()
 
-#Updates the debug info in the top right
-func show_debug_info():
-		var max_health_text = "Max Health: " + str(max_health) + "\n"
-		var health_text = "Health: " + str(health) + "\n" + "\n"
-		var pos_text = "Position: " + str(Vector2(int(position.x), int(position.y))) + "\n" + "\n"
-		var kb_text = "Knockback: " + str(Vector2(int(knockback.x), int(knockback.y))) + "\n"
-		var body_dmg_text = "Body Damage: " + str(body_damage) + "\n" + "\n"
-		var bullet_dmg_text = "Bullet Damage: " + str(bullet_damage) + "\n"
-		var bullet_speed_text = "Bullet Speed: " + str(bullet_speed) + "\n" + "\n"
-		var shoot_text = "Shooting: " + str(shooting) + "\n"
-		var cooldown_text = "Cooldown: " + str(snapped(shot_cooldown, 0.01)) + "\n" + "\n"
-		var player_level_text = "Level: " + str(player_level) 
-		var next_level_points_text = "    Points for next: " + str(total_points_incl_next_level) 
-		var points_text = "    Points: " + str(points) 
-		
-		$HUD/StatsLabel.text = max_health_text + health_text + pos_text + kb_text + body_dmg_text + bullet_dmg_text
-		$HUD/StatsLabel.text = $HUD/StatsLabel.text +  bullet_speed_text + shoot_text + cooldown_text 
-		
-		$HUD/LevelLabel.text = player_level_text + next_level_points_text + points_text
-		
-func _physics_process(delta):
+# Server-side physics calculation and client input gathering
+func _physics_process(delta: float) -> void:
 	if name == str(multiplayer.get_unique_id()):
-		move_player()
 		hold_to_shoot()
 
 	if multiplayer.is_server():
-		handle_knockback(delta)
+		decrease_knockback(delta)
+		velocity = movement_component.get_movement_velocity() + knockback
+		move_and_slide()
 		handle_collisions()
-		
-	if multiplayer.is_server() or name == str(multiplayer.get_unique_id()):
-		reload(delta)
 
-
-#For moving the player with WASD
-func move_player():
-	var x = Input.get_axis("move_left", "move_right")
-	var y = Input.get_axis("move_up", "move_down")
-	var new_dir = Vector2(x, y)
-		
-	if new_dir.length() > 0:
-		new_dir = new_dir.normalized()
-		
-	if new_dir != input_dir:
-		input_dir = new_dir
-		if not multiplayer.is_server():
-			rpc_id(1, "receive_input", new_dir)
-
-func hold_to_shoot():
+# Checks if the player is holding the shoot button
+func hold_to_shoot() -> void:
 	if Input.is_action_pressed("shoot"):
-			shoot()
+		ranged_w_component.shoot(get_global_mouse_position())
 
-#Handles knockback after being hit by something
-func handle_knockback(delta):
+# Smoothly slows the player down from impacts
+func decrease_knockback(delta: float) -> void:
 	knockback = knockback.move_toward(Vector2.ZERO, delta * 1500)
-	velocity = (input_dir * player_speed) + knockback
-	
-	move_and_slide()
 
-#For bumping into things
-func handle_collisions():
+# Handles bouncing off objects and dealing ramming damage
+func handle_collisions() -> void:
 	for i in get_slide_collision_count():
-		var collision = get_slide_collision(i)
-		var collider = collision.get_collider()
-		var normal = collision.get_normal()
+		var collision: KinematicCollision2D = get_slide_collision(i)
+		var collider: Object = collision.get_collider()
+		var normal: Vector2 = collision.get_normal()
 		
 		velocity = Vector2.ZERO
-		knockback = normal * 500 #Update here to use damage or size or something
+		knockback = normal * 500
 		
 		if collider and collider.has_method("apply_bounce"):
 			collider.apply_bounce(-normal * 500)
-			
 			if collider.is_in_group("food"):
 				do_contact_damage(collider)
 
-#Does damage to the object you hit and also yourself
-func do_contact_damage(collider):
+# Triggers damage against food and causes recoil damage to self
+func do_contact_damage(collider: Node) -> void:
 	collider.take_damage(body_damage, name)
-	health -= 2
+	health_component.take_damage(2)
 
-#For when something collides into you they call this to knock you back
-func apply_bounce(force: Vector2):
+# Used by external objects to shove the player
+func apply_bounce(force: Vector2) -> void:
 	if multiplayer.is_server():
 		knockback = force
-
-#For when you are damaged by something
-func take_damage(amount: int, attacker_id: String = ""):
-	if multiplayer.is_server():
-		health -= amount
 		
-		if health <= 0:
-			give_points_on_death(attacker_id)
-			queue_free()
+# Applies recoil from the weapon
+func _on_apply_recoil(force: Vector2) -> void:
+	knockback += force
 
-# Gives points to the attacker (There should be one unless 2 foods bump into each other)
-func give_points_on_death(attacker_id: String):
+# Routes damage to the health component
+func take_damage(amount: int, attacker_id: String = "") -> void:
+	health_component.take_damage(amount, attacker_id)
+
+# Drops points and destroys the player
+func _on_player_died(attacker_id: String) -> void:
+	give_points_on_death(attacker_id)
+	queue_free()
+
+# Gives the person who killed you your score
+func give_points_on_death(attacker_id: String) -> void:
 	if attacker_id != "":
-		var attacker = get_tree().current_scene.get_node_or_null("SpawnedPlayers/" + attacker_id)
+		var attacker: Node = get_tree().current_scene.get_node_or_null("SpawnedPlayers/" + attacker_id)
 		if attacker and attacker.has_method("get_points_from_kill"):
-			attacker.get_points_from_kill(points)
-	else:
-		printerr("No attacker id")
+			attacker.get_points_from_kill(leveling_component.total_score)
 
-# This is called by the server when someone dies
-func get_points_from_kill(kill_value: int):
-	if multiplayer.is_server():
-		points += kill_value # This syncs to clients automatically via your Synchronizer
-		
-		# Send a direct message to the player who owns this node (name.to_int() is their ID)
-		rpc_id(name.to_int(), "animate_points_ui", kill_value)
+# Passes the kill value down to the component
+func get_points_from_kill(kill_value: int) -> void:
+	leveling_component.get_points_from_kill(kill_value)
 
-# NEW: The server triggers this on the specific client (and call_local ensures it works for the host too)
-@rpc("authority", "call_local", "reliable")
-func animate_points_ui(kill_value: int):
-	$HUD/LevelBar.queue_points(kill_value)
-
-func level_up():
-	# Only show the UI if this is the local player's screen
+# Used by the LevelBar UI
+func level_up() -> void:
 	if name == str(multiplayer.get_unique_id()):
-		
-		# Increase the points required for the next level
-		player_level += 1
-		next_level_points = next_level_points * 2
-		total_points_incl_next_level += next_level_points
-	
-		pending_upgrades += 1
+		leveling_component.rpc_id(1, "request_level_up_math")
 
-		for button in $HUD/UpgradeUI.get_children():
-			var stat = upgradeable_stats.keys().pick_random()
-			print(stat)
-			button.stat_id = stat
-			button.refresh_text()
+# Populates the upgrade UI with random stat choices
+func _show_upgrade_menu() -> void:
+	for button in $HUD/UpgradeUI.get_children():
+		var stat: String = leveling_component.upgradeable_stats.keys().pick_random()
+		button.stat_id = stat
+		button.refresh_text()
+	$HUD/UpgradeUI.show()
+
+# Triggered when an upgrade is selected
+func _on_stat_chosen(chosen_stat: String) -> void:
+	$HUD/UpgradeUI.hide() 
+	if multiplayer.is_server():
+		leveling_component.apply_upgrade(chosen_stat)
+	else:
+		leveling_component.rpc_id(1, "request_upgrade", chosen_stat)
 			
-		$HUD/UpgradeUI.show()
-
-#When a stat upgrade button is clicked
-func _on_stat_chosen(chosen_stat: String):
-	$HUD/UpgradeUI.hide() # Hide the menu again
-	if multiplayer.is_server():
-		apply_upgrade(chosen_stat) # Just apply it
-	else:
-		rpc_id(1, "request_upgrade", chosen_stat) # Ask the server to apply it
+# Shows debug info on the player's screen
+func show_debug_info() -> void:
+	var max_health_text: String = "Max Health: " + str(health_component.max_health) + "\n"
+	var health_text: String = "Health: " + str(health_component.health) + "\n\n"
+	var pos_text: String = "Position: " + str(Vector2(int(position.x), int(position.y))) + "\n\n"
+	var kb_text: String = "Knockback: " + str(Vector2(int(knockback.x), int(knockback.y))) + "\n"
+	var body_dmg_text: String = "Body Damage: " + str(body_damage) + "\n\n"
+	var bullet_dmg_text: String = "Bullet Damage: " + str(ranged_w_component.bullet_damage) + "\n"
+	var bullet_speed_text: String = "Bullet Speed: " + str(ranged_w_component.bullet_speed) + "\n\n"
+	var shoot_text: String = "Shooting: " + str(ranged_w_component.shooting) + "\n"
+	var reload_time_text: String = "Reload Time: " + str(ranged_w_component.reload_speed)+ "\n"
+	var cooldown_text: String = "Cooldown: " + str(snapped(ranged_w_component.shot_cooldown, 0.01)) + "\n\n"
 	
-@rpc("any_peer", "call_remote", "reliable")
-func request_upgrade(chosen_stat: String):
-	if multiplayer.is_server():
-		if str(multiplayer.get_remote_sender_id()) == name:
-			apply_upgrade(chosen_stat)
-
-# Actually applies the upgrade (Server Side Only)
-func apply_upgrade(chosen_stat: String):
-	# Security check: Make sure they actually have an upgrade to claim!
-	if pending_upgrades <= 0:
-		return 
-		
-	pending_upgrades -= 1
+	var player_level_text: String = "Level: " + str(leveling_component.player_level)
+	var next_level_points_text: String = "    Points for next: " + str(leveling_component.next_level_points)
+	var points_text: String = "    Points: " + str(leveling_component.points) 
+	var score_text: String = "    Score: " + str(leveling_component.total_score)
+	var pending_text: String = "Pending upgrades: " + str(leveling_component.pending_upgrades) + "\n"
 	
-	match chosen_stat:
-		"health":
-			max_health += 10
-			health += 10 # Heal to match 
-		"bullet_damage":
-			bullet_damage += 1
-		"bullet_speed":
-			bullet_speed += 50
-		"body_damage":
-			body_damage += 1
-
-	# If they STILL have upgrades waiting, force the UI back open!
-	if pending_upgrades > 0:
-		rpc_id(name.to_int(), "show_upgrade_ui")
-
-#Decreases the time until you can shoot again
-func reload(delta):
-	if shot_cooldown > 0:
-		shot_cooldown -= delta
-	
-	shooting = shot_cooldown > (reload_speed - 0.1)
-
-#Spawns bullets after the player triggers the shoot input
-func shoot():
-	if shot_cooldown > 0:
-		return
-		
-	var click_pos = get_global_mouse_position()
-	var shoot_dir = (click_pos - global_position).normalized()
-	
-	shot_cooldown = reload_speed
-	shooting = true
-	
-	if multiplayer.is_server():
-		# If you are server just spawn the bullet
-		get_tree().current_scene.get_node("SpawnedBullets").spawn_bullet(global_position, shoot_dir, name, bullet_speed, bullet_damage)
-	else:
-		# If you are client request to shoot via server
-		rpc_id(1, "request_shoot", shoot_dir)
-
-
-# Uses call_remote since this is only used by client players
-@rpc("any_peer", "call_remote", "reliable")
-func request_shoot(dir: Vector2):
-	if multiplayer.is_server():
-		# Verify the person sending the RPC is actually this player
-		if str(multiplayer.get_remote_sender_id()) == name:
-			# NEW: Server checks its own copy of the cooldown to prevent cheating
-			if shot_cooldown <= 0:
-				shot_cooldown = reload_speed
-				get_tree().current_scene.get_node("SpawnedBullets").spawn_bullet(global_position, dir, name, bullet_speed, bullet_damage)
-
-# To change the input for movement (server side) after a client requests to do so
-@rpc("any_peer", "call_remote", "unreliable")
-func receive_input(dir: Vector2):
-	if multiplayer.is_server():
-		# Ensures the client is only moving their own node
-		if str(multiplayer.get_remote_sender_id()) == name:
-			input_dir = dir
+	$HUD/StatsLabel.text = max_health_text + health_text + pos_text + kb_text + body_dmg_text + bullet_dmg_text
+	$HUD/StatsLabel.text += bullet_speed_text + shoot_text + reload_time_text + cooldown_text + pending_text
+	$HUD/LevelLabel.text = player_level_text + next_level_points_text + points_text + score_text

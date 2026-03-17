@@ -4,16 +4,17 @@ extends Node2D
 
 const food_per_player: int = 500
 
-func add_player(id):
-	var player_instance = player_scene.instantiate()
+# Spawns a newly connected player and updates the global food limit
+func add_player(id: int) -> void:
+	var player_instance: Node = player_scene.instantiate()
 	player_instance.name = str(id) 
 	
-	var random_x = randf_range(-2000, 2000)
-	var random_y = randf_range(-2000, 2000)
+	var random_x: float = randf_range(-1000, 1000)
+	var random_y: float = randf_range(-1000, 1000)
 	player_instance.position = Vector2(random_x, random_y)
 	
 	add_child(player_instance, true)
 	
-	# Update the max_food variable stored on the Main node
+	# Recalculates the food capacity based on the active player count
 	if owner != null:
 		owner.max_food = get_child_count() * food_per_player

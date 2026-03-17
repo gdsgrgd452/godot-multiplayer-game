@@ -1,11 +1,12 @@
 extends Node2D
 
 @export var bullet_scene: PackedScene = preload("res://bullet.tscn")
-var bullet_counter = 0
+var bullet_counter: int = 0
 
-func spawn_bullet(spawn_pos: Vector2, dir: Vector2, shooter_id: String, bullet_speed: int, bullet_damage: int):
+# Instantiates and configures a new bullet on the server side
+func spawn_bullet(spawn_pos: Vector2, dir: Vector2, shooter_id: String, bullet_speed: int, bullet_damage: int) -> void:
 	if multiplayer.is_server():
-		var bullet = bullet_scene.instantiate()
+		var bullet: Node = bullet_scene.instantiate()
 		
 		bullet_counter += 1
 		bullet.name = "Bullet_" + str(bullet_counter)
@@ -16,5 +17,6 @@ func spawn_bullet(spawn_pos: Vector2, dir: Vector2, shooter_id: String, bullet_s
 		
 		bullet.speed = bullet_speed
 		bullet.damage = bullet_damage
-		# Add it directly to ourselves (the SpawnedBullets node)
+		
+		# Adds the bullet to the SpawnedBullets node tree
 		add_child(bullet, true)

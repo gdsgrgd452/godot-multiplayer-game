@@ -1,17 +1,23 @@
 extends ProgressBar
 
-@onready var parent = get_parent()
+@onready var parent: Node = get_parent()
+var target_health_node: Node = null
 
-func _ready():
-	# If the parent has a max_health variable, use it. Otherwise default to 100.
-	if "max_health" in parent:
-		max_value = parent.max_health
+# Finds the correct node to track health from
+func _ready() -> void:
+	# Look for the new component. If it doesn't exist, fallback to the parent!
+	if parent.has_node("Components/HealthComponent"):
+		target_health_node = parent.get_node("Components/HealthComponent")
+	else:
+		target_health_node = parent
+
+	if "max_health" in target_health_node:
+		max_value = target_health_node.max_health
 	else:
 		max_value = 100
 
-func _process(_delta):
-	# Continuously update the bar to match the parent's current health
-	if "health" in parent:
-		value = parent.health
-	if "max_health" in parent:
-		max_value = parent.max_health
+# Continually updates the bar visually to match the entity's health
+func _process(_delta: float) -> void:
+	if target_health_node and "health" in target_health_node:
+		value = target_health_node.health
+		max_value = target_health_node.max_health

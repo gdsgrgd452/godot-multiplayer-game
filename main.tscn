@@ -3,12 +3,28 @@
 [ext_resource type="Script" uid="uid://cmbq4w4ddh6xs" path="res://main.gd" id="1_ig7tw"]
 [ext_resource type="Script" uid="uid://t8h5v33i1exp" path="res://spawning_food.gd" id="2_0xm2m"]
 [ext_resource type="Script" uid="uid://bxkxyoc5ui4kf" path="res://spawning_players.gd" id="2_1bvp3"]
+[ext_resource type="Shader" uid="uid://b5npgpaiuqcby" path="res://main.gdshader" id="2_lquwl"]
 [ext_resource type="Script" uid="uid://cx4o8l16ouh2j" path="res://spawning_bullets.gd" id="4_lquwl"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_7mycd"]
+shader = ExtResource("2_lquwl")
+shader_parameter/square_size = 100.0
+shader_parameter/color1 = Color(0.69, 0.69, 0.69, 1)
+shader_parameter/color2 = Color(0.3, 0.3, 0.3, 1)
 
 [node name="Main" type="Node2D" unique_id=769039100]
 script = ExtResource("1_ig7tw")
 
+[node name="Background" type="ColorRect" parent="." unique_id=706016326]
+material = SubResource("ShaderMaterial_7mycd")
+offset_left = -2509.0
+offset_top = -2483.0
+offset_right = 2491.0
+offset_bottom = 2517.0
+
 [node name="Map" type="Polygon2D" parent="." unique_id=1540580453]
+visible = false
+position = Vector2(3, 1)
 color = Color(0.49433076, 0.49433076, 0.4943307, 1)
 polygon = PackedVector2Array(-2500, -2500, 2500, -2500, 2500, 2500, -2500, 2500)
 
@@ -24,6 +40,13 @@ offset_left = 58.0
 offset_right = 96.0
 offset_bottom = 31.0
 text = "Join"
+
+[node name="LineEdit" type="LineEdit" parent="CanvasLayer" unique_id=91751582]
+offset_left = 131.0
+offset_top = 3.0
+offset_right = 199.5
+offset_bottom = 34.0
+placeholder_text = "127.0.0.1"
 
 [node name="SpawnedPlayers" type="Node2D" parent="." unique_id=380994455]
 script = ExtResource("2_1bvp3")
