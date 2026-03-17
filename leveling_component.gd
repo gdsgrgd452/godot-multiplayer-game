@@ -2,10 +2,14 @@ extends Node
 
 signal update_ui_points(kill_value: int)
 signal show_upgrade_menu
+signal show_promotion_menu
 
 @onready var player: Node = get_parent().get_parent()
 @onready var health_component: Node = $"../HealthComponent"
 @onready var ranged_w_component: Node = $"../RangedWeaponComponent"
+@onready var player_sprite: Node = $"../../PlayerSprite"
+
+var knight_texture = load('res://knight.png')
 
 var upgradeable_stats: Dictionary = {"max_health": 100, "body_damage": 5, "bullet_damage": 5, "bullet_speed": 75, "reload_speed": -0.1}
 
@@ -44,11 +48,21 @@ func request_level_up_math() -> void:
 			
 			if leveled_up:
 				rpc_id(player.name.to_int(), "trigger_show_upgrade_ui")
+				
+				if player_level % 3 == 0:
+					print("Showing promotion UI, Level: " + str(player_level))
+					rpc_id(player.name.to_int(), "trigger_show_promotion_ui")
 
 # Tells the player node to show the upgrade menu
 @rpc("authority", "call_local", "reliable")
 func trigger_show_upgrade_ui() -> void:
 	show_upgrade_menu.emit()
+
+# Tells the player node to show the promotion menu
+@rpc("authority", "call_local", "reliable")
+func trigger_show_promotion_ui() -> void:
+	print("Emitting")
+	show_promotion_menu.emit()
 
 # Routes the clients upgrade choice to the server
 @rpc("any_peer", "call_remote", "reliable")
@@ -56,6 +70,20 @@ func request_upgrade(chosen_stat: String) -> void:
 	if multiplayer.is_server():
 		if str(multiplayer.get_remote_sender_id()) == player.name:
 			apply_upgrade(chosen_stat)
+
+# Routes the clients promotion choice to the server
+@rpc("any_peer", "call_remote", "reliable")
+func request_promotion(chosen_type: String) -> void:
+	if multiplayer.is_server():
+		if str(multiplayer.get_remote_sender_id()) == player.name:
+			apply_upgrade(chosen_type)
+
+# Actually applies the upgrade stats (Server Side Only)
+func apply_promotion(chosen_type: String) -> void:
+	match chosen_type:
+		"Knight":
+			player_sprite.texture = knight_texture
+			print("Should have changed")
 
 # Actually applies the upgrade stats (Server Side Only)
 func apply_upgrade(chosen_stat: String) -> void:

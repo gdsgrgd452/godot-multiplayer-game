@@ -4,14 +4,16 @@ extends CharacterBody2D
 @onready var health_component: Node = $Components/HealthComponent
 @onready var leveling_component: Node = $Components/LevelingComponent
 @onready var ranged_w_component: Node = $Components/RangedWeaponComponent
+@onready var sprite_component: Sprite2D = $PlayerSprite
 
 var knockback: Vector2 = Vector2.ZERO
 var body_damage: int = 5
+var ranks = ["Knight", "Rook", "Bishop"]
 
 # Initializes UI, colors, and connects component signals
 func _ready() -> void:
 	if name == str(multiplayer.get_unique_id()):
-		$Sprite2D.modulate = Color(0, 1, 0)
+		$PlayerSprite.modulate = Color(0, 1, 0)
 		$Camera2D.make_current()
 		$HUD.show()
 		
@@ -19,10 +21,15 @@ func _ready() -> void:
 		for button in $HUD/UpgradeUI.get_children():
 			button.stat_chosen.connect(_on_stat_chosen)
 			
+		$HUD/PromotionUI.hide()
+		for button in $HUD/PromotionUI.get_children():
+			button.type_chosen.connect(_on_type_chosen)
+		
 		leveling_component.update_ui_points.connect(func(val: int): $HUD/LevelBar.queue_points(val))
 		leveling_component.show_upgrade_menu.connect(_show_upgrade_menu)
+		leveling_component.show_promotion_menu.connect(_show_promotion_menu)
 	else:
-		$Sprite2D.modulate = Color(1, 0, 0)
+		$PlayerSprite.modulate = Color(1, 0, 0)
 		$HUD.hide()
 		
 	ranged_w_component.apply_recoil.connect(_on_apply_recoil)
@@ -121,7 +128,36 @@ func _on_stat_chosen(chosen_stat: String) -> void:
 		leveling_component.apply_upgrade(chosen_stat)
 	else:
 		leveling_component.rpc_id(1, "request_upgrade", chosen_stat)
-			
+
+# Populates the promotion UI with set type choices
+func _show_promotion_menu() -> void:
+	var buttons: Array[Node] = $HUD/PromotionUI.get_children()
+	for i in buttons.size():
+		var type: String = ranks[i]
+		var button: Node = buttons[i]
+		
+		button.type_id = type
+		button.refresh_text()
+		
+	$HUD/PromotionUI.show()
+
+#Triggered when a type is chosen
+func _on_type_chosen(chosen_type: String) -> void:
+	$HUD/PromotionUI.hide()
+	if multiplayer.is_server():
+		sprite_component.apply_promotion(chosen_type)
+	else:
+		sprite_component.rpc_id(1, "request_promotion", chosen_type)
+
+func promotion_aquired(chosen_type: String) -> void:
+	match chosen_type:
+		"Knight":
+			ranged_w_component.bullet_damage += 50
+			movement_component.player_speed += 50
+		"Rook":
+			health_component.max_health += 50
+			health_component.heal(50)
+
 # Shows debug info on the player's screen
 func show_debug_info() -> void:
 	var max_health_text: String = "Max Health: " + str(health_component.max_health) + "\n"

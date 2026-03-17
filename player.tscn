@@ -1,10 +1,12 @@
 [gd_scene format=3 uid="uid://datkho1onaiuj"]
 
 [ext_resource type="Script" uid="uid://51d52vfdc3ev" path="res://player.gd" id="1_onrkg"]
-[ext_resource type="Texture2D" uid="uid://ccoeeojnrk0t3" path="res://pawn.png" id="2_onrkg"]
+[ext_resource type="Texture2D" uid="uid://cpdwagtalsl1a" path="res://chess-pieces/white-pawn.png" id="2_nvl01"]
 [ext_resource type="PackedScene" uid="uid://77qhp5s4b2wv" path="res://level_bar.tscn" id="3_hqtel"]
 [ext_resource type="PackedScene" uid="uid://b0tv68ilswjsh" path="res://health_bar.tscn" id="3_i3pqv"]
+[ext_resource type="Script" uid="uid://craciikeoqn6n" path="res://player_sprite.gd" id="3_nvl01"]
 [ext_resource type="PackedScene" uid="uid://bxfwklemd5f4o" path="res://stat_button.tscn" id="4_sweqy"]
+[ext_resource type="PackedScene" uid="uid://ca4thm5hu2im0" path="res://promotion_button.tscn" id="5_n7ghd"]
 [ext_resource type="Script" uid="uid://grm2y86px8ee" path="res://movement_component.gd" id="6_2hs0m"]
 [ext_resource type="Script" uid="uid://bjthdas6w0rl7" path="res://health_component.gd" id="7_1jxqw"]
 [ext_resource type="Script" uid="uid://bcp4tn61yaump" path="res://leveling_component.gd" id="8_dw050"]
@@ -56,26 +58,30 @@ properties/13/replication_mode = 2
 properties/14/path = NodePath(".:body_damage")
 properties/14/spawn = true
 properties/14/replication_mode = 2
+properties/15/path = NodePath("PlayerSprite:texture_path")
+properties/15/spawn = true
+properties/15/replication_mode = 2
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_onrkg"]
-size = Vector2(130.81761, 199.04309)
+size = Vector2(138.27162, 177.77779)
 
 [node name="Player" type="CharacterBody2D" unique_id=328923263 groups=["player"]]
 scale = Vector2(0.25, 0.25)
 script = ExtResource("1_onrkg")
 
-[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1635438858]
-modulate = Color(0.50431156, 0.14319322, 0.46227157, 1)
-scale = Vector2(0.195, 0.195)
-texture = ExtResource("2_onrkg")
+[node name="PlayerSprite" type="Sprite2D" parent="." unique_id=1635438858]
+modulate = Color(0.75076467, 0.00045069636, 0.7539706, 1)
+scale = Vector2(1.5, 1.5)
+texture = ExtResource("2_nvl01")
+script = ExtResource("3_nvl01")
 
 [node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="." unique_id=1956268638]
 process_priority = 1
 replication_config = SubResource("SceneReplicationConfig_sweqy")
 
 [node name="CollisionShape2D2" type="CollisionShape2D" parent="." unique_id=1881785656]
-position = Vector2(0, -3.9339066e-06)
-scale = Vector2(0.795, 1.045)
+position = Vector2(0, 8.000004)
+scale = Vector2(0.81, 0.81)
 shape = SubResource("RectangleShape2D_onrkg")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=436632609]
@@ -132,10 +138,35 @@ layout_mode = 2
 [node name="StatButton3" parent="HUD/UpgradeUI" unique_id=246827500 instance=ExtResource("4_sweqy")]
 layout_mode = 2
 
+[node name="PromotionUI" type="HBoxContainer" parent="HUD" unique_id=632326009]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -118.0
+offset_top = -95.0
+offset_right = 118.0
+offset_bottom = -64.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="PromotionButton" parent="HUD/PromotionUI" unique_id=788578532 instance=ExtResource("5_n7ghd")]
+layout_mode = 2
+text = "Promote"
+
+[node name="PromotionButton2" parent="HUD/PromotionUI" unique_id=264756725 instance=ExtResource("5_n7ghd")]
+layout_mode = 2
+text = "Promote"
+
+[node name="PromotionButton3" parent="HUD/PromotionUI" unique_id=1577920357 instance=ExtResource("5_n7ghd")]
+layout_mode = 2
+text = "Promote"
+
 [node name="HealthBar" parent="." unique_id=1748738400 instance=ExtResource("3_i3pqv")]
 offset_left = -60.0
-offset_top = 112.0
-offset_bottom = 127.0
+offset_top = 130.0
+offset_bottom = 145.0
 
 [node name="Components" type="Node2D" parent="." unique_id=1775574074]
 
