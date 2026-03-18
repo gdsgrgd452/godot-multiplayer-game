@@ -1,20 +1,16 @@
 [gd_scene format=3 uid="uid://datkho1onaiuj"]
 
 [ext_resource type="Script" uid="uid://51d52vfdc3ev" path="res://player.gd" id="1_onrkg"]
-[ext_resource type="Texture2D" path="res://chess-pieces/white-pawn.png" id="2_nvl01"]
+[ext_resource type="Texture2D" uid="uid://cpdwagtalsl1a" path="res://chess-pieces/white-pawn.png" id="2_nvl01"]
 [ext_resource type="PackedScene" uid="uid://77qhp5s4b2wv" path="res://level_bar.tscn" id="3_hqtel"]
 [ext_resource type="PackedScene" uid="uid://b0tv68ilswjsh" path="res://health_bar.tscn" id="3_i3pqv"]
 [ext_resource type="Script" uid="uid://craciikeoqn6n" path="res://player_sprite.gd" id="3_nvl01"]
-[ext_resource type="Texture2D" path="res://chess-pieces/white-knight.png" id="4_bwjto"]
 [ext_resource type="PackedScene" uid="uid://bxfwklemd5f4o" path="res://stat_button.tscn" id="4_sweqy"]
-[ext_resource type="Texture2D" path="res://chess-pieces/white-rook.png" id="5_606se"]
 [ext_resource type="PackedScene" uid="uid://ca4thm5hu2im0" path="res://promotion_button.tscn" id="5_n7ghd"]
 [ext_resource type="Script" uid="uid://grm2y86px8ee" path="res://movement_component.gd" id="6_2hs0m"]
-[ext_resource type="Texture2D" path="res://chess-pieces/white-bishop.png" id="6_u1c27"]
 [ext_resource type="Script" uid="uid://bjthdas6w0rl7" path="res://health_component.gd" id="7_1jxqw"]
 [ext_resource type="Script" uid="uid://bcp4tn61yaump" path="res://leveling_component.gd" id="8_dw050"]
 [ext_resource type="Script" uid="uid://c3oqen1idtfkt" path="res://ranged_weapon_component.gd" id="9_b26j0"]
-[ext_resource type="PackedScene" uid="uid://dj0p4gihi17kq" path="res://meele_weapon_component.tscn" id="15_606se"]
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_sweqy"]
 properties/0/path = NodePath(".:position")
@@ -62,12 +58,9 @@ properties/13/replication_mode = 2
 properties/14/path = NodePath(".:body_damage")
 properties/14/spawn = true
 properties/14/replication_mode = 2
-properties/15/path = NodePath("Components/LevelingComponent:pending_promotions")
+properties/15/path = NodePath("PlayerSprite:texture_path")
 properties/15/spawn = true
 properties/15/replication_mode = 2
-properties/16/path = NodePath(".:current_class")
-properties/16/spawn = true
-properties/16/replication_mode = 2
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_onrkg"]
 size = Vector2(138.27162, 177.77779)
@@ -81,10 +74,6 @@ modulate = Color(0.75076467, 0.00045069636, 0.7539706, 1)
 scale = Vector2(1.5, 1.5)
 texture = ExtResource("2_nvl01")
 script = ExtResource("3_nvl01")
-pawn_texture = ExtResource("2_nvl01")
-knight_texture = ExtResource("4_bwjto")
-rook_texture = ExtResource("5_606se")
-bishop_texture = ExtResource("6_u1c27")
 
 [node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="." unique_id=1956268638]
 process_priority = 1
@@ -193,7 +182,3 @@ script = ExtResource("8_dw050")
 
 [node name="RangedWeaponComponent" type="Node2D" parent="Components" unique_id=1446159142]
 script = ExtResource("9_b26j0")
-
-[node name="MeeleWeaponComponent" parent="Components" unique_id=1710691811 instance=ExtResource("15_606se")]
-position = Vector2(224, 0)
-scale = Vector2(0.035, 0.035)

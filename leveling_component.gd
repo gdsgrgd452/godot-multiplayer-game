@@ -1,111 +1,123 @@
 extends Node
 
-signal update_ui_points(kill_value: int)
-signal show_upgrade_menu
-signal show_promotion_menu
+signal update_ui_points(val: int)
+signal show_upgrade_menu()
+signal show_promotion_menu()
 
-@onready var player: Node = get_parent().get_parent()
-@onready var health_component: Node = $"../HealthComponent"
-@onready var ranged_w_component: Node = $"../RangedWeaponComponent"
-@onready var player_sprite: Node = $"../../PlayerSprite"
+@export var points: int = 0:
+	set(value):
+		points = value
+		update_ui_points.emit(points)
 
-var knight_texture = load('res://knight.png')
+@export var player_level: int = 1
+@export var next_level_points: int = 10
 
-var upgradeable_stats: Dictionary = {"max_health": 100, "body_damage": 5, "bullet_damage": 5, "bullet_speed": 75, "reload_speed": -0.1}
-
-var player_level: int = 0
-var next_level_points: int = 10
-var points: int = 0
 var total_score: int = 0
 var pending_upgrades: int = 0
+var pending_promotions: int = 0
 
-# Gives the player points and updates their local UI
-func get_points_from_kill(kill_value: int) -> void:
-	if multiplayer.is_server():
-		points += kill_value
-		total_score += kill_value
-		rpc_id(player.name.to_int(), "animate_points_ui", kill_value)
+var upgradeable_stats: Dictionary = {
+	"max_health": 50,
+	"bullet_damage": 10,
+	"bullet_speed": 50,
+	"body_damage": 10,
+	"reload_speed": -0.01
+}
 
-# Tells the UI to animate the point gain locally
-@rpc("authority", "call_local", "reliable")
-func animate_points_ui(kill_value: int) -> void:
-	update_ui_points.emit(kill_value)
+@onready var player: CharacterBody2D = get_parent().get_parent()
 
-# Checks if the player has enough points to level up
+# Grants score and initiates level up verification.
+func get_points_from_kill(amount: int) -> void:
+	if not multiplayer.is_server():
+		return
+		
+	points += amount
+	total_score += amount
+	# update_ui_points.emit(points) is removed from here because the setter now handles it automatically.
+	request_level_up_math()
+
+# Evaluates if current points meet the threshold for the next level.
 @rpc("any_peer", "call_local", "reliable")
 func request_level_up_math() -> void:
-	if multiplayer.is_server():
-		if str(multiplayer.get_remote_sender_id()) == player.name:
-			var leveled_up: bool = false
+	if not multiplayer.is_server():
+		return
+	
+	if points >= next_level_points:
+		player_level += 1
+		points -= next_level_points
+		next_level_points = int(pow(player_level, 1.5) * 10)
+		print("In Component: " + str(next_level_points)) 
+		pending_upgrades += 1
+		
+		if player_level % 3 == 0:
+			pending_promotions += 1
 			
-			# While loop handles multiple level ups at once
-			while points >= next_level_points:
-				points -= next_level_points 
-				player_level += 1
-				next_level_points = next_level_points * 2
-				pending_upgrades += 1 
-				leveled_up = true
-			
-			if leveled_up:
-				rpc_id(player.name.to_int(), "trigger_show_upgrade_ui")
-				
-				if player_level % 3 == 0:
-					print("Showing promotion UI, Level: " + str(player_level))
-					rpc_id(player.name.to_int(), "trigger_show_promotion_ui")
+		if pending_promotions > 0:
+			trigger_promotion_ui.rpc_id(multiplayer.get_remote_sender_id())
+		if pending_upgrades > 0:
+			trigger_upgrade_ui.rpc_id(multiplayer.get_remote_sender_id())
 
-# Tells the player node to show the upgrade menu
+# Requests a specific stat upgrade from the server.
+@rpc("any_peer", "call_remote", "reliable")
+func request_upgrade(stat_name: String) -> void:
+	if multiplayer.is_server():
+		apply_upgrade(stat_name)
+
+# Applies a standard level-up stat increase to the player components.
+func apply_upgrade(stat_name: String) -> void:
+	if pending_upgrades > 0:
+		pending_upgrades -= 1
+		
+		if pending_upgrades > 0:
+			trigger_upgrade_ui.rpc_id(multiplayer.get_remote_sender_id())
+
+			# TODO: Route the explicit stat logic to Health/Weapon components here
+
+# Processes the client's class choice and checks for remaining backlogged promotions.
+@rpc("any_peer", "call_local", "reliable")
+func request_promotion(choice: String) -> void:
+	if not multiplayer.is_server():
+		return
+		
+	if pending_promotions > 0:
+		apply_promotion_stats(choice)
+		pending_promotions -= 1
+		
+		# Update the synchronized variable instead of using an RPC
+		player.current_class = choice 
+		
+		if pending_promotions > 0:
+			trigger_promotion_ui.rpc_id(multiplayer.get_remote_sender_id())
+
+# Commands the local client to open the upgrade selection interface via signal.
 @rpc("authority", "call_local", "reliable")
-func trigger_show_upgrade_ui() -> void:
+func trigger_upgrade_ui() -> void:
+	print("Emitting upgrade")
 	show_upgrade_menu.emit()
 
-# Tells the player node to show the promotion menu
+# Commands the local client to open the promotion selection interface via signal.
 @rpc("authority", "call_local", "reliable")
-func trigger_show_promotion_ui() -> void:
-	print("Emitting")
+func trigger_promotion_ui() -> void:
 	show_promotion_menu.emit()
 
-# Routes the clients upgrade choice to the server
-@rpc("any_peer", "call_remote", "reliable")
-func request_upgrade(chosen_stat: String) -> void:
-	if multiplayer.is_server():
-		if str(multiplayer.get_remote_sender_id()) == player.name:
-			apply_upgrade(chosen_stat)
-
-# Routes the clients promotion choice to the server
-@rpc("any_peer", "call_remote", "reliable")
-func request_promotion(chosen_type: String) -> void:
-	if multiplayer.is_server():
-		if str(multiplayer.get_remote_sender_id()) == player.name:
-			apply_upgrade(chosen_type)
-
-# Actually applies the upgrade stats (Server Side Only)
-func apply_promotion(chosen_type: String) -> void:
-	match chosen_type:
+# Applies specific stat packages based on the chosen chess class.
+func apply_promotion_stats(choice: String) -> void:
+	var components: Node = player.get_node("Components")
+	var health_comp: Node = components.get_node("HealthComponent")
+	var weapon_comp: Node = components.get_node("RangedWeaponComponent")
+	var move_comp: Node = components.get_node("MovementComponent")
+	
+	match choice:
 		"Knight":
-			player_sprite.texture = knight_texture
-			print("Should have changed")
-
-# Actually applies the upgrade stats (Server Side Only)
-func apply_upgrade(chosen_stat: String) -> void:
-	if pending_upgrades <= 0:
-		return 
-		
-	pending_upgrades -= 1
-	
-	match chosen_stat:
-		"max_health":
-			health_component.max_health += upgradeable_stats.get("max_health")
-			health_component.heal(upgradeable_stats.get("max_health"))
-		"bullet_damage":
-			ranged_w_component.bullet_damage += upgradeable_stats.get("bullet_damage")
-		"bullet_speed":
-			ranged_w_component.bullet_speed += upgradeable_stats.get("bullet_speed")
-		"body_damage":
-			player.body_damage += upgradeable_stats.get("body_damage") 
-		"reload_speed":
-			ranged_w_component.reload_speed += upgradeable_stats.get("reload_speed")
-			ranged_w_component.reload_speed = max(0.05, ranged_w_component.reload_speed)
-	
-	# If they still have upgrades waiting, show the buttons
-	if pending_upgrades > 0:
-		rpc_id(player.name.to_int(), "trigger_show_upgrade_ui")
+			move_comp.player_speed += 50.0
+			health_comp.max_health += 20.0
+			health_comp.health += 20.0
+		"Rook":
+			health_comp.max_health += 100.0
+			health_comp.health += 100.0
+			move_comp.player_speed -= 20.0
+			weapon_comp.bullet_damage += 15.0
+		"Bishop":
+			weapon_comp.bullet_speed += 200.0
+			weapon_comp.reload_speed *= 0.8
+			health_comp.max_health += 10.0
