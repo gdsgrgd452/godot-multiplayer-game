@@ -1,0 +1,26 @@
+[gd_scene format=3 uid="uid://c0n8o6qg5guih"]
+
+[ext_resource type="Script" uid="uid://2ojmplfb3hbc" path="res://Components/Weapon Components/Meele Weapon Component/sword_component.gd" id="1_00yqu"]
+[ext_resource type="Texture2D" uid="uid://0tlfye568x8d" path="res://images/sword.png" id="1_dq22f"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_00yqu"]
+size = Vector2(37, 275.68237)
+
+[node name="SwordComponent" type="Node2D" unique_id=179149588]
+script = ExtResource("1_00yqu")
+
+[node name="Hitbox" type="Area2D" parent="." unique_id=518192612]
+position = Vector2(81.18319, 2.753189)
+
+[node name="Collision" type="CollisionShape2D" parent="Hitbox" unique_id=165719975]
+position = Vector2(44.079407, -2.9999986)
+rotation = 1.5707964
+scale = Vector2(0.5, 0.5)
+shape = SubResource("RectangleShape2D_00yqu")
+debug_color = Color(0.30588236, 0, 0.73333335, 0.8)
+
+[node name="Sprite" type="Sprite2D" parent="." unique_id=1587892858]
+position = Vector2(87.75319, 2.7531915)
+rotation = 2.0943952
+scale = Vector2(0.05, 0.05)
+texture = ExtResource("1_dq22f")

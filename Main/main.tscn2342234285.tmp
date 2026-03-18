@@ -1,0 +1,72 @@
+[gd_scene format=3 uid="uid://d0hn1wbn7lp3l"]
+
+[ext_resource type="Script" uid="uid://cmbq4w4ddh6xs" path="res://Main/main.gd" id="1_ig7tw"]
+[ext_resource type="Script" uid="uid://t8h5v33i1exp" path="res://Spawning/spawning_food.gd" id="2_0xm2m"]
+[ext_resource type="Script" uid="uid://bxkxyoc5ui4kf" path="res://Spawning/spawning_players.gd" id="2_1bvp3"]
+[ext_resource type="Shader" uid="uid://b5npgpaiuqcby" path="res://Main/main.gdshader" id="2_lquwl"]
+[ext_resource type="PackedScene" uid="uid://datkho1onaiuj" path="res://Objects/Dynamic/Player/player.tscn" id="4_7mycd"]
+[ext_resource type="Script" uid="uid://cx4o8l16ouh2j" path="res://Spawning/spawning_bullets.gd" id="4_lquwl"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_7mycd"]
+shader = ExtResource("2_lquwl")
+shader_parameter/square_size = 100.0
+shader_parameter/color1 = Color(0.69, 0.69, 0.69, 1)
+shader_parameter/color2 = Color(0.3, 0.3, 0.3, 1)
+
+[node name="Main" type="Node2D" unique_id=769039100]
+script = ExtResource("1_ig7tw")
+
+[node name="Background" type="ColorRect" parent="." unique_id=706016326]
+material = SubResource("ShaderMaterial_7mycd")
+offset_left = -2509.0
+offset_top = -2483.0
+offset_right = 2491.0
+offset_bottom = 2517.0
+
+[node name="Map" type="Polygon2D" parent="." unique_id=1540580453]
+visible = false
+position = Vector2(3, 1)
+color = Color(0.49433076, 0.49433076, 0.4943307, 1)
+polygon = PackedVector2Array(-2500, -2500, 2500, -2500, 2500, 2500, -2500, 2500)
+
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=1275093181]
+
+[node name="HostButton" type="Button" parent="CanvasLayer" unique_id=1692954295]
+offset_right = 8.0
+offset_bottom = 8.0
+text = "Host"
+
+[node name="JoinButton" type="Button" parent="CanvasLayer" unique_id=496051306]
+offset_left = 58.0
+offset_right = 96.0
+offset_bottom = 31.0
+text = "Join"
+
+[node name="LineEdit" type="LineEdit" parent="CanvasLayer" unique_id=91751582]
+offset_left = 131.0
+offset_top = 3.0
+offset_right = 199.5
+offset_bottom = 34.0
+placeholder_text = "127.0.0.1"
+
+[node name="SpawnedPlayers" type="Node2D" parent="." unique_id=380994455]
+script = ExtResource("2_1bvp3")
+player_scene = ExtResource("4_7mycd")
+
+[node name="PlayerSpawner" type="MultiplayerSpawner" parent="." unique_id=721109747]
+_spawnable_scenes = PackedStringArray("uid://datkho1onaiuj")
+spawn_path = NodePath("../SpawnedPlayers")
+
+[node name="SpawnedFood" type="Node2D" parent="." unique_id=249340547]
+script = ExtResource("2_0xm2m")
+
+[node name="FoodSpawner" type="MultiplayerSpawner" parent="." unique_id=56989496]
+_spawnable_scenes = PackedStringArray("uid://b7d2a506v42a6")
+spawn_path = NodePath("../SpawnedFood")
+
+[node name="SpawnedBullets" type="Node2D" parent="." unique_id=864186805]
+script = ExtResource("4_lquwl")
+
+[node name="BulletSpawner" type="MultiplayerSpawner" parent="." unique_id=348082235]
+_spawnable_scenes = PackedStringArray("uid://cgmgag6o33ogd")
+spawn_path = NodePath("../SpawnedBullets")

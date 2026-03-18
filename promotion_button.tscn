@@ -1,9 +1,0 @@
-[gd_scene format=3 uid="uid://ca4thm5hu2im0"]
-
-[ext_resource type="Script" uid="uid://dgsmvcrojqlep" path="res://promotion_button.gd" id="1_s6fe0"]
-
-[node name="PromotionButton" type="Button" unique_id=788578532]
-offset_right = 8.0
-offset_bottom = 8.0
-text = "Promote:"
-script = ExtResource("1_s6fe0")

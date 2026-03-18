@@ -1,0 +1,17 @@
+[gd_scene format=3 uid="uid://77qhp5s4b2wv"]
+
+[ext_resource type="Script" uid="uid://dwxdspdoh0ii4" path="res://UI/Level Bar/level_bar.gd" id="1_ajfem"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dqb0o"]
+bg_color = Color(0.1882353, 0.1882353, 0.1882353, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ajfem"]
+bg_color = Color(0.26999998, 0.26999998, 1, 1)
+
+[node name="LevelBar" type="ProgressBar" unique_id=1244872040]
+offset_right = 60.0
+offset_bottom = 10.0
+theme_override_styles/background = SubResource("StyleBoxFlat_dqb0o")
+theme_override_styles/fill = SubResource("StyleBoxFlat_ajfem")
+show_percentage = false
+script = ExtResource("1_ajfem")

@@ -1,0 +1,7 @@
+[gd_scene format=3 uid="uid://cwwsf3s6favdh"]
+
+[ext_resource type="Script" uid="uid://bftyd5stpj0qi" path="res://Components/Weapon Components/Meele Weapon Component/melee_weapon_component.gd" id="1_byntq"]
+
+[node name="MeeleWeaponComponent" type="Node2D" unique_id=1710691811]
+scale = Vector2(1.5, 1.5)
+script = ExtResource("1_byntq")
