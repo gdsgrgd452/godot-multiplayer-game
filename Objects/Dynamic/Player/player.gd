@@ -6,6 +6,7 @@ extends CharacterBody2D
 @onready var sprite_component: Sprite2D = $PlayerSprite
 var ranged_w_component: Node
 var melee_w_component: Node
+var area_w_component: Node
 
 @export var current_class: String = "Pawn":
 	set(value):
@@ -24,6 +25,12 @@ var melee_w_component: Node
 		current_ranged_weapon = value
 		if is_node_ready():
 			_change_r_weapon(value)
+			
+@export var current_area_weapon: String = "Magic":
+	set(value):
+		current_area_weapon = value
+		if is_node_ready():
+			_change_a_weapon(value)
 
 var knockback: Vector2 = Vector2.ZERO
 var body_damage: int = 5
@@ -31,8 +38,11 @@ var ranks: Array[String] = ["Knight", "Rook", "Bishop"]
 
 # Initializes UI, colors, and connects component signals.
 func _ready() -> void:
+	#Initialises the weapons on spawn
 	_change_m_weapon(current_melee_weapon)
 	_change_r_weapon(current_ranged_weapon)
+	_change_a_weapon(current_area_weapon)
+	
 	if name == str(multiplayer.get_unique_id()):
 		$PlayerSprite.modulate = Color(0, 1, 0)
 		$Camera2D.make_current()
@@ -65,8 +75,9 @@ func _process(_delta: float) -> void:
 # Processes server-side physics and calls local client input gathering.
 func _physics_process(delta: float) -> void:
 	if name == str(multiplayer.get_unique_id()):
-		hold_to_shoot()
+		check_ranged_input()
 		check_melee_input()
+		check_area_input()
 
 	if multiplayer.is_server():
 		decrease_knockback(delta)
@@ -75,7 +86,7 @@ func _physics_process(delta: float) -> void:
 		handle_collisions()
 
 # Evaluates and triggers continuous shooting input.
-func hold_to_shoot() -> void:
+func check_ranged_input() -> void:
 	if ranged_w_component and Input.is_action_pressed("shoot"):
 		ranged_w_component.shoot(get_global_mouse_position())
 
@@ -84,6 +95,13 @@ func check_melee_input() -> void:
 	if melee_w_component and Input.is_action_pressed("meele"): # Map "melee" to Spacebar or Right Click in Project Settings
 		var target_pos: Vector2 = get_global_mouse_position()
 		melee_w_component.request_melee_attack.rpc_id(1, target_pos)
+
+func check_area_input() -> void:
+	if area_w_component and Input.is_action_just_pressed("area"):
+		print("Requesting")
+		area_w_component.request_area_attack.rpc_id(1)
+
+
 
 # Smoothly decays physical knockback momentum over time.
 func decrease_knockback(delta: float) -> void:
@@ -231,6 +249,27 @@ func _change_r_weapon(weapon_type: String) -> void:
 				ranged_w_component.process_mode = Node.PROCESS_MODE_DISABLED
 				ranged_w_component = null
 
+# Updates the active area weapon references, hides visuals, and disables processing for unused components.
+func _change_a_weapon(area_weapon_type: String):
+	match area_weapon_type:
+		"Magic":
+			var magic = $"Components/Magic Area Weapon Component"
+			
+			magic.hide() #Remove because it is not a canvas?
+			magic.process_mode = Node.PROCESS_MODE_DISABLED
+			
+			match area_weapon_type:
+				"Magic":
+					area_w_component = magic
+			
+			area_w_component.show()
+			area_w_component.process_mode = Node.PROCESS_MODE_INHERIT
+		"None":
+			if area_w_component:
+				area_w_component.hide()
+				area_w_component.process_mode = Node.PROCESS_MODE_DISABLED
+				area_w_component = null
+			
 # Compiles and displays internal entity variables to the local HUD.
 func show_debug_info() -> void:
 	

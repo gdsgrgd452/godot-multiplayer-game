@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://bcpvgo3r5i7b3"]
 
-[ext_resource type="Script" uid="uid://dmot630bvyp2q" path="res://Components/Weapon Components/Meele Weapon Component/spear_component.gd" id="1_d7kee"]
+[ext_resource type="Script" uid="uid://dmot630bvyp2q" path="res://Components/Weapon Components/Meele Weapon Component/Spear Component/spear_component.gd" id="1_d7kee"]
 [ext_resource type="Texture2D" uid="uid://bmlfbv2ey47x3" path="res://images/spear.png" id="2_1hsh6"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_1we2h"]

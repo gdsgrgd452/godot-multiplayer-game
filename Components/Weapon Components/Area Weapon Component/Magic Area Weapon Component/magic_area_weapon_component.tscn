@@ -1,0 +1,14 @@
+[gd_scene format=3 uid="uid://dqv8bguh4vdbj"]
+
+[ext_resource type="Script" uid="uid://4tpo7tjuvlrm" path="res://Components/Weapon Components/Area Weapon Component/Magic Area Weapon Component/magic_area_weapon_component.gd" id="1_efip6"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_efip6"]
+
+[node name="Magic Area Weapon Component" type="Node2D" unique_id=1293441058]
+script = ExtResource("1_efip6")
+
+[node name="Hitbox" type="Area2D" parent="." unique_id=315946468]
+
+[node name="Collision" type="CollisionShape2D" parent="Hitbox" unique_id=1819639034]
+shape = SubResource("CircleShape2D_efip6")
+debug_color = Color(0, 0.4215818, 0.78133553, 0.54901963)
