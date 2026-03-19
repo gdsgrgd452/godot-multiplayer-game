@@ -127,10 +127,11 @@ func handle_collisions() -> void:
 		velocity = Vector2.ZERO
 		knockback = normal * 500
 		
-		if collider and collider.has_method("apply_bounce"):
-			collider.apply_bounce(-normal * knockback_force)
-			if collider.is_in_group("food"):
-				do_contact_damage(collider)
+		if collider: 
+			if collider.has_method("apply_bounce"):
+				collider.apply_bounce(-normal * knockback_force)
+				if collider.is_in_group("food"):
+					do_contact_damage(collider)
 
 # Triggers contact damage against target and self.
 func do_contact_damage(collider: Node) -> void:
