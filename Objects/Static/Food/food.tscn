@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://b7d2a506v42a6"]
 
 [ext_resource type="Script" uid="uid://da682bbtqwx87" path="res://Objects/Static/Food/food.gd" id="1_8txok"]
-[ext_resource type="PackedScene" uid="uid://b0tv68ilswjsh" path="res://UI/Health Bar/health_bar.tscn" id="2_pohk7"]
+[ext_resource type="PackedScene" uid="uid://b0tv68ilswjsh" path="res://UI/Bars/Health Bar/health_bar.tscn" id="2_pohk7"]
 [ext_resource type="Script" uid="uid://bjthdas6w0rl7" path="res://Components/Health Component/health_component.gd" id="3_q6vj8"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_4x0hx"]

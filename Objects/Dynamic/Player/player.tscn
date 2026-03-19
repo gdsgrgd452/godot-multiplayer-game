@@ -2,8 +2,8 @@
 
 [ext_resource type="Script" uid="uid://51d52vfdc3ev" path="res://Objects/Dynamic/Player/player.gd" id="1_onrkg"]
 [ext_resource type="Texture2D" uid="uid://cpdwagtalsl1a" path="res://images/chess-pieces/white-pawn.png" id="3_606se"]
-[ext_resource type="PackedScene" uid="uid://77qhp5s4b2wv" path="res://UI/Level Bar/level_bar.tscn" id="3_hqtel"]
-[ext_resource type="PackedScene" uid="uid://b0tv68ilswjsh" path="res://UI/Health Bar/health_bar.tscn" id="3_i3pqv"]
+[ext_resource type="PackedScene" uid="uid://77qhp5s4b2wv" path="res://UI/Bars/Level Bar/level_bar.tscn" id="3_hqtel"]
+[ext_resource type="PackedScene" uid="uid://b0tv68ilswjsh" path="res://UI/Bars/Health Bar/health_bar.tscn" id="3_i3pqv"]
 [ext_resource type="Script" uid="uid://craciikeoqn6n" path="res://Objects/Dynamic/Player/player_sprite.gd" id="3_nvl01"]
 [ext_resource type="PackedScene" uid="uid://bxfwklemd5f4o" path="res://UI/Upgrade Button/stat_button.tscn" id="4_sweqy"]
 [ext_resource type="Texture2D" uid="uid://b26rvhpfp288a" path="res://images/chess-pieces/white-knight.png" id="4_u1c27"]
@@ -34,6 +34,8 @@
 [ext_resource type="Script" uid="uid://drtotaaepbr3t" path="res://Components/Promotion Component/promotion_component.gd" id="19_j1n4j"]
 [ext_resource type="Texture2D" uid="uid://bxbrjc37sox1c" path="res://images/chess-pieces/white-amazon.png" id="20_p8344"]
 [ext_resource type="Texture2D" uid="uid://dobde2a3751e6" path="res://images/chess-pieces/white-rqueen.png" id="21_p5e7e"]
+[ext_resource type="PackedScene" uid="uid://d4bosy3p363kl" path="res://UI/Bars/Ability Bar/ability_bar.tscn" id="26_xyotm"]
+[ext_resource type="Script" uid="uid://dd6mlpw8tkkbb" path="res://Components/Ability Components/teleport_component.gd" id="35_x2bxi"]
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_sweqy"]
 properties/0/path = NodePath(".:position")
@@ -70,7 +72,7 @@ properties/10/path = NodePath("Components/RangedWeaponComponent:bullet_speed")
 properties/10/spawn = true
 properties/10/replication_mode = 2
 properties/11/path = NodePath("Components/RangedWeaponComponent:reload_speed")
-properties/11/spawn = false
+properties/11/spawn = true
 properties/11/replication_mode = 2
 properties/12/path = NodePath("Components/RangedWeaponComponent:shot_cooldown")
 properties/12/spawn = true
@@ -90,31 +92,36 @@ properties/16/replication_mode = 2
 properties/17/path = NodePath(".:current_ranged_weapon")
 properties/17/spawn = true
 properties/17/replication_mode = 2
-properties/18/path = NodePath(".:current_area_weapon")
+properties/18/path = NodePath("Components/HealthComponent:regen_amount")
 properties/18/spawn = true
 properties/18/replication_mode = 2
-properties/19/path = NodePath("Components/HealthComponent:regen_amount")
+properties/19/path = NodePath("Components/HealthComponent:regen_speed")
 properties/19/spawn = true
 properties/19/replication_mode = 2
-properties/20/path = NodePath("Components/HealthComponent:regen_speed")
+properties/20/path = NodePath("Components/HealthComponent:regen_cooldown")
 properties/20/spawn = true
 properties/20/replication_mode = 2
-properties/21/path = NodePath("Components/HealthComponent:regen_cooldown")
+properties/21/path = NodePath("Components/PromotionComponent:pending_promotions")
 properties/21/spawn = true
 properties/21/replication_mode = 2
-properties/22/path = NodePath("Components/PromotionComponent:pending_promotions")
+properties/22/path = NodePath(".:current_first_ability")
 properties/22/spawn = true
-properties/22/replication_mode = 1
+properties/22/replication_mode = 2
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_onrkg"]
 size = Vector2(138.27162, 177.77779)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_xyotm"]
+bg_color = Color(0.1882353, 0.1882353, 0.1882353, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ootfv"]
+bg_color = Color(0.9479591, 0.36396852, 0.55674356, 1)
 
 [node name="Player" type="CharacterBody2D" unique_id=328923263 groups=["player"]]
 scale = Vector2(0.25, 0.25)
 script = ExtResource("1_onrkg")
 current_melee_weapon = "Spear"
 current_ranged_weapon = "None"
-current_area_weapon = "None"
 
 [node name="PlayerSprite" type="Sprite2D" parent="." unique_id=1635438858]
 modulate = Color(0.75076467, 0.00045069636, 0.7539706, 1)
@@ -247,6 +254,15 @@ offset_left = -60.0
 offset_top = 130.0
 offset_bottom = 145.0
 
+[node name="AbilityBar" parent="." unique_id=980408302 instance=ExtResource("26_xyotm")]
+offset_left = -100.0
+offset_top = -300.0
+offset_right = 100.0
+offset_bottom = -270.0
+theme_override_styles/background = SubResource("StyleBoxFlat_xyotm")
+theme_override_styles/fill = SubResource("StyleBoxFlat_ootfv")
+show_percentage = false
+
 [node name="Components" type="Node2D" parent="." unique_id=1775574074]
 
 [node name="MovementComponent" type="Node2D" parent="Components" unique_id=795235486]
@@ -273,13 +289,11 @@ knockback_force = 400.0
 attack_cooldown = 2.0
 
 [node name="Magic Area Weapon Component" parent="Components" unique_id=1293441058 instance=ExtResource("17_ws0sy")]
-area_damage = 10
-max_radius = 200.0
-knockback_force = 1000.0
-attack_cooldown = 30.0
-attack_duration = 1.0
 
 [node name="ShieldComponent" parent="Components" unique_id=1213126401 instance=ExtResource("18_x7332")]
 
 [node name="PromotionComponent" type="Node2D" parent="Components" unique_id=768163417]
 script = ExtResource("19_j1n4j")
+
+[node name="TeleportComponent" type="Node2D" parent="Components" unique_id=1275204178]
+script = ExtResource("35_x2bxi")

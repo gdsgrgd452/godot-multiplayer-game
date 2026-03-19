@@ -5,7 +5,7 @@ signal show_promotion_menu(available_classes: Array[String])
 var pending_promotions: int = 0
 
 var promotion_tree: Dictionary = {
-	"Pawn": ["Pawn_I"], #Rank 1
+	"Pawn": ["Pawn_I", "Knight", "Bishop", "Mini_Rook"], #Rank 1
 	
 	"Pawn_I": ["Pawn_II"], #Rank 2
 	
@@ -91,6 +91,10 @@ var class_proficiency_tree: Dictionary = {
 		"melee_damage": 4,
 		"melee_knockback": 3,
 		"melee_cooldown": 8,
+		
+		#Teleport
+		"teleport_range": 4,
+		"teleport_cooldown": 4
 	}, # Rank 4
 	
 	"Mini_Rook": {
@@ -119,6 +123,10 @@ var class_proficiency_tree: Dictionary = {
 		"melee_damage": 6,
 		"melee_knockback": 3,
 		"melee_cooldown": 9,
+		
+		#Teleport
+		"teleport_range": 5,
+		"teleport_cooldown": 5
 	}, # Rank 5
 	
 	"Flowers_Knight": {
@@ -133,6 +141,10 @@ var class_proficiency_tree: Dictionary = {
 		"melee_damage": 5,
 		"melee_knockback": 4,
 		"melee_cooldown": 8,
+				
+		#Teleport
+		"teleport_range": 5,
+		"teleport_cooldown": 5
 	},
 	
 	"Rook": {
@@ -182,6 +194,10 @@ var class_proficiency_tree: Dictionary = {
 		"melee_damage": 7,
 		"melee_knockback": 4,
 		"melee_cooldown": 9,
+				
+		#Teleport
+		"teleport_range": 6,
+		"teleport_cooldown": 6
 	}, # Rank 6
 	
 	"Rook_Knight": {
@@ -198,7 +214,7 @@ var class_proficiency_tree: Dictionary = {
 		"melee_cooldown": 6,
 	}, 
 	
-	"Bishop_Knight": { 
+	"Bishop_Knight": { # TODO
 		# General 
 		"player_speed": 6,
 		"max_health": 5,
@@ -236,6 +252,10 @@ var class_proficiency_tree: Dictionary = {
 		"melee_damage": 9,
 		"melee_knockback": 8,
 		"melee_cooldown": 9,
+				
+		#Teleport
+		"teleport_range": 8,
+		"teleport_cooldown": 8
 	}, # Rank 7
 	
 	"King": {
@@ -292,6 +312,11 @@ var class_proficiency_tree: Dictionary = {
 		"melee_damage": 10,
 		"melee_knockback": 10,
 		"melee_cooldown": 10,
+		
+				
+		#Teleport
+		"teleport_range": 10,
+		"teleport_cooldown": 10
 	},
 	
 	"Super_Queen": {
@@ -366,25 +391,26 @@ func request_promotion(choice: String) -> void:
 func change_weapon(class_choice: String) -> void:
 	var new_m_weapon: String = "None"
 	var new_r_weapon: String = "None"
-	var new_a_weapon: String = "None"
+	var new_first_ability: String = "None"
 	
 	match class_choice:
 		"Pawn", "Pawn_I", "Pawn_II":
 			new_m_weapon = "Spear"
 		"Knight", "Shadow_Knight", "Flowers_Knight", "Ottoman_Knight", "King_Knight":
 			new_m_weapon = "Sword"
+			new_first_ability = "Teleport"
 		"Mini_Rook", "Rook", "Rook_Knight":
 			new_m_weapon = "Spear"
 		"Bishop", "Bishop_Knight":
 			new_r_weapon = "Ranged_Spell"
-			new_a_weapon = "Magic"
+			new_first_ability = "Magic"
 		"King", "Queen", "Sultan", "Jester", "Super_Queen", "Holy_Queen":
 			new_m_weapon = "Sword"
 			new_r_weapon = "Ranged_Spell"
-			new_a_weapon = "Magic"
+			new_first_ability = "Magic"
 	player.current_melee_weapon = new_m_weapon
 	player.current_ranged_weapon = new_r_weapon
-	player.current_area_weapon = new_a_weapon
+	player.current_first_ability = new_first_ability
 
 # Calculates and applies stat multipliers based on the proficiency difference between the old and new class.
 func apply_promotion_stats(class_choice: String) -> void:
@@ -400,7 +426,7 @@ func apply_promotion_stats(class_choice: String) -> void:
 	var move_comp: Node = components.get_node("MovementComponent")
 	var r_weapon_comp: Node = player.ranged_w_component
 	var m_weapon_comp: Node = player.melee_w_component
-	var a_weapon_comp: Node = player.area_w_component
+	var first_ability_comp: Node = player.first_ability_component
 
 	apply_general_prom_stats(move_comp, health_comp, old_prof, new_prof)
 	
@@ -408,13 +434,10 @@ func apply_promotion_stats(class_choice: String) -> void:
 		apply_melee_prom_stats(m_weapon_comp, old_prof, new_prof)
 		
 	if r_weapon_comp:
-		print("Has ")
 		apply_ranged_prom_stats(r_weapon_comp, old_prof, new_prof)
 		
-	if a_weapon_comp:
-		apply_area_prom_stats(a_weapon_comp, old_prof, new_prof)
-
-#The below promotional upgrades are not always positive, you can get worse at something
+	if first_ability_comp:
+		apply_first_ability_prom_stats(first_ability_comp, old_prof, new_prof)
 
 # Modifies general movement and health capabilities based on safely retrieved proficiency ratios.
 func apply_general_prom_stats(move_comp: Node, health_comp: Node, old_prof: Dictionary, new_prof: Dictionary) -> void:
@@ -442,9 +465,14 @@ func apply_ranged_prom_stats(r_weapon_comp: Node, old_prof: Dictionary, new_prof
 	r_weapon_comp.reload_speed *= float(old_prof.get("reload_speed", 1)) / float(new_prof.get("reload_speed", 1))
 	r_weapon_comp.accuracy *= float(new_prof.get("accuracy", 1)) / float(old_prof.get("accuracy", 1))
 	
-# Modifies area combat capabilities based on safely retrieved proficiency ratios.
-func apply_area_prom_stats(a_weapon_comp: Node, old_prof: Dictionary, new_prof: Dictionary) -> void:
-	a_weapon_comp.area_damage = int(a_weapon_comp.area_damage * (float(new_prof.get("area_damage", 1)) / float(old_prof.get("area_damage", 1))))
-	a_weapon_comp.knockback_force *= float(new_prof.get("area_knockback", 1)) / float(old_prof.get("area_knockback", 1))
-	a_weapon_comp.max_radius *= float(new_prof.get("area_radius", 1)) / float(old_prof.get("area_radius", 1))
-	a_weapon_comp.attack_cooldown *= float(old_prof.get("area_cooldown", 1)) / float(new_prof.get("area_cooldown", 1))
+# Routes logic to the correct stat modifier based on the player's active first ability.
+func apply_first_ability_prom_stats(first_ability_comp: Node, old_prof: Dictionary, new_prof: Dictionary) -> void:
+	match player.current_first_ability:
+		"Magic":
+			first_ability_comp.area_damage = int(first_ability_comp.area_damage * (float(new_prof.get("area_damage", 1)) / float(old_prof.get("area_damage", 1))))
+			first_ability_comp.knockback_force *= float(new_prof.get("area_knockback", 1)) / float(old_prof.get("area_knockback", 1))
+			first_ability_comp.max_radius *= float(new_prof.get("area_radius", 1)) / float(old_prof.get("area_radius", 1))
+			first_ability_comp.max_cooldown *= float(old_prof.get("area_cooldown", 1)) / float(new_prof.get("area_cooldown", 1))
+		"Teleport":
+			first_ability_comp.max_range *= float(new_prof.get("teleport_range", 1)) / float(old_prof.get("teleport_range", 1))
+			first_ability_comp.max_cooldown *= float(old_prof.get("teleport_cooldown", 1)) / float(new_prof.get("teleport_cooldown", 1))

@@ -1,0 +1,9 @@
+[gd_scene format=3 uid="uid://d4bosy3p363kl"]
+
+[ext_resource type="Script" uid="uid://djjt02n2bkdt4" path="res://UI/Bars/Ability Bar/ability_bar.gd" id="1_oiyp3"]
+
+[node name="AbilityBar" type="ProgressBar" unique_id=980408302]
+offset_right = 4.0
+offset_bottom = 27.0
+script = ExtResource("1_oiyp3")
+metadata/_custom_type_script = "uid://2lr61aueyl58"

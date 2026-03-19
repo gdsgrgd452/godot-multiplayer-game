@@ -1,0 +1,9 @@
+[gd_scene format=3 uid="uid://ca3mb1pjjp3jx"]
+
+[ext_resource type="Script" uid="uid://2lr61aueyl58" path="res://UI/Bars/entity_bar.gd" id="1_3x54h"]
+
+[node name="EntityBar" type="ProgressBar" unique_id=152199711]
+offset_right = 4.0
+offset_bottom = 27.0
+script = ExtResource("1_3x54h")
+metadata/_custom_type_script = "uid://2lr61aueyl58"

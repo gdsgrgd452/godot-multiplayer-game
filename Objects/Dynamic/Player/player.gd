@@ -9,6 +9,7 @@ extends CharacterBody2D
 var ranged_w_component: Node
 var melee_w_component: Node
 var area_w_component: Node
+var first_ability_component: Node
 
 var shielding: bool = false
 
@@ -31,11 +32,11 @@ var shielding: bool = false
 		if is_node_ready():
 			_change_r_weapon(value)
 			
-@export var current_area_weapon: String = "Magic":
+@export var current_first_ability: String = "Magic":
 	set(value):
-		current_area_weapon = value
+		current_first_ability = value
 		if is_node_ready():
-			_change_a_weapon(value)
+			_change_first_ability(value)
 
 var knockback: Vector2 = Vector2.ZERO
 var knockback_force: int = 200
@@ -52,7 +53,7 @@ func _ready() -> void:
 	#Initialises the weapons on spawn
 	_change_m_weapon(current_melee_weapon)
 	_change_r_weapon(current_ranged_weapon)
-	_change_a_weapon(current_area_weapon)
+	_change_first_ability(current_first_ability)
 	
 	if name == str(multiplayer.get_unique_id()):
 		$PlayerSprite.modulate = Color(0, 1, 0)
@@ -87,7 +88,7 @@ func _physics_process(delta: float) -> void:
 		#if not shielding: # TODO Add this back in
 		check_ranged_input()
 		check_melee_input()
-		check_area_input()
+		check_first_ability_input()
 		check_shield_input()
 
 	if multiplayer.is_server():
@@ -107,9 +108,14 @@ func check_melee_input() -> void:
 		var target_pos: Vector2 = get_global_mouse_position()
 		melee_w_component.request_melee_attack.rpc_id(1, target_pos)
 
-func check_area_input() -> void:
-	if area_w_component and Input.is_action_just_pressed("area"):
-		area_w_component.request_area_attack.rpc_id(1)
+# Evaluates input and triggers the appropriate logic based on the current ability type.
+func check_first_ability_input() -> void:
+	if first_ability_component and Input.is_action_just_pressed("first_ability"):
+		match current_first_ability:
+			"Magic":
+				first_ability_component.request_area_attack.rpc_id(1)
+			"Teleport":
+				first_ability_component.request_teleport.rpc_id(1, get_global_mouse_position())
 
 # Evaluates continuous input to request shield activation and deactivation from the server.
 func check_shield_input() -> void:
@@ -177,7 +183,7 @@ func _update_ui_points(new_points: int):
 	#print("Queueing points: " + str(new_points))
 	$HUD/LevelBar.queue_points(new_points)
 
-# Populates the upgrade UI with valid random stat choices based on equipped weapons.
+# Populates the upgrade UI with valid random stat choices based on equipped capabilities.
 func _show_upgrade_menu() -> void:
 	var valid_stats: Array[String] = ["max_health", "regen_amount", "regen_speed", "body_damage", "player_speed"]
 	
@@ -185,8 +191,13 @@ func _show_upgrade_menu() -> void:
 		valid_stats.append_array(["bullet_damage", "bullet_speed", "reload_speed", "accuracy"])
 	if melee_w_component:
 		valid_stats.append_array(["melee_damage", "melee_knockback", "melee_cooldown"])
-	if area_w_component:
-		valid_stats.append_array(["area_damage", "area_knockback", "area_radius", "area_cooldown"])
+	
+	if first_ability_component:
+		match current_first_ability:
+			"Magic":
+				valid_stats.append_array(["area_damage", "area_knockback", "area_radius", "area_cooldown"])
+			"Teleport":
+				valid_stats.append_array(["teleport_cooldown", "teleport_range"])
 		
 	for button: Node in $HUD/UpgradeUI.get_children():
 		var stat: String = valid_stats.pick_random()
@@ -278,27 +289,31 @@ func _change_r_weapon(weapon_type: String) -> void:
 				ranged_w_component.process_mode = Node.PROCESS_MODE_DISABLED
 				ranged_w_component = null
 
-# Updates the active area weapon references, hides visuals, and disables processing for unused components.
-func _change_a_weapon(area_weapon_type: String):
-	#print("Changing area weapon to: " + area_weapon_type)
-	match area_weapon_type:
-		"Magic":
-			var magic = $"Components/Magic Area Weapon Component"
-			
-			magic.hide() #Remove because it is not a canvas?
+# Updates the active first ability references, hides visuals, and disables processing for unused components.
+func _change_first_ability(ability_type: String) -> void:
+	match ability_type:
+		"Magic", "Teleport":
+			var magic: Node = $"Components/Magic Area Weapon Component"
+			magic.hide() 
 			magic.process_mode = Node.PROCESS_MODE_DISABLED
 			
-			match area_weapon_type:
-				"Magic":
-					area_w_component = magic
+			var teleport: Node = $"Components/TeleportComponent"
+			teleport.hide() 
+			teleport.process_mode = Node.PROCESS_MODE_DISABLED
 			
-			area_w_component.show()
-			area_w_component.process_mode = Node.PROCESS_MODE_INHERIT
+			match ability_type:
+				"Magic":
+					first_ability_component = magic
+				"Teleport":
+					first_ability_component = teleport
+			
+			first_ability_component.show()
+			first_ability_component.process_mode = Node.PROCESS_MODE_INHERIT
 		"None":
-			if area_w_component:
-				area_w_component.hide()
-				area_w_component.process_mode = Node.PROCESS_MODE_DISABLED
-				area_w_component = null
+			if first_ability_component:
+				first_ability_component.hide()
+				first_ability_component.process_mode = Node.PROCESS_MODE_DISABLED
+				first_ability_component = null
 			
 # Compiles and displays internal entity variables to the local HUD.
 func show_debug_info() -> void:
@@ -345,17 +360,24 @@ func show_debug_info() -> void:
 		var no_melee_text: String = "No Melee Weapon"  + "\n" + "\n"
 		$HUD/StatsLabel.text += no_melee_text
 
-	#AREA COMBAT
-	if area_w_component:
-		var area_damage_text: String = "Area Damage: " + str(area_w_component.area_damage) + "\n"
-		var area_kb_text: String = "Area Knockback: " + str(area_w_component.knockback_force) + "\n"
-		var area_radius_text: String = "Area Radius: " + str(area_w_component.max_radius) + "\n"
-		var area_cooldown_text: String = "Area Cooldown: " + str(area_w_component.attack_cooldown) + "\n"
-		var area_duration_text: String = "Area Attack Duration: " + str(area_w_component.attack_duration) + "\n\n"
-		$HUD/StatsLabel.text += area_damage_text + area_kb_text + area_radius_text + area_cooldown_text + area_duration_text
+# FIRST ABILITY COMBAT
+	if first_ability_component:
+		match current_first_ability:
+			"Magic":
+				var area_damage_text: String = "Area Damage: " + str(first_ability_component.area_damage) + "\n"
+				var area_kb_text: String = "Area Knockback: " + str(first_ability_component.knockback_force) + "\n"
+				var area_radius_text: String = "Area Radius: " + str(first_ability_component.max_radius) + "\n"
+				var area_cooldown_text: String = "Area Cooldown: " + str(first_ability_component.max_cooldown) + "\n"
+				var area_duration_text: String = "Area Attack Duration: " + str(first_ability_component.attack_duration) + "\n\n"
+				$HUD/StatsLabel.text += area_damage_text + area_kb_text + area_radius_text + area_cooldown_text + area_duration_text
+			"Teleport":
+				var tele_cooldown_text: String = "Teleport Cooldown: " + str(first_ability_component.max_cooldown) + "\n"
+				var tele_duration_text: String = "Til next: " + str(snapped(first_ability_component.current_cooldown, 0.1)) + "\n"
+				var tele_range_text: String = "Teleport Range: " + str(first_ability_component.max_range) + "\n\n"
+				$HUD/StatsLabel.text += tele_cooldown_text + tele_duration_text + tele_range_text
 	else:
-		var no_area_text: String = "No Area Weapon" + "\n" + "\n"
-		$HUD/StatsLabel.text += no_area_text
+		var no_ability_text: String = "No First Ability" + "\n" + "\n"
+		$HUD/StatsLabel.text += no_ability_text
 	
 	if shield_component:
 		var max_shield_health_text = "Max Shield Health: " + str(shield_component.max_shield_health) + "\n"
