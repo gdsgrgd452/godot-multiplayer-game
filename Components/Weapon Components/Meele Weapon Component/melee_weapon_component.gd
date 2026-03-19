@@ -20,7 +20,6 @@ var active_tween: Tween
 func _ready() -> void:
 	default_position = position
 	hitbox.add_to_group("shield_blockable")
-	print("Groups: " + str(get_groups()))
 	hitbox.monitoring = true
 	hitbox_shape.disabled = false
 

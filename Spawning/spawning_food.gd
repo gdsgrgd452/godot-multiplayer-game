@@ -3,26 +3,51 @@ extends Node2D
 @export var food_scene: PackedScene = preload("res://Objects/Static/Food/food.tscn")
 
 var spawn_timer: float = 0.0
+var arena_size: float = 2500.0
 
-# Handles the dynamic spawning interval for food entities
+# Handles the dynamic spawning interval for food entities exclusively on the server.
 func _process(delta: float) -> void:
-	# Validates that the Main node is loaded
 	if owner == null:
 		return
 		
-	if owner.is_hosting:
+	if multiplayer.is_server():
 		spawn_timer -= delta
 		
-		if spawn_timer <= 0 and get_child_count() < owner.max_food:
-			_spawn_random_food()
+		if spawn_timer <= 0.0 and get_child_count() < owner.max_food:
+			try_spawn_food()
 			
-			# Calculates a dynamic spawn rate based on current food density
-			var current_food: float = max(get_child_count(), 1.0)
+			var current_food: float = max(float(get_child_count()), 1.0)
 			spawn_timer = 20.0 / (float(owner.max_food) / current_food)
 
-# Spawns a new food entity at a random location within the boundaries
-func _spawn_random_food() -> void:
-	var food_instance: Node = food_scene.instantiate()
+# Attempts to find a valid spawn position using rejection sampling with a fixed maximum attempt limit.
+func try_spawn_food() -> void:
+	var max_attempts: int = 7
+	var attempts: int = 0
+	var success: bool = false
 	
-	food_instance.position = Vector2(randf_range(-1000, 1000), randf_range(-1000, 1000))
+	while attempts < max_attempts and not success:
+		var attempted_position: Vector2 = Vector2(randf_range(-2500.0, 2500.0), randf_range(-2500.0, 2500.0))
+		
+		if randf() < get_spawn_probability(attempted_position):
+			_spawn_food(attempted_position)
+			success = true
+		attempts += 1
+		
+	#print("Attempts: " + str(attempts))
+
+# Calculates a normalized spawn probability that decreases as the distance from the center origin increases.
+func get_spawn_probability(food_pos: Vector2) -> float:
+	var current_distance: float = food_pos.length()
+	var normalized_distance: float = clampf(current_distance / arena_size, 0.0, 1.0)
+	var probability: float = 1.2 - normalized_distance
+	
+	return probability
+	
+# Instantiates and places a new food entity, calculating its distance modifier.
+func _spawn_food(food_pos: Vector2) -> void:
+	var food_instance: Node2D = food_scene.instantiate() as Node2D
+	food_instance.position = food_pos
+	
+	food_instance.distance_factor = clampf(food_pos.length() / arena_size, 0.0, 1.0)
+	
 	add_child(food_instance, true)

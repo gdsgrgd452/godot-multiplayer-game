@@ -20,7 +20,6 @@ func _ready() -> void:
 	hitbox.body_entered.connect(_on_body_entered)
 	hitbox.area_entered.connect(_on_body_entered)
 	add_to_group("shield")
-	print(str(get_groups()))
 
 # Updates the shield orbit position locally and syncs it across the network.
 func _physics_process(_delta: float) -> void:

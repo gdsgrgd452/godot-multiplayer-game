@@ -96,7 +96,6 @@ size = Vector2(138.27162, 177.77779)
 [node name="Player" type="CharacterBody2D" unique_id=328923263 groups=["player"]]
 scale = Vector2(0.25, 0.25)
 script = ExtResource("1_onrkg")
-current_class = "Bishop"
 current_melee_weapon = "Spear"
 current_ranged_weapon = "None"
 current_area_weapon = "None"
@@ -121,6 +120,7 @@ scale = Vector2(0.81, 0.81)
 shape = SubResource("RectangleShape2D_onrkg")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=436632609]
+zoom = Vector2(0.6, 0.6)
 position_smoothing_enabled = true
 
 [node name="HUD" type="CanvasLayer" parent="." unique_id=298534784]
@@ -220,6 +220,7 @@ offset_bottom = 145.0
 
 [node name="MovementComponent" type="Node2D" parent="Components" unique_id=795235486]
 script = ExtResource("6_2hs0m")
+player_speed = 600
 
 [node name="HealthComponent" type="Node2D" parent="Components" unique_id=643590896]
 script = ExtResource("7_1jxqw")

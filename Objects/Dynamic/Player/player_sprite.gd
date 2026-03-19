@@ -11,6 +11,7 @@ extends Sprite2D
 
 # Updates the visual texture based on the newly applied class promotion.
 func _on_promotion_applied(new_class: String) -> void:
+	print("Changing texture to: " + str(new_class))
 	match new_class:
 		"Knight":
 			texture = knight_texture

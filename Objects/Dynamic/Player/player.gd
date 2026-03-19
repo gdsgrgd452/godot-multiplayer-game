@@ -15,6 +15,7 @@ var shielding: bool = false
 	set(value):
 		current_class = value
 		if is_node_ready():
+			print(current_class)
 			sprite_component._on_promotion_applied(value)
 
 @export var current_melee_weapon: String = "Sword":
@@ -42,6 +43,11 @@ var ranks: Array[String] = ["Knight", "Rook", "Bishop"]
 
 # Initializes UI, colors, and connects component signals.
 func _ready() -> void:
+	#Initialises the class on spawn
+	if is_node_ready():
+		print(current_class)
+		sprite_component._on_promotion_applied(current_class)
+
 	#Initialises the weapons on spawn
 	_change_m_weapon(current_melee_weapon)
 	_change_r_weapon(current_ranged_weapon)
