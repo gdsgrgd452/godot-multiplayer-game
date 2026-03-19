@@ -7,17 +7,33 @@
 [ext_resource type="Script" uid="uid://craciikeoqn6n" path="res://Objects/Dynamic/Player/player_sprite.gd" id="3_nvl01"]
 [ext_resource type="PackedScene" uid="uid://bxfwklemd5f4o" path="res://UI/Upgrade Button/stat_button.tscn" id="4_sweqy"]
 [ext_resource type="Texture2D" uid="uid://b26rvhpfp288a" path="res://images/chess-pieces/white-knight.png" id="4_u1c27"]
+[ext_resource type="Texture2D" uid="uid://cwgelun1dajm3" path="res://images/chess-pieces/white-bpawn.png" id="4_usr54"]
+[ext_resource type="Texture2D" uid="uid://bv0i0bvheebl5" path="res://images/chess-pieces/white-bpawn2.png" id="5_imvv6"]
 [ext_resource type="PackedScene" uid="uid://ca4thm5hu2im0" path="res://UI/Promotion Button/promotion_button.tscn" id="5_n7ghd"]
 [ext_resource type="Texture2D" uid="uid://fb7p2l5bl7vo" path="res://images/chess-pieces/white-rook.png" id="5_op7ga"]
 [ext_resource type="Script" uid="uid://grm2y86px8ee" path="res://Components/Movement Component/movement_component.gd" id="6_2hs0m"]
 [ext_resource type="Texture2D" uid="uid://cniblbm6wnaui" path="res://images/chess-pieces/white-bishop.png" id="6_q13i1"]
 [ext_resource type="Script" uid="uid://bjthdas6w0rl7" path="res://Components/Health Component/health_component.gd" id="7_1jxqw"]
 [ext_resource type="Script" uid="uid://bcp4tn61yaump" path="res://Components/Leveling Component/leveling_component.gd" id="8_dw050"]
+[ext_resource type="Texture2D" uid="uid://b6grref5skx1o" path="res://images/chess-pieces/white-rook4.png" id="9_4ge2x"]
 [ext_resource type="Script" uid="uid://c3oqen1idtfkt" path="res://Components/Weapon Components/Ranged Weapon Component/ranged_weapon_component.gd" id="9_b26j0"]
+[ext_resource type="Texture2D" uid="uid://bti2nc5m3le0j" path="res://images/chess-pieces/white-nightrd.png" id="10_ktvaa"]
+[ext_resource type="Texture2D" uid="uid://pljcosvt7t4d" path="res://images/chess-pieces/white-augnf.png" id="11_5mjlr"]
+[ext_resource type="Texture2D" uid="uid://cprl6jr11gq2y" path="res://images/chess-pieces/white-centaur.png" id="12_8ai7u"]
+[ext_resource type="Texture2D" uid="uid://237fsxjn0wkh" path="res://images/chess-pieces/white-archbis.png" id="13_hacst"]
+[ext_resource type="Texture2D" uid="uid://trkcu4ptukdx" path="res://images/chess-pieces/white-chancel.png" id="14_mf1qr"]
 [ext_resource type="PackedScene" uid="uid://c0n8o6qg5guih" path="res://Components/Weapon Components/Meele Weapon Component/Sword Component/sword_component.tscn" id="15_cmuwl"]
+[ext_resource type="Texture2D" uid="uid://bkti6qkbmljk0" path="res://images/chess-pieces/white-rknight.png" id="15_mf1qr"]
+[ext_resource type="Texture2D" uid="uid://ckf555syla3gf" path="res://images/chess-pieces/white-nrking.png" id="16_x2bxi"]
 [ext_resource type="PackedScene" uid="uid://bcpvgo3r5i7b3" path="res://Components/Weapon Components/Meele Weapon Component/Spear Component/spear_component.tscn" id="16_xw66s"]
 [ext_resource type="PackedScene" uid="uid://dqv8bguh4vdbj" path="res://Components/Weapon Components/Area Weapon Component/Magic Area Weapon Component/magic_area_weapon_component.tscn" id="17_ws0sy"]
+[ext_resource type="Texture2D" uid="uid://bt2kynq1b814t" path="res://images/chess-pieces/white-queen.png" id="17_xyotm"]
+[ext_resource type="Texture2D" uid="uid://da1t6men8pybg" path="res://images/chess-pieces/white-commonr.png" id="18_ootfv"]
 [ext_resource type="PackedScene" uid="uid://i81b0a7uurhf" path="res://Components/Shield Components/Shield Component/shield_component.tscn" id="18_x7332"]
+[ext_resource type="Texture2D" uid="uid://5eubu4uhawbi" path="res://images/chess-pieces/white-grassh.png" id="19_46ev8"]
+[ext_resource type="Script" uid="uid://drtotaaepbr3t" path="res://Components/Promotion Component/promotion_component.gd" id="19_j1n4j"]
+[ext_resource type="Texture2D" uid="uid://bxbrjc37sox1c" path="res://images/chess-pieces/white-amazon.png" id="20_p8344"]
+[ext_resource type="Texture2D" uid="uid://dobde2a3751e6" path="res://images/chess-pieces/white-rqueen.png" id="21_p5e7e"]
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_sweqy"]
 properties/0/path = NodePath(".:position")
@@ -65,30 +81,30 @@ properties/13/replication_mode = 2
 properties/14/path = NodePath(".:body_damage")
 properties/14/spawn = true
 properties/14/replication_mode = 2
-properties/15/path = NodePath("Components/LevelingComponent:pending_promotions")
+properties/15/path = NodePath(".:current_class")
 properties/15/spawn = true
 properties/15/replication_mode = 2
-properties/16/path = NodePath(".:current_class")
+properties/16/path = NodePath(".:current_melee_weapon")
 properties/16/spawn = true
 properties/16/replication_mode = 2
-properties/17/path = NodePath(".:current_melee_weapon")
+properties/17/path = NodePath(".:current_ranged_weapon")
 properties/17/spawn = true
 properties/17/replication_mode = 2
-properties/18/path = NodePath(".:current_ranged_weapon")
+properties/18/path = NodePath(".:current_area_weapon")
 properties/18/spawn = true
 properties/18/replication_mode = 2
-properties/19/path = NodePath(".:current_area_weapon")
+properties/19/path = NodePath("Components/HealthComponent:regen_amount")
 properties/19/spawn = true
 properties/19/replication_mode = 2
-properties/20/path = NodePath("Components/HealthComponent:regen_amount")
+properties/20/path = NodePath("Components/HealthComponent:regen_speed")
 properties/20/spawn = true
 properties/20/replication_mode = 2
-properties/21/path = NodePath("Components/HealthComponent:regen_speed")
+properties/21/path = NodePath("Components/HealthComponent:regen_cooldown")
 properties/21/spawn = true
 properties/21/replication_mode = 2
-properties/22/path = NodePath("Components/HealthComponent:regen_cooldown")
+properties/22/path = NodePath("Components/PromotionComponent:pending_promotions")
 properties/22/spawn = true
-properties/22/replication_mode = 2
+properties/22/replication_mode = 1
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_onrkg"]
 size = Vector2(138.27162, 177.77779)
@@ -106,9 +122,24 @@ scale = Vector2(1.5, 1.5)
 texture = ExtResource("3_606se")
 script = ExtResource("3_nvl01")
 pawn_texture = ExtResource("3_606se")
+pawn_i_texture = ExtResource("4_usr54")
+pawn_ii_texture = ExtResource("5_imvv6")
+mini_rook_texture = ExtResource("9_4ge2x")
 knight_texture = ExtResource("4_u1c27")
-rook_texture = ExtResource("5_op7ga")
+shadow_knight_texture = ExtResource("10_ktvaa")
+flower_knight_texture = ExtResource("11_5mjlr")
 bishop_texture = ExtResource("6_q13i1")
+rook_texture = ExtResource("5_op7ga")
+ottoman_knight_texture = ExtResource("12_8ai7u")
+rook_knight_texture = ExtResource("14_mf1qr")
+bishop_knight_texture = ExtResource("13_hacst")
+king_knight_texture = ExtResource("15_mf1qr")
+king_texture = ExtResource("16_x2bxi")
+queen_texture = ExtResource("17_xyotm")
+sultan_texture = ExtResource("18_ootfv")
+jester_texture = ExtResource("19_46ev8")
+super_queen_texture = ExtResource("20_p8344")
+holy_queen_texture = ExtResource("21_p5e7e")
 
 [node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="." unique_id=1956268638]
 process_priority = 1
@@ -220,7 +251,6 @@ offset_bottom = 145.0
 
 [node name="MovementComponent" type="Node2D" parent="Components" unique_id=795235486]
 script = ExtResource("6_2hs0m")
-player_speed = 600
 
 [node name="HealthComponent" type="Node2D" parent="Components" unique_id=643590896]
 script = ExtResource("7_1jxqw")
@@ -233,10 +263,23 @@ script = ExtResource("8_dw050")
 script = ExtResource("9_b26j0")
 
 [node name="SwordComponent" parent="Components" unique_id=179149588 instance=ExtResource("15_cmuwl")]
+melee_damage = 30
+knockback_force = 400.0
+attack_cooldown = 2.0
 
 [node name="SpearComponent" parent="Components" unique_id=1242225676 instance=ExtResource("16_xw66s")]
+melee_damage = 30
+knockback_force = 400.0
+attack_cooldown = 2.0
 
 [node name="Magic Area Weapon Component" parent="Components" unique_id=1293441058 instance=ExtResource("17_ws0sy")]
-max_radius = 300.0
+area_damage = 10
+max_radius = 200.0
+knockback_force = 1000.0
+attack_cooldown = 30.0
+attack_duration = 1.0
 
 [node name="ShieldComponent" parent="Components" unique_id=1213126401 instance=ExtResource("18_x7332")]
+
+[node name="PromotionComponent" type="Node2D" parent="Components" unique_id=768163417]
+script = ExtResource("19_j1n4j")

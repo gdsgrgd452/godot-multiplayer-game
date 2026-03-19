@@ -4,8 +4,8 @@ signal died(attacker_id: String)
 
 @export var max_health: int = 500
 var health: int = 500
-var regen_amount: int = 50
-var regen_speed: float = 3.0
+@export var regen_amount: int = 2
+@export var regen_speed: float = 10.0
 var regen_cooldown: float = regen_speed
 
 @onready var object: CharacterBody2D = get_parent().get_parent()

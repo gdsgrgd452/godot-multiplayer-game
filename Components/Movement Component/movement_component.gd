@@ -1,6 +1,6 @@
 extends Node
 
-@export var player_speed: int = 300
+@export var player_speed: int = 100
 var input_dir: Vector2 = Vector2.ZERO
 
 @onready var player: Node = get_parent().get_parent()

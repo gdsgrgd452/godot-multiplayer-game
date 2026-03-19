@@ -3,6 +3,7 @@ extends CharacterBody2D
 @onready var movement_component: Node = $Components/MovementComponent
 @onready var health_component: Node = $Components/HealthComponent
 @onready var leveling_component: Node = $Components/LevelingComponent
+@onready var promotion_component: Node = $Components/PromotionComponent
 @onready var shield_component: Node2D = $Components/ShieldComponent
 @onready var sprite_component: Sprite2D = $PlayerSprite
 var ranged_w_component: Node
@@ -37,8 +38,8 @@ var shielding: bool = false
 			_change_a_weapon(value)
 
 var knockback: Vector2 = Vector2.ZERO
-var knockback_force: int = 500
-var body_damage: int = 20
+var knockback_force: int = 200
+var body_damage: int = 2
 var ranks: Array[String] = ["Knight", "Rook", "Bishop"]
 
 # Initializes UI, colors, and connects component signals.
@@ -68,8 +69,7 @@ func _ready() -> void:
 		
 		leveling_component.update_ui_points.connect(_update_ui_points)
 		leveling_component.show_upgrade_menu.connect(_show_upgrade_menu)
-		leveling_component.show_promotion_menu.connect(_show_promotion_menu)
-
+		promotion_component.show_promotion_menu.connect(_show_promotion_menu)
 	else:
 		$PlayerSprite.modulate = Color(1, 0, 0)
 		$HUD.hide()
@@ -203,23 +203,26 @@ func _on_stat_chosen(chosen_stat: String) -> void:
 	else:
 		leveling_component.rpc_id(1, "request_upgrade", chosen_stat)
 
-# Populates the promotion UI with the available class types.
-func _show_promotion_menu() -> void:
-	#print("Trying to show promotion menu")
+# Populates the promotion UI with the available class types
+func _show_promotion_menu(available_classes: Array[String]) -> void:
 	var buttons: Array[Node] = $HUD/PromotionUI.get_children()
 	for i: int in buttons.size():
-		var type: String = ranks[i]
 		var button: Node = buttons[i]
 		
-		button.type_id = type
-		button.refresh_text()
-		
+		if i < available_classes.size():
+			var type: String = available_classes[i]
+			button.type_id = type
+			button.refresh_text()
+			button.show()
+		else:
+			button.hide()
+			
 	$HUD/PromotionUI.show()
 
-# Transmits the selected class promotion to the server via the leveling component.
+# Transmits the selected class promotion to the server via the promotion component.
 func _on_type_chosen(chosen_type: String) -> void:
 	$HUD/PromotionUI.hide()
-	leveling_component.request_promotion.rpc_id(1, chosen_type)
+	promotion_component.request_promotion.rpc_id(1, chosen_type)
 
 # Defines an RPC for the server to command the local client to update its sprite.
 @rpc("any_peer", "call_local", "reliable")
@@ -365,7 +368,7 @@ func show_debug_info() -> void:
 	
 	#PROMOTIONS AND UPGRADES
 	var pending_upgrades_text: String = "Pending upgrades: " + str(leveling_component.pending_upgrades) + "\n"
-	var pending_promotions_text: String = "Pending Promotions: " + str(leveling_component.pending_promotions) + "\n"
+	var pending_promotions_text: String = "Pending Promotions: " + str(promotion_component.pending_promotions) + "\n"
 	# Down the right side
 	$HUD/StatsLabel2.text += pending_upgrades_text + pending_promotions_text
 

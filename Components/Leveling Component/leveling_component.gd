@@ -2,8 +2,6 @@ extends Node
 
 signal update_ui_points(val: int)
 signal show_upgrade_menu()
-signal show_promotion_menu()
-
 
 @export var points: int = 0:
 	set(value):
@@ -15,7 +13,6 @@ signal show_promotion_menu()
 
 var total_score: int = 0
 var pending_upgrades: int = 0
-var pending_promotions: int = 0
 
 var upgradeable_stats: Dictionary = {
 	"player_speed": 1.1,
@@ -57,15 +54,12 @@ func request_level_up_math() -> void:
 	if points >= next_level_points:
 		player_level += 1
 		points -= next_level_points
-		next_level_points = int(pow(player_level, 1.5) * 10)
-		#print("In Component: " + str(next_level_points)) 
+		next_level_points = int(pow(float(player_level), 1.5) * 10.0)
 		pending_upgrades += 1
 		
-		if player_level % 8 == 0:
-			pending_promotions += 1
+		if player_level % 2 == 0:
+			player.get_node("Components/PromotionComponent").add_pending_promotion(multiplayer.get_remote_sender_id())
 			
-		if pending_promotions > 0:
-			trigger_promotion_ui.rpc_id(multiplayer.get_remote_sender_id())
 		if pending_upgrades > 0:
 			trigger_upgrade_ui.rpc_id(multiplayer.get_remote_sender_id())
 
@@ -141,35 +135,11 @@ func apply_upgrade(stat_name: String) -> void:
 							player.area_w_component.max_radius *= multiplier
 						"area_cooldown":
 							player.area_w_component.attack_cooldown *= multiplier
-	
-# Processes the class choice and applies stats on the server, relying on synchronizers for the client.
-@rpc("any_peer", "call_local", "reliable")
-func request_promotion(choice: String) -> void:
-	if not multiplayer.is_server():
-		return
-		
-	if pending_promotions > 0:
-		pending_promotions -= 1
-		
-		# Change weapons and apply stats on the Server
-		change_weapon(choice)
-		apply_promotion_stats(choice)
-		
-		# Update the synchronized variable so clients update their visual sprites
-		player.current_class = choice 
-		
-		if pending_promotions > 0:
-			trigger_promotion_ui.rpc_id(multiplayer.get_remote_sender_id())
 
 # Commands the local client to open the upgrade selection interface via signal.
 @rpc("authority", "call_local", "reliable")
 func trigger_upgrade_ui() -> void:
 	show_upgrade_menu.emit()
-
-# Commands the local client to open the promotion selection interface via signal.
-@rpc("authority", "call_local", "reliable")
-func trigger_promotion_ui() -> void:
-	show_promotion_menu.emit()
 
 # Updates the synchronized weapon variables on the server so all clients receive the change.
 func change_weapon(class_choice: String) -> void:
@@ -195,35 +165,3 @@ func change_weapon(class_choice: String) -> void:
 	player.current_melee_weapon = new_m_weapon
 	player.current_ranged_weapon = new_r_weapon
 	player.current_area_weapon = new_a_weapon
-
-# Applies default and specific stat packages based on the chosen chess class.
-func apply_promotion_stats(class_choice: String) -> void:
-	var components: Node = player.get_node("Components")
-	var health_comp: Node = components.get_node("HealthComponent")
-	var move_comp: Node = components.get_node("MovementComponent")
-	var r_weapon_comp: Node = player.ranged_w_component
-	var m_weapon_comp: Node = player.melee_w_component
-	var a_weapon_comp: Node = player.area_w_component
-	
-
-	# print("Applying stats for: " + str(class_choice))
-	
-	match class_choice:
-		"Knight": #Knights are faster (Swords are naturally faster so no change to melee speed)
-			move_comp.player_speed += 300.0
-			health_comp.max_health = health_comp.max_health * 0.8
-			health_comp.health = health_comp.max_health
-			m_weapon_comp.melee_damage = m_weapon_comp.melee_damage * 1.5
-			
-		"Rook": #Rooks are tanks, High health high damage
-			health_comp.max_health = health_comp.max_health * 2
-			move_comp.player_speed = move_comp.player_speed * 0.5
-			m_weapon_comp.melee_damage = m_weapon_comp.melee_damage * 1.5
-			m_weapon_comp.knockback_force = min(m_weapon_comp.knockback_force * 2, 4000)
-			player.knockback_force = player.knockback_force * 2
-
-		"Bishop": #Bishops are ranged with magic and area attack
-			r_weapon_comp.bullet_speed = min(r_weapon_comp.bullet_speed * 2, 2500)
-			r_weapon_comp.reload_speed = max(r_weapon_comp.reload_speed * 0.5, 0.25)
-			a_weapon_comp.max_radius = a_weapon_comp.max_radius * 1.15
-			a_weapon_comp.attack_cooldown = a_weapon_comp.attack_cooldown * 0.9
