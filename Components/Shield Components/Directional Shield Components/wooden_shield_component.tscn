@@ -1,0 +1,16 @@
+[gd_scene format=3 uid="uid://3y2gt1rbgeo3"]
+
+[ext_resource type="Script" uid="uid://cni8ihob2gt7d" path="res://Components/Shield Components/Directional Shield Components/wooden_shield_component.gd" id="1_vpbaj"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_3itx8"]
+size = Vector2(46, 17)
+
+[node name="WoodenShieldComponent" type="Node2D" unique_id=975093531]
+scale = Vector2(6, 3)
+script = ExtResource("1_vpbaj")
+
+[node name="Hitbox" type="Area2D" parent="." unique_id=2082028233]
+
+[node name="Collision" type="CollisionShape2D" parent="Hitbox" unique_id=964632112]
+shape = SubResource("RectangleShape2D_3itx8")
+debug_color = Color(0.35710907, 0.115965985, 0.08251613, 0.41960785)

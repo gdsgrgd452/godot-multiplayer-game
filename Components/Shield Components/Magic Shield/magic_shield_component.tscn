@@ -1,0 +1,15 @@
+[gd_scene format=3 uid="uid://dlp1hxy3ufer6"]
+
+[ext_resource type="Script" uid="uid://bcx3a0dxi5w1b" path="res://Components/Shield Components/Magic Shield/magic_shield_component.gd" id="1_lgkrk"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_lgkrk"]
+
+[node name="MagicShieldComponent" type="Node2D" unique_id=669235489]
+scale = Vector2(28, 28)
+script = ExtResource("1_lgkrk")
+
+[node name="Hitbox" type="Area2D" parent="." unique_id=1311044741]
+
+[node name="Collision" type="CollisionShape2D" parent="Hitbox" unique_id=767059117]
+shape = SubResource("CircleShape2D_lgkrk")
+debug_color = Color(0.760752, 0.45238793, 0, 0.41960785)
