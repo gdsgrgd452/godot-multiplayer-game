@@ -116,12 +116,13 @@ func handle_knockback(delta: float) -> void:
 func handle_collisions() -> void:
 	for i in get_slide_collision_count():
 		var collision: KinematicCollision2D = get_slide_collision(i)
-		var collider: Object = collision.get_collider()
+		#var collider: Object = collision.get_collider()
 		var normal: Vector2 = collision.get_normal()
 		knockback = knockback.bounce(normal)
 		
-		if collider and collider.has_method("apply_bounce"):
-			collider.apply_bounce(-normal * 250.0)
+		#if collider and collider.has_method("apply_bounce"): #TODO
+			#print("Applying bounce" + str(position))
+			#collider.apply_bounce(-normal * 100.0)
 
 # Accepts a physical push from an outside source.
 func apply_bounce(force: Vector2) -> void:
