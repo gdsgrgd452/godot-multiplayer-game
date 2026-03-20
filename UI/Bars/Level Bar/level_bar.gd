@@ -13,7 +13,8 @@ func _ready() -> void:
 func queue_points(new_points: int) -> void:
 	var target_max: float = float(levelling_component.next_level_points)
 	
-	if float(value) + float(new_points) >= target_max:
-		value = 0.0
-		
+	# Keep the underlying EntityBar max_value updated 
+	max_value = target_max
+	
+	# Animate to the new absolute point total 
 	animate_value(float(new_points), target_max, 0.4)

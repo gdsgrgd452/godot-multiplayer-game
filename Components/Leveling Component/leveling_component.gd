@@ -102,17 +102,27 @@ func request_level_up_math() -> void:
 	if not multiplayer.is_server():
 		return
 	
-	if points >= next_level_points:
+	var peer_id: int = player.name.to_int()
+	var leveled_up: bool = false
+	
+	while points >= next_level_points:
+		leveled_up = true
 		player_level += 1
-		points -= next_level_points
-		next_level_points = int(pow(float(player_level), 1.5) * 10.0)
+		
+		var leftover: int = points - next_level_points
+		
+		next_level_points = int(pow(float(player_level), 1.5) * 10.0) #Points per level calculation
 		pending_upgrades += 1
 		
+		points = leftover
+		
+		# Promote if at the right level
 		if player_level % 2 == 0:
-			player.get_node("Components/PromotionComponent").add_pending_promotion(multiplayer.get_remote_sender_id())
+			player.get_node("Components/PromotionComponent").add_pending_promotion(peer_id)
 			
-		if pending_upgrades > 0:
-			trigger_upgrade_ui.rpc_id(multiplayer.get_remote_sender_id())
+	# If we leveled up at least once, trigger the upgrade menu for the client
+	if leveled_up and pending_upgrades > 0:
+		trigger_upgrade_ui.rpc_id(peer_id)
 
 # Requests a specific stat upgrade from the server.
 @rpc("any_peer", "call_remote", "reliable")

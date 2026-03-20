@@ -2,7 +2,7 @@ extends Node
 
 signal show_promotion_menu(available_classes: Array[String])
 
-var pending_promotions: int = 1
+var pending_promotions: int = 0
 
 var promotion_tree: Dictionary = {
 	"Pawn": ["Pawn_I", "Knight", "Bishop", "Mini_Rook"], #Rank 1
