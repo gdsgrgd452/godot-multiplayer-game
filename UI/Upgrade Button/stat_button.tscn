@@ -2,8 +2,14 @@
 
 [ext_resource type="Script" uid="uid://cmui42tdnn0ob" path="res://UI/Upgrade Button/stat_button.gd" id="1_xcqn4"]
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_drecd"]
+bg_color = Color(0.6, 0.6, 0.6, 0.6039216)
+
 [node name="StatButton" type="Button" unique_id=802052301]
 offset_right = 40.0
 offset_bottom = 40.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_drecd")
 text = "Upgrade"
 script = ExtResource("1_xcqn4")

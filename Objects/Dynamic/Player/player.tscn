@@ -197,6 +197,9 @@ properties/50/replication_mode = 2
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_onrkg"]
 size = Vector2(138.27162, 177.77779)
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_46ev8"]
+bg_color = Color(1, 1, 1, 1)
+
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_xyotm"]
 bg_color = Color(0.1882353, 0.1882353, 0.1882353, 1)
 
@@ -294,6 +297,7 @@ grow_vertical = 0
 
 [node name="StatButton" parent="HUD/UpgradeUI" unique_id=802052301 instance=ExtResource("4_sweqy")]
 layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_46ev8")
 
 [node name="StatButton2" parent="HUD/UpgradeUI" unique_id=1369310281 instance=ExtResource("4_sweqy")]
 layout_mode = 2
@@ -307,41 +311,36 @@ layout_mode = 2
 [node name="StatButton5" parent="HUD/UpgradeUI" unique_id=1873888271 instance=ExtResource("4_sweqy")]
 layout_mode = 2
 
-[node name="StatButton6" parent="HUD/UpgradeUI" unique_id=823484458 instance=ExtResource("4_sweqy")]
-layout_mode = 2
-
 [node name="PromotionUI" type="HBoxContainer" parent="HUD" unique_id=632326009]
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -118.0
-offset_top = -95.0
-offset_right = 118.0
-offset_bottom = -64.0
+offset_left = -133.0
+offset_top = -154.0
+offset_right = 133.0
+offset_bottom = -59.0
 grow_horizontal = 2
 grow_vertical = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+alignment = 1
 
 [node name="PromotionButton" parent="HUD/PromotionUI" unique_id=788578532 instance=ExtResource("5_n7ghd")]
 layout_mode = 2
-text = "Promote"
 
 [node name="PromotionButton2" parent="HUD/PromotionUI" unique_id=264756725 instance=ExtResource("5_n7ghd")]
 layout_mode = 2
-text = "Promote"
 
 [node name="PromotionButton3" parent="HUD/PromotionUI" unique_id=1577920357 instance=ExtResource("5_n7ghd")]
 layout_mode = 2
-text = "Promote"
 
 [node name="PromotionButton4" parent="HUD/PromotionUI" unique_id=1003027074 instance=ExtResource("5_n7ghd")]
 layout_mode = 2
-text = "Promote"
 
 [node name="PromotionButton5" parent="HUD/PromotionUI" unique_id=2066935059 instance=ExtResource("5_n7ghd")]
 layout_mode = 2
-text = "Promote"
 
 [node name="StatsLabel2" type="Label" parent="HUD" unique_id=472733984]
 offset_left = 20.000002

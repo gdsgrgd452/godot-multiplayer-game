@@ -247,7 +247,6 @@ func _show_promotion_menu(available_classes: Array[String]) -> void:
 		if i < available_classes.size():
 			var type: String = available_classes[i]
 			button.type_id = type
-			button.refresh_text()
 			button.show()
 		else:
 			button.hide()
@@ -266,7 +265,7 @@ func update_sprite_rpc(choice: String) -> void:
 
 # Updates the active melee weapon references, hides visuals, and disables processing for unused components.
 func _change_m_weapon(weapon_type: String) -> void:
-	print("Trying to change melee weapon: " + weapon_type)
+	#print("Trying to change melee weapon: " + weapon_type)
 	match weapon_type:
 		"Spear", "Sword":
 			var spear: Node2D = $Components/SpearComponent
@@ -285,7 +284,7 @@ func _change_m_weapon(weapon_type: String) -> void:
 					
 			melee_w_component.show()
 			melee_w_component.process_mode = Node.PROCESS_MODE_INHERIT
-			print("Set melee weapon: " + weapon_type)
+			#print("Set melee weapon: " + weapon_type)
 		"None":
 			if melee_w_component:
 				melee_w_component.hide()

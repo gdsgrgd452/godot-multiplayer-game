@@ -24,42 +24,46 @@ extends Sprite2D
 
 # Updates the visual texture based on the newly applied class promotion.
 func _on_promotion_applied(new_class: String) -> void:
-	match new_class:
+	texture = get_texture_from_type(new_class)
+
+# Returns the corresponding Texture2D for a given class name.
+func get_texture_from_type(class_type: String) -> Texture2D:
+	match class_type:
 		"Pawn_I":
-			texture = pawn_i_texture
+			return pawn_i_texture
 		"Pawn_II":
-			texture = pawn_ii_texture
+			return pawn_ii_texture
 		"Mini_Rook":
-			texture = mini_rook_texture
+			return mini_rook_texture
 		"Knight":
-			texture = knight_texture
+			return knight_texture
 		"Shadow_Knight":
-			texture = shadow_knight_texture
+			return shadow_knight_texture
 		"Flowers_Knight":
-			texture = flower_knight_texture
+			return flower_knight_texture
 		"Bishop":
-			texture = bishop_texture
+			return bishop_texture
 		"Rook":
-			texture = rook_texture
+			return rook_texture
 		"Ottoman_Knight":
-			texture = ottoman_knight_texture
+			return ottoman_knight_texture
 		"Rook_Knight":
-			texture = rook_knight_texture
+			return rook_knight_texture
 		"Bishop_Knight":
-			texture = bishop_knight_texture
+			return bishop_knight_texture
 		"King_Knight":
-			texture = king_knight_texture
+			return king_knight_texture
 		"King":
-			texture = king_texture
+			return king_texture
 		"Queen":
-			texture = queen_texture
+			return queen_texture
 		"Sultan":
-			texture = sultan_texture
+			return sultan_texture
 		"Jester":
-			texture = jester_texture
+			return jester_texture
 		"Super_Queen":
-			texture = super_queen_texture
+			return super_queen_texture
 		"Holy_Queen":
-			texture = holy_queen_texture
+			return holy_queen_texture
 		_:
-			texture = pawn_texture
+			return pawn_texture

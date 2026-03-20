@@ -22,10 +22,8 @@ func spawn_projectile(spawn_pos: Vector2, dir: Vector2, shooter_id: String, proj
 		projectile.name = "Projectile_" + str(projectile_counter)
 		
 		projectile.position = spawn_pos + (dir * 30) 
-		print("Rot: " + str(projectile.rotation))
 		projectile.direction = dir
 		projectile.rotation = dir.angle() + deg_to_rad(90)
-		print("Rot after: " + str(projectile.rotation))
 		projectile.shooter_id = shooter_id
 		
 		projectile.speed = projectile_speed

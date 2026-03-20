@@ -18,6 +18,7 @@ var leaderboard_timer: float = 0.0
 # Connects buttons and initializes the game boundary
 func _ready() -> void:
 	$CanvasLayer/HostButton.pressed.connect(_on_host_pressed)
+	$CanvasLayer/HostOPButton.pressed.connect(_on_host_open_port_pressed)
 	$CanvasLayer/JoinButton.pressed.connect(_on_join_pressed)
 	respawn_button.pressed.connect(_on_respawn_pressed)
 	_create_boundaries()
@@ -116,9 +117,15 @@ func _create_boundaries() -> void:
 		boundary_body.add_child(collision)
 		
 	add_child(boundary_body)
+
+func _on_host_open_port_pressed() -> void:
+	# Run the UPNP port forwarding before starting the server
+	setup_upnp()
 	
+	_on_host_pressed() 
+
 # Initiates the server and spawns the host player
-func _on_host_pressed() -> void:	
+func _on_host_pressed() -> void:
 	peer.create_server(PORT) 
 	multiplayer.multiplayer_peer = peer
 	
@@ -126,10 +133,36 @@ func _on_host_pressed() -> void:
 	$SpawnedPlayers.add_player(multiplayer.get_unique_id())
 	
 	$CanvasLayer/HostButton.hide()
+	$CanvasLayer/HostOPButton.hide()
 	$CanvasLayer/JoinButton.hide()
 	$CanvasLayer/RespawnButton.hide()
 	$CanvasLayer/LineEdit.hide()
 	is_hosting = true
+
+# Attempts to automatically forward the game port on the host's router.
+func setup_upnp() -> void:
+	var upnp: UPNP = UPNP.new()
+	
+	# Ask the network to find the local router (This will be blocked by many networks)
+	var discover_result: int = upnp.discover()
+	if discover_result != UPNP.UPNP_RESULT_SUCCESS:
+		print("UPNP Discover Failed! Error: %s" % discover_result)
+		return
+
+	# Verify the router is a valid gateway that accepts commands
+	if not upnp.get_gateway() or not upnp.get_gateway().is_valid_gateway():
+		print("UPNP Invalid Gateway!")
+		return
+
+	# Ask the router to open the UDP port (ENet uses UDP)
+	var map_result: int = upnp.add_port_mapping(PORT, PORT, "My Godot Game", "UDP")
+	if map_result != UPNP.UPNP_RESULT_SUCCESS:
+		print("UPNP Port Mapping Failed! Error: %s" % map_result)
+		return
+		
+	# Prints the public IP so the host can share it
+	print("UPNP Success! Port %s is open." % PORT)
+	print("Your public IP to give to friends is: %s" % upnp.query_external_address())
 
 # Attempts to connect to a server IP
 func _on_join_pressed() -> void:
@@ -142,6 +175,7 @@ func _on_join_pressed() -> void:
 	multiplayer.multiplayer_peer = peer
 	
 	$CanvasLayer/HostButton.hide()
+	$CanvasLayer/HostOPButton.hide()
 	$CanvasLayer/JoinButton.hide()
 	$CanvasLayer/RespawnButton.hide()
 	$CanvasLayer/LineEdit.hide()
