@@ -4,7 +4,7 @@
 [ext_resource type="Script" uid="uid://t8h5v33i1exp" path="res://Spawning/spawning_food.gd" id="2_0xm2m"]
 [ext_resource type="Script" uid="uid://bxkxyoc5ui4kf" path="res://Spawning/spawning_players.gd" id="2_1bvp3"]
 [ext_resource type="Shader" uid="uid://b5npgpaiuqcby" path="res://Main/main.gdshader" id="2_lquwl"]
-[ext_resource type="Script" uid="uid://cx4o8l16ouh2j" path="res://Spawning/spawning_bullets.gd" id="4_lquwl"]
+[ext_resource type="Script" uid="uid://cx4o8l16ouh2j" path="res://Spawning/spawning_projectiles.gd" id="4_lquwl"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_7mycd"]
 shader = ExtResource("2_lquwl")
@@ -21,6 +21,7 @@ offset_left = -2509.0
 offset_top = -2483.0
 offset_right = 2491.0
 offset_bottom = 2517.0
+rotation = -0.00014920316
 
 [node name="Map" type="Polygon2D" parent="." unique_id=1540580453]
 visible = false
@@ -116,12 +117,11 @@ script = ExtResource("2_0xm2m")
 _spawnable_scenes = PackedStringArray("uid://b7d2a506v42a6")
 spawn_path = NodePath("../SpawnedFood")
 
-[node name="SpawnedBullets" type="Node2D" parent="." unique_id=864186805]
+[node name="SpawnedProjectiles" type="Node2D" parent="." unique_id=864186805]
 script = ExtResource("4_lquwl")
 
-[node name="BulletSpawner" type="MultiplayerSpawner" parent="." unique_id=348082235]
-_spawnable_scenes = PackedStringArray("uid://cgmgag6o33ogd")
-spawn_path = NodePath("../SpawnedBullets")
+[node name="ProjectileSpawner" type="MultiplayerSpawner" parent="." unique_id=348082235]
+spawn_path = NodePath("../SpawnedProjectiles")
 
 [node name="SpectatorCamera" type="Camera2D" parent="." unique_id=1223713430]
 enabled = false

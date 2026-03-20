@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://2p2a116rfkeo"]
+
+[ext_resource type="Script" uid="uid://duc6go52cbiwt" path="res://Components/Weapon Components/Ranged Weapon Components/Fireball Shooter Component/fireball_shooter_component.gd" id="1_6pj26"]
+
+[node name="FireballShooterComponent" type="Node2D" unique_id=269407601]
+script = ExtResource("1_6pj26")

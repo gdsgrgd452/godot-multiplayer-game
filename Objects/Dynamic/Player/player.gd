@@ -26,7 +26,7 @@ var shielding: bool = false
 		if is_node_ready():
 			_change_m_weapon(value)
 
-@export var current_ranged_weapon: String = "Ranged_Spell":
+@export var current_ranged_weapon: String = "Fireball_Shooter":
 	set(value):
 		current_ranged_weapon = value
 		if is_node_ready():
@@ -216,7 +216,7 @@ func _show_upgrade_menu() -> void:
 	var valid_stats: Array[String] = ["max_health", "regen_amount", "regen_speed", "body_damage", "player_speed"]
 	
 	if ranged_w_component:
-		valid_stats.append_array(["bullet_damage", "bullet_speed", "reload_speed", "accuracy"])
+		valid_stats.append_array(["projectile_damage", "projectile_speed", "reload_speed", "accuracy"])
 	if melee_w_component:
 		valid_stats.append_array(["melee_damage", "melee_knockback", "melee_cooldown"])
 	
@@ -299,16 +299,20 @@ func _change_m_weapon(weapon_type: String) -> void:
 # Updates the active ranged weapon references, hides visuals, and disables processing for unused components.
 func _change_r_weapon(weapon_type: String) -> void:
 	match weapon_type:
-		"Ranged_Spell":
-			var ranged_spell: Node = $Components/RangedWeaponComponent
-			# Remove hide() and show() here if your ranged weapon does not inherit from Node2D/CanvasItem
-			ranged_spell.hide() 
-			ranged_spell.process_mode = Node.PROCESS_MODE_DISABLED
+		"Fireball_Shooter", "Bow":
+			var fireball_shooter: Node = $Components/FireballShooterComponent
+			fireball_shooter.hide() 
+			fireball_shooter.process_mode = Node.PROCESS_MODE_DISABLED
+			
+			var bow: Node = $Components/BowComponent
+			bow.hide() 
+			bow.process_mode = Node.PROCESS_MODE_DISABLED
 			
 			match weapon_type:
-				"Ranged_Spell":
-					ranged_w_component = ranged_spell
-					
+				"Fireball_Shooter":
+					ranged_w_component = fireball_shooter
+				"Bow":
+					ranged_w_component = bow
 			ranged_w_component.show()
 			ranged_w_component.process_mode = Node.PROCESS_MODE_INHERIT
 		"None":
@@ -390,13 +394,13 @@ func show_debug_info() -> void:
 
 	#RANGED COMBAT
 	if ranged_w_component:
-		var bullet_dmg_text: String = "Bullet Damage: " + str(ranged_w_component.bullet_damage) + "\n"
-		var bullet_speed_text: String = "Bullet Speed: " + str(ranged_w_component.bullet_speed) + "\n\n"
+		var projectile_dmg_text: String = "Projectile Damage: " + str(ranged_w_component.projectile_damage) + "\n"
+		var projectile_speed_text: String = "Projectile Speed: " + str(ranged_w_component.projectile_speed) + "\n\n"
 		var shoot_text: String = "Shooting: " + str(ranged_w_component.shooting) + "\n"
 		var reload_time_text: String = "Reload Time: " + str(ranged_w_component.reload_speed)+ "\n"
 		var cooldown_text: String = "Cooldown: " + str(snapped(ranged_w_component.shot_cooldown, 0.01)) + "\n"
 		var accuracy_text: String = "Accuracy: " + str(snapped(ranged_w_component.accuracy, 0.01)) + "\n\n"
-		$HUD/StatsLabel.text += bullet_dmg_text + bullet_speed_text + shoot_text + reload_time_text + cooldown_text + accuracy_text
+		$HUD/StatsLabel.text += projectile_dmg_text + projectile_speed_text + shoot_text + reload_time_text + cooldown_text + accuracy_text
 	else:
 		var no_ranged_text: String = "No Ranged Weapon" + "\n" + "\n"
 		$HUD/StatsLabel.text += no_ranged_text

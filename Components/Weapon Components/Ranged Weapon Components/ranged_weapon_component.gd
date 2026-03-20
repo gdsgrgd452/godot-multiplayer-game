@@ -1,17 +1,21 @@
 extends Node
+class_name RangedWeaponComponent
 
 # Tells the parent to apply knockback
 signal apply_recoil(recoil_force: Vector2)
 
 @onready var player: Node = get_parent().get_parent()
 
+# An identifier passed to the projectile so it knows what sprite to load
+@export var projectile_type: String = "Default"
+
 # Weapon Stats
 var shooting: bool = false
 var reload_speed: float = 0.4
 var shot_cooldown: float = reload_speed
-var bullet_speed: int = 200
-var bullet_damage: int = 10
-var bullet_force: float = 2.0
+var projectile_speed: int = 200
+var projectile_damage: int = 10
+var projectile_force: float = 2.0
 var recoil_strength: int = 30
 var accuracy: float = 100.0
 
@@ -39,16 +43,17 @@ func shoot(click_pos: Vector2) -> void:
 	shooting = true
 	
 	if multiplayer.is_server():
-		_spawn_bullet_and_recoil(shoot_dir)
+		_spawn_projectile_and_recoil(shoot_dir)
 	else:
 		rpc_id(1, "request_shoot", shoot_dir)
 
-# Spawns the bullet and triggers the recoil signal
-func _spawn_bullet_and_recoil(dir: Vector2) -> void:
-	get_tree().current_scene.get_node("SpawnedBullets").spawn_bullet(player.global_position, dir, player.name, bullet_speed, bullet_damage)
+# Spawns the projectile and triggers the recoil signal
+func _spawn_projectile_and_recoil(dir: Vector2) -> void:
+	# Make sure to rename your spawner node and function in your main scene!
+	get_tree().current_scene.get_node("SpawnedProjectiles").spawn_projectile(player.global_position, dir, player.name, projectile_speed, projectile_damage, projectile_type)
 	apply_recoil.emit(-dir * recoil_strength)
 
-# Used by clients to ask the server to spawn a bullet
+# Used by clients to ask the server to spawn a projectile
 @rpc("any_peer", "call_remote", "reliable")
 func request_shoot(dir: Vector2) -> void:
 	if multiplayer.is_server():
@@ -56,4 +61,4 @@ func request_shoot(dir: Vector2) -> void:
 		if str(multiplayer.get_remote_sender_id()) == player.name:
 			if shot_cooldown <= 0:
 				shot_cooldown = reload_speed
-				_spawn_bullet_and_recoil(dir)
+				_spawn_projectile_and_recoil(dir)

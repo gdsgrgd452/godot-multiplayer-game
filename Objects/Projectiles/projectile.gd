@@ -1,4 +1,5 @@
 extends Area2D
+class_name Projectile
 
 var speed: float = 100.0
 var direction: Vector2 = Vector2.ZERO
@@ -12,7 +13,7 @@ func _ready() -> void:
 	if multiplayer.is_server():
 		body_entered.connect(_on_body_entered)
 
-# Moves the bullet forward on the server side
+# Moves the projectile forward on the server side
 func _physics_process(delta: float) -> void:
 	if multiplayer.is_server():
 		position += direction * speed * delta
@@ -20,13 +21,13 @@ func _physics_process(delta: float) -> void:
 		if (time_to_live <= 0):
 			queue_free()
 
-# Accepts a bounce force to reflect the bullet away from the shield.
+# Accepts a bounce force to reflect the projectile away from the shield.
 func apply_bounce(bounce_force: Vector2) -> void:
 	if multiplayer.is_server():
 		direction = bounce_force.normalized()
 		shooter_id = ""
 
-# Handles logic when the bullet hits a physics body
+# Handles core logic when the projectile hits a physics body
 func _on_body_entered(body: Node2D) -> void:
 	if multiplayer.is_server():
 		# Ignores collision with the shooter
@@ -40,7 +41,10 @@ func _on_body_entered(body: Node2D) -> void:
 			# Applies damage to the hit entity
 			if body.has_method("take_damage"):
 				body.take_damage(damage, shooter_id)
-		
-		# Decreases the time to live after piercing
-		time_to_live = time_to_live * 0.3
-		#queue_free()
+				
+		# Trigger the custom subclass hit behavior
+		_on_hit(body)
+
+# VIRTUAL FUNCTION: To be overwritten by subclasses
+func _on_hit(_body: Node2D) -> void:
+	pass

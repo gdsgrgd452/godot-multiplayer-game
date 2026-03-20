@@ -22,8 +22,8 @@ var promotion_tree: Dictionary = {
 	"Queen": ["Super_Queen", "Holy_Queen"],
 	"Sultan": ["Super_Queen", "Holy_Queen"],
 	"Jester": ["Super_Queen", "Holy_Queen"],
-	"Super_Queen": ["Super_Queen"], #Rank 9
-	"Holy_Queen": ["Holy_Queen"]
+	"Super_Queen": ["Super_Queen", "Pawn_II"], #Rank 9
+	"Holy_Queen": ["Holy_Queen", "Pawn_II"]
 }
 
 var max_tier_template: Dictionary = {
@@ -35,9 +35,9 @@ var max_tier_template: Dictionary = {
 	"melee_damage": 60.0,
 	"melee_knockback": 800.0,
 	"melee_cooldown": 0.2, 
-	"bullet_damage": 40.0,
-	"bullet_speed": 1500.0,
-	"reload_speed": 0.3, 
+	"projectile_damage": 40.0,
+	"projectile_speed": 1500.0,
+	"reload_speed": 0.3,
 	"accuracy": 100.0, 
 	"area_damage": 75.0,
 	"area_knockback": 800.0,
@@ -114,22 +114,7 @@ var class_base_stats: Dictionary = {
 		"melee_cooldown": 1.2,
 		"shield_health": 80.0
 	},
-	"Bishop": {
-		"player_speed": 350.0,
-		"max_health": 45.0,
-		"regen_speed": 1.0,
-		"regen_amount": 3.0,
-		"body_damage": 4.0,
-		"bullet_damage": 15.0,
-		"bullet_speed": 800.0,
-		"reload_speed": 1.2,
-		"accuracy": 70.0,
-		"area_damage": 30.0,
-		"area_knockback": 400.0,
-		"area_radius": 150.0,
-		"area_cooldown": 8.0,
-		"shield_health": 50.0
-	},
+
 
 	# Rank 5
 	"Shadow_Knight": { 
@@ -169,6 +154,22 @@ var class_base_stats: Dictionary = {
 		"melee_cooldown": 1.5,
 		"shield_health": 120.0
 	},
+	"Bishop": {
+		"player_speed": 350.0,
+		"max_health": 45.0,
+		"regen_speed": 1.0,
+		"regen_amount": 3.0,
+		"body_damage": 4.0,
+		"projectile_damage": 15.0,
+		"projectile_speed": 800.0,
+		"reload_speed": 1.2,
+		"accuracy": 70.0,
+		"area_damage": 30.0,
+		"area_knockback": 400.0,
+		"area_radius": 150.0,
+		"area_cooldown": 8.0,
+		"shield_health": 50.0
+	},
 
 	# Rank 6
 	"Ottoman_Knight": {
@@ -203,8 +204,8 @@ var class_base_stats: Dictionary = {
 		"regen_speed": 1.5,
 		"regen_amount": 4.0,
 		"body_damage": 6.0,
-		"bullet_damage": 25.0,
-		"bullet_speed": 1000.0,
+		"projectile_damage": 25.0,
+		"projectile_speed": 1000.0,
 		"reload_speed": 0.9,
 		"accuracy": 85.0,
 		"area_damage": 45.0,
@@ -280,14 +281,40 @@ func change_weapon(class_choice: String) -> void:
 			new_m_weapon = "Sword"
 			new_first_ability = "Teleport"
 		"Mini_Rook", "Rook", "Rook_Knight":
-			new_m_weapon = "Spear"
+			new_r_weapon = "Bow"
 		"Bishop", "Bishop_Knight":
-			new_r_weapon = "Ranged_Spell"
+			new_r_weapon = "Fireball_Shooter"
 			new_first_ability = "Magic"
 			new_shield = "Magic"
-		"King", "Queen", "Sultan", "Jester", "Super_Queen", "Holy_Queen":
+			
+		"King":
 			new_m_weapon = "Sword"
-			new_r_weapon = "Ranged_Spell"
+			new_r_weapon = "Bow"
+			new_first_ability = "Magic"
+			new_shield = "Wooden"
+		"Queen":
+			new_m_weapon = "Sword"
+			new_r_weapon = "Fireball_Shooter"
+			new_first_ability = "Teleport"
+			new_shield = "Magic"
+		"Sultan":
+			new_m_weapon = "Spear"
+			new_r_weapon = "Fireball_Shooter"
+			new_first_ability = "Teleport"
+			new_shield = "Wooden"
+		"Jester":
+			new_m_weapon = "Spear"
+			new_r_weapon = "Bow"
+			new_first_ability = "Teleport"
+			new_shield = "None"
+		"Super_Queen":
+			new_m_weapon = "Sword"
+			new_r_weapon = "Fireball_Shooter"
+			new_first_ability = "Teleport"
+			new_shield = "Magic"
+		"Holy_Queen":
+			new_m_weapon = "Spear"
+			new_r_weapon = "Fireball_Shooter"
 			new_first_ability = "Magic"
 			new_shield = "Magic"
 			

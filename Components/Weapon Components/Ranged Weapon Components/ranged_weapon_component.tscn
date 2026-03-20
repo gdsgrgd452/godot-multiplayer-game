@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://kisjr2wmib3q"]
+
+[ext_resource type="Script" uid="uid://7xpy63mk252u" path="res://Components/Weapon Components/Ranged Weapon Components/ranged_weapon_component.gd" id="1_bvkcb"]
+
+[node name="RangedWeaponComponent" type="Node2D" unique_id=1163638389]
+script = ExtResource("1_bvkcb")

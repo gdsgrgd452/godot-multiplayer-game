@@ -25,8 +25,8 @@ var upgrade_increments: Dictionary = {
 	"regen_amount": 1.1,
 	
 	#Ranged
-	"bullet_damage": 1.1,
-	"bullet_speed": 1.1,
+	"projectile_damage": 1.1,
+	"projectile_speed": 1.1,
 	"reload_speed": 0.9,
 	"accuracy": 1.1,
 	
@@ -61,10 +61,10 @@ var stat_multipliers: Dictionary = {
 	"regen_amount": 1.0,
 	
 	#Ranged
-	"bullet_damage": 1.0,
-	"bullet_speed": 1.0,
-	"reload_speed": 1.0,
-	"accuracy": 1.0,
+	"projectile_damage": 1.1,
+	"projectile_speed": 1.1,
+	"reload_speed": 0.9,
+	"accuracy": 1.1,
 	
 	#Melee
 	"melee_damage": 1.0,
