@@ -282,16 +282,14 @@ offset_right = 472.0
 offset_bottom = 63.0
 
 [node name="UpgradeUI" type="HBoxContainer" parent="HUD" unique_id=1761934495]
-anchors_preset = 7
-anchor_left = 0.5
+anchors_preset = 3
+anchor_left = 1.0
 anchor_top = 1.0
-anchor_right = 0.5
+anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -36.5
-offset_top = -48.0
-offset_right = 38.5
-offset_bottom = -8.0
-grow_horizontal = 2
+offset_left = -351.0
+offset_top = -40.0
+grow_horizontal = 0
 grow_vertical = 0
 
 [node name="StatButton" parent="HUD/UpgradeUI" unique_id=802052301 instance=ExtResource("4_sweqy")]
@@ -311,20 +309,14 @@ layout_mode = 2
 layout_mode = 2
 
 [node name="PromotionUI" type="HBoxContainer" parent="HUD" unique_id=632326009]
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -133.0
-offset_top = -154.0
-offset_right = 133.0
-offset_bottom = -59.0
-grow_horizontal = 2
-grow_vertical = 2
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = -95.0
+offset_right = 391.0
+grow_vertical = 0
 size_flags_horizontal = 4
 size_flags_vertical = 4
-alignment = 1
 
 [node name="PromotionButton" parent="HUD/PromotionUI" unique_id=788578532 instance=ExtResource("5_n7ghd")]
 layout_mode = 2
@@ -354,12 +346,28 @@ horizontal_alignment = 2
 anchors_preset = 2
 anchor_top = 1.0
 anchor_bottom = 1.0
-offset_left = 13.0
-offset_top = -52.0
-offset_right = 53.0
-offset_bottom = -29.0
+offset_left = 16.0
+offset_top = -316.0
+offset_right = 56.0
+offset_bottom = -293.0
 grow_vertical = 0
 theme_override_colors/font_color = Color(0, 0.46666667, 1, 1)
+
+[node name="InfoLabel" type="Label" parent="HUD" unique_id=742106657]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -0.5
+offset_top = -134.22
+offset_right = 0.5
+offset_bottom = -111.219955
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(1, 0.27058825, 1, 1)
+theme_override_colors/font_shadow_color = Color(0.5803922, 0, 0.6627451, 1)
+text = "PROMOTED TO ..."
 
 [node name="HealthBar" parent="." unique_id=1748738400 instance=ExtResource("3_i3pqv")]
 offset_left = -60.0

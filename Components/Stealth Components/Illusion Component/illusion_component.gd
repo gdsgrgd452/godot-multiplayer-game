@@ -3,6 +3,8 @@ class_name IllusionComponent
 
 @export var illusion_duration: float = 4.0
 @export var illusions_count: int = 4
+var illusion_min_range: float = 150.0
+var illusion_max_range: float = 400.0
 
 var active_illusions: Array[Node2D] = []
 
@@ -43,7 +45,7 @@ func request_scattered_illusions() -> void:
 		player.collision_mask = 0
 		trigger_stealth_visuals.rpc(true)
 		
-		await get_tree().create_timer(1.0).timeout
+		await get_tree().create_timer(1.0).timeout # Remove in the future
 		
 		if not is_instance_valid(player):
 			return
@@ -56,11 +58,11 @@ func request_scattered_illusions() -> void:
 		
 		for i: int in range(illusions_count):
 			var random_angle: float = randf() * TAU
-			var random_radius: float = randf_range(150.0, 600.0)
+			var random_radius: float = randf_range(illusion_min_range, illusion_max_range)
 			var offset: Vector2 = Vector2(cos(random_angle), sin(random_angle)) * random_radius
 			positions.append(player.global_position + offset)
 			
-		trigger_stealth_visuals.rpc(false)
+		trigger_stealth_visuals.rpc(false) # Need to move to happen halfway through (After the illusions appear and the player has had the chance to move). 
 		trigger_scattered_illusions.rpc(positions)
 
 # Requests the server to prematurely stop all active illusions.
@@ -99,7 +101,11 @@ func trigger_scattered_illusions(positions: Array[Vector2]) -> void:
 		var illusion: Node2D = _build_illusion_node(pos, main_scene)
 		active_illusions.append(illusion)
 		
+		# Starts invisible to sync with the stealth component's fade-in time (0.75s)
+		illusion.modulate.a = 0.0
+		
 		var tween: Tween = create_tween()
+		tween.tween_property(illusion, "modulate:a", 1.0, 0.75).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 		tween.tween_property(illusion, "modulate:a", 0.0, illusion_duration).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
 		tween.tween_callback(illusion.queue_free)
 
@@ -126,11 +132,12 @@ func _build_illusion_node(spawn_pos: Vector2, parent_scene: Node) -> Node2D:
 	illusion_node.global_position = spawn_pos
 	parent_scene.add_child(illusion_node)
 	
-	# Duplicate the primary visual representation of the player entity.
+	# Duplicate the primary visual representation of the player entity. (They are invisible at the time)
 	var player_sprite: Sprite2D = player.get_node_or_null("PlayerSprite") as Sprite2D
 	if player_sprite:
 		var sprite_dup: Sprite2D = player_sprite.duplicate(0) as Sprite2D
 		_strip_physics_and_scripts(sprite_dup)
+		sprite_dup.modulate.a = 1.0 
 		illusion_node.add_child(sprite_dup)
 		illusion_node.scale *= 0.25
 		

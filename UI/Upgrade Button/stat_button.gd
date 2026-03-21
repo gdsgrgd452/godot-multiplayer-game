@@ -1,21 +1,23 @@
 extends Button
 
 var stat_id: String = ""
-@export var display_text: String = "Upgrade: "
 
 signal stat_chosen(stat_id: String)
 
 # Initializes the button text and connects the press event
 func _ready() -> void:
-	text = display_text + stat_id
+	text = format_stat_name(stat_id)
 	update_button_color()
 	pressed.connect(_on_pressed)
 
 # Updates the visual text to match the currently assigned stat_id
 func refresh_text() -> void:
-	text = display_text + stat_id
+	text = format_stat_name(stat_id)
 	update_button_color()
-	
+
+func format_stat_name(stat: String) -> String: # Turns reload_speed into Reload Speed
+	return " ".join(Array(stat.split("_")).map(func(w): return w.capitalize()))
+
 # Emits the selected stat_id to the listening components
 func _on_pressed() -> void:
 	stat_chosen.emit(stat_id)
