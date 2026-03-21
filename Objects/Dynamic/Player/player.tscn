@@ -32,6 +32,7 @@
 [ext_resource type="Script" uid="uid://drtotaaepbr3t" path="res://Components/Promotion Component/promotion_component.gd" id="19_j1n4j"]
 [ext_resource type="Texture2D" uid="uid://bxbrjc37sox1c" path="res://images/chess-pieces/white-amazon.png" id="20_p8344"]
 [ext_resource type="Texture2D" uid="uid://dobde2a3751e6" path="res://images/chess-pieces/white-rqueen.png" id="21_p5e7e"]
+[ext_resource type="Script" uid="uid://cforq77l244y6" path="res://UI/info_label.gd" id="25_2rxi1"]
 [ext_resource type="PackedScene" uid="uid://d4bosy3p363kl" path="res://UI/Bars/Ability Bar/ability_bar.tscn" id="26_xyotm"]
 [ext_resource type="Script" uid="uid://dd6mlpw8tkkbb" path="res://Components/Ability Components/teleport_component.gd" id="35_x2bxi"]
 [ext_resource type="PackedScene" uid="uid://3y2gt1rbgeo3" path="res://Components/Shield Components/Directional Shield Components/wooden_shield_component.tscn" id="36_xyotm"]
@@ -359,15 +360,15 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -0.5
-offset_top = -134.22
-offset_right = 0.5
-offset_bottom = -111.219955
+offset_left = 1.0
+offset_top = -134.0
+offset_right = 2.0
+offset_bottom = -110.999954
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_colors/font_color = Color(1, 0.27058825, 1, 1)
-theme_override_colors/font_shadow_color = Color(0.5803922, 0, 0.6627451, 1)
-text = "PROMOTED TO ..."
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(1, 1, 1, 1)
+script = ExtResource("25_2rxi1")
 
 [node name="HealthBar" parent="." unique_id=1748738400 instance=ExtResource("3_i3pqv")]
 offset_left = -60.0

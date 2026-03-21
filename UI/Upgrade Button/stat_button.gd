@@ -25,13 +25,13 @@ func _on_pressed() -> void:
 # Updates the button colour 
 func update_button_color() -> void:
 	var new_style: StyleBoxFlat = get_theme_stylebox("normal").duplicate() as StyleBoxFlat
-	new_style.bg_color = get_colour_based_on_type()
+	new_style.bg_color = get_colour_based_on_type(stat_id)
 	
 	add_theme_stylebox_override("normal", new_style)
 
 # Gets a themed colour based on the category of the stat
-func get_colour_based_on_type() -> Color:
-	match stat_id:
+func get_colour_based_on_type(stat: String) -> Color:
+	match stat:
 		"player_speed", "body_damage":
 			return Color(0.553, 0.902, 0.196, 0.6)
 		"max_health", "regen_speed", "regen_amount":

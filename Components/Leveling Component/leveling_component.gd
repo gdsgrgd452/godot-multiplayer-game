@@ -156,11 +156,15 @@ func apply_upgrade(stat_name: String) -> void:
 			trigger_upgrade_ui.rpc_id(multiplayer.get_remote_sender_id())
 			
 		var increment: float = upgrade_increments.get(stat_name, 1.0)
-		print("Before: " + str(stat_multipliers[stat_name]))
 		stat_multipliers[stat_name] *= increment
-		print("Applyng, Now: " + str(stat_multipliers[stat_name]))
+		
 		var promotion_comp: Node = player.get_node("Components/PromotionComponent")
 		promotion_comp.apply_promotion_stats(player.current_class)
+		
+		# Notify the specific client's UI about the upgrade.
+		var info_bar: Node = player.get_node_or_null("HUD/InfoLabel")
+		if info_bar:
+			info_bar.display_message.rpc_id(player.name.to_int(), "Upgraded " + stat_name)
 
 # Commands the local client to open the upgrade selection interface via signal.
 @rpc("authority", "call_local", "reliable")

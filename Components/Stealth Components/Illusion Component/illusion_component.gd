@@ -38,6 +38,10 @@ func request_scattered_illusions() -> void:
 	if multiplayer.is_server() and current_cooldown <= 0.0:
 		current_cooldown = max_cooldown
 		
+		var info_label: Node = player.get_node_or_null("HUD/InfoLabel")
+		if info_label:
+			info_label.display_message.rpc_id(player.name.to_int(), "Ability Used: Illusion")
+		
 		# Store original physical states, disable hitboxes, and hide the player across the network.
 		var original_layer: int = player.collision_layer
 		var original_mask: int = player.collision_mask

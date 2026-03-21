@@ -2,7 +2,7 @@ extends Node2D
 
 @export var player_scene: PackedScene = preload("res://Objects/Dynamic/Player/player.tscn")
 
-const food_per_player: int = 10000
+const food_per_player: int = 2500
 
 # Spawns a newly connected player and updates the global food limit
 func add_player(id: int) -> void:

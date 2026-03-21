@@ -284,6 +284,12 @@ func request_promotion(choice: String) -> void:
 		
 		player.current_class = choice 
 		
+		# Notify the specific client's UI about the promotion.
+		var info_bar: Node = player.get_node_or_null("HUD/InfoLabel")
+		if info_bar:
+			var formatted_class: String = choice.replace("_", " ")
+			info_bar.display_message.rpc_id(player.name.to_int(), "Promoted to " + formatted_class)
+		
 		if pending_promotions > 0:
 			trigger_promotion_ui.rpc_id(multiplayer.get_remote_sender_id())
 
