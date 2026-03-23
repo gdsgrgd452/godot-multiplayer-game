@@ -308,58 +308,72 @@ func change_weapon(class_choice: String) -> void:
 	var new_m_weapon: String = "None"
 	var new_r_weapon: String = "None"
 	var new_first_ability: String = "None"
-	var new_shield: String = "Wooden"
+	var new_shield: String = "None"
 	
 	match class_choice:
 		"Pawn", "Pawn_I", "Pawn_II":
 			new_m_weapon = "Spear"
+			new_shield = "Wooden"
 
-		"Knight", "Flowers_Knight", "Ottoman_Knight", "King_Knight":
+		"Knight", "Flowers_Knight":
 			new_m_weapon = "Sword"
 			new_first_ability = "Teleport"
+			new_shield = "Wooden"
+			
+		"Shadow_Knight":
+			new_m_weapon = "Sword"
+			new_first_ability = "Stealth"
+			new_shield = "Wooden"
+			
+		"Ottoman_Knight", "King_Knight":
+			new_m_weapon = "Sword"
+			new_first_ability = "Teleport_Crush"
+			new_shield = "Wooden"
 			
 		"Mini_Rook":
 			new_r_weapon = "Bow"
+			
 		"Rook", "Rook_Knight":
 			new_r_weapon = "Bow"
 			new_first_ability = "Spawner"
+			
 		"Bishop", "Bishop_Knight":
 			new_r_weapon = "Fireball_Shooter"
 			new_first_ability = "Magic"
 			new_shield = "Magic"
-		"Shadow_Knight":
-			new_m_weapon = "Sword"
-			new_first_ability = "Stealth"
+			
 		"King":
 			new_m_weapon = "Sword"
-			new_r_weapon = "Bow"
 			new_first_ability = "Magic"
 			new_shield = "Wooden"
-		"Queen":
-			new_m_weapon = "Sword"
-			new_r_weapon = "Fireball_Shooter"
-			new_first_ability = "Teleport"
-			new_shield = "Magic"
+			
 		"Sultan":
 			new_m_weapon = "Spear"
-			new_r_weapon = "Fireball_Shooter"
 			new_first_ability = "Spawner"
 			new_shield = "Wooden"
+			
+		"Queen":
+			new_r_weapon = "Fireball_Shooter"
+			new_first_ability = "Teleport_Crush"
+			new_shield = "Magic"
+			
 		"Jester":
-			new_m_weapon = "Spear"
 			new_r_weapon = "Pin_Shooter"
 			new_first_ability = "Illusion"
 			new_shield = "Magic"
+			
 		"Super_Queen":
 			new_m_weapon = "Sword"
-			new_r_weapon = "Fireball_Shooter"
-			new_first_ability = "Teleport"
-			new_shield = "Magic"
+			new_r_weapon = "Bow"
+			new_first_ability = "Teleport_Crush"
+			new_shield = "Wooden"
+			
 		"Holy_Queen":
 			new_m_weapon = "Spear"
 			new_r_weapon = "Fireball_Shooter"
 			new_first_ability = "Illusion"
 			new_shield = "Magic"
+			
 	print("New shield: " + new_shield)
 	player.current_melee_weapon = new_m_weapon
 	player.current_ranged_weapon = new_r_weapon
@@ -430,7 +444,7 @@ func apply_promotion_stats(class_choice: String) -> void:
 					first_ability_comp.max_radius = float(base_stats["area_radius"]) * float(upgrades["area_radius"])
 				if base_stats.has("area_cooldown"):
 					first_ability_comp.max_cooldown = float(base_stats["area_cooldown"]) * float(upgrades["area_cooldown"])
-			"Teleport":
+			"Teleport", "Teleport_Crush":
 				if base_stats.has("teleport_range"):
 					first_ability_comp.max_range = float(base_stats["teleport_range"]) * float(upgrades["teleport_range"])
 				if base_stats.has("teleport_cooldown"):

@@ -1,0 +1,14 @@
+[gd_scene format=3 uid="uid://v2n3x7mkhsnw"]
+
+[ext_resource type="Script" uid="uid://bhkkgq11imhgj" path="res://Components/Ability Components/Teleport Components/Teleport Crush Component/teleport_crush_component.gd" id="1_5r24h"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_4taic"]
+
+[node name="TeleportCrushComponent" type="Node2D" unique_id=1114628848]
+script = ExtResource("1_5r24h")
+
+[node name="Hitbox" type="Area2D" parent="." unique_id=92830369]
+
+[node name="Collision" type="CollisionShape2D" parent="Hitbox" unique_id=712080580]
+shape = SubResource("CircleShape2D_4taic")
+debug_color = Color(0, 0.4215818, 0.78133553, 0.54901963)

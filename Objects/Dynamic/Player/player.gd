@@ -15,7 +15,7 @@ var shield_component: Node
 
 var shielding: bool = false
 
-@export var current_class: String = "Pawn_II":
+@export var current_class: String = "Ottoman_Knight":
 	set(value):
 		current_class = value
 		if is_node_ready():
@@ -146,6 +146,8 @@ func check_first_ability_input() -> void:
 				first_ability_component.request_stealth.rpc_id(1)
 			"Spawner":
 				first_ability_component.request_spawn.rpc_id(1, position)
+			"Teleport_Crush":
+				first_ability_component.request_teleport_crush.rpc_id(1, get_global_mouse_position())
 
 # Evaluates continuous input to request shield activation and deactivation from the server.
 func check_shield_input() -> void:
@@ -258,6 +260,8 @@ func _show_upgrade_menu() -> void:
 				valid_stats.append_array(["stealth_cooldown", "stealth_duration"])
 			"Spawner":
 				valid_stats.append_array(["spawner_cooldown", "spawner_limit"])
+			"Teleport_Crush":
+				valid_stats.append_array(["teleport_cooldown", "teleport_range", "area_damage", "area_knockback", "area_radius"])
 		
 	for button: Node in $HUD/UpgradeUI.get_children():
 		var stat: String = valid_stats.pick_random()
@@ -361,7 +365,7 @@ func _change_r_weapon(weapon_type: String) -> void:
 # Updates the active first ability references, hides visuals, and disables processing for unused components.
 func _change_first_ability(ability_type: String) -> void:
 	match ability_type:
-		"Magic", "Teleport", "Illusion", "Stealth", "Spawner":
+		"Magic", "Teleport", "Illusion", "Stealth", "Spawner", "Teleport_Crush":
 			var magic: Node = get_node_or_null("Components/MagicAreaWeaponComponent")
 			if magic:
 				magic.hide() 
@@ -386,6 +390,12 @@ func _change_first_ability(ability_type: String) -> void:
 			if spawner:
 				spawner.hide()
 				spawner.process_mode = Node.PROCESS_MODE_DISABLED
+				
+			var teleport_crush: Node = get_node_or_null("Components/TeleportCrushComponent")
+			if teleport_crush:
+				teleport_crush.hide()
+				teleport_crush.process_mode = Node.PROCESS_MODE_DISABLED
+				
 			match ability_type:
 				"Magic":
 					first_ability_component = magic
@@ -397,7 +407,9 @@ func _change_first_ability(ability_type: String) -> void:
 					first_ability_component = stealth
 				"Spawner":
 					first_ability_component = spawner
-			
+				"Teleport_Crush":
+					first_ability_component = teleport_crush
+			print(str(first_ability_component.name))
 			if first_ability_component:
 				first_ability_component.show()
 				first_ability_component.process_mode = Node.PROCESS_MODE_INHERIT
@@ -508,6 +520,15 @@ func show_debug_info() -> void:
 				var stealth_time_text: String = "Til next: " + str(snapped(first_ability_component.current_cooldown, 0.1)) + "\n"
 				var stealth_dur_text: String = "Max spawns: " + str(first_ability_component.max_spawns) + "\n\n"
 				$HUD/StatsLabel.text += spawner_cd_text + stealth_time_text + stealth_dur_text
+			"Teleport_Crush":
+				var tpc_damage_text: String = "Teleport Damage: " + str(first_ability_component.area_damage) + "\n"
+				var tpc_kb_text: String = "Teleport Knockback: " + str(first_ability_component.knockback_force) + "\n"
+				var tpc_radius_text: String = "Teleport AoE Radius: " + str(first_ability_component.max_radius) + "\n"
+				var tpc_area_duration_text: String = "Area Attack Duration: " + str(first_ability_component.attack_duration) + "\n\n"
+				var tpc_cooldown_text: String = "Teleport Cooldown: " + str(first_ability_component.max_cooldown) + "\n"
+				var tpc_duration_text: String = "Til next: " + str(snapped(first_ability_component.current_cooldown, 0.1)) + "\n"
+				var tpc_range_text: String = "Teleport Range: " + str(first_ability_component.max_range) + "\n\n"
+				$HUD/StatsLabel.text += tpc_damage_text + tpc_kb_text + tpc_radius_text + tpc_area_duration_text + tpc_cooldown_text + tpc_duration_text + tpc_range_text
 	else:
 		var no_ability_text: String = "No First Ability" + "\n" + "\n"
 		$HUD/StatsLabel.text += no_ability_text
