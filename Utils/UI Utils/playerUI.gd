@@ -20,6 +20,7 @@ var shield_component: Node
 
 var current_first_ability: String
 
+@onready var name_label: Label = $"../Name"
 @onready var stats_label_one: Label = $"../HUD/StatsLabel"
 @onready var stats_label_two: Label = $"../HUD/StatsLabel2"
 @onready var level_label: Label = $"../HUD/LevelBar/LevelLabel"
@@ -30,6 +31,7 @@ var current_first_ability: String
 @onready var leaderboard_label: Label = $"../HUD/LeaderboardLabel"
 
 func _ready() -> void:
+	name_label.text = "Player " + player.name.substr(0, 4)
 	if player.name == str(multiplayer.get_unique_id()):
 		leveling_component.show_upgrade_menu.connect(_show_upgrade_menu)
 		promotion_component.show_promotion_menu.connect(_show_promotion_menu)
@@ -84,8 +86,11 @@ func _show_promotion_menu(available_classes: Array[String]) -> void:
 
 # Updates the local leaderboard UI with data broadcasted from the server.
 func update_leaderboard_ui(board_text: String) -> void:
-	if has_node("HUD/LeaderboardLabel"):
+	if leaderboard_label:
 		leaderboard_label.text = board_text
+	else:
+		printerr("No leaderboard label")
+		
 
 # Updates the debug info display.
 func _process(_delta: float) -> void:

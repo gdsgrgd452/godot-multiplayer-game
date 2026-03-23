@@ -6,7 +6,8 @@ signal show_upgrade_menu()
 @export var points: int = 0:
 	set(value):
 		points = value
-		if multiplayer.is_server():
+		# Ensures the multiplayer API and onready player reference are valid before attempting synchronization.
+		if is_inside_tree() and player != null and multiplayer.is_server():
 			sync_points_to_client.rpc_id(player.name.to_int(), value)
 
 

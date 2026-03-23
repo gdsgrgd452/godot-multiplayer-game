@@ -264,6 +264,13 @@ bg_color = Color(0.1882353, 0.1882353, 0.1882353, 1)
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ootfv"]
 bg_color = Color(0.9479591, 0.36396852, 0.55674356, 1)
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ohodf"]
+bg_color = Color(0.6, 0.6, 0.9607843, 0.6)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
 [node name="Player" type="CharacterBody2D" unique_id=328923263 groups=["player"]]
 scale = Vector2(0.25, 0.25)
 script = ExtResource("1_onrkg")
@@ -456,13 +463,36 @@ offset_top = 130.0
 offset_bottom = 145.0
 
 [node name="AbilityBar" parent="." unique_id=980408302 instance=ExtResource("26_xyotm")]
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
 offset_left = -100.0
-offset_top = -300.0
+offset_top = -250.0
 offset_right = 100.0
-offset_bottom = -270.0
+offset_bottom = -220.0
+grow_horizontal = 2
 theme_override_styles/background = SubResource("StyleBoxFlat_xyotm")
 theme_override_styles/fill = SubResource("StyleBoxFlat_ootfv")
 show_percentage = false
+
+[node name="Name" type="Label" parent="." unique_id=1838796313]
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -35.0
+offset_top = 189.0
+offset_right = 35.0
+offset_bottom = 223.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 50
+theme_override_styles/normal = SubResource("StyleBoxFlat_ohodf")
+text = "NAME"
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="Components" type="Node2D" parent="." unique_id=1775574074]
 

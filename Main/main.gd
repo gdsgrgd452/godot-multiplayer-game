@@ -72,11 +72,15 @@ func broadcast_leaderboard() -> void:
 @rpc("authority", "call_local", "unreliable")
 func update_leaderboard_rpc(leaderboard_text: String) -> void:
 	var local_id: String = str(multiplayer.get_unique_id())
+	print(str(local_id))
 	var local_player: Node = $SpawnedPlayers.get_node_or_null(local_id)
 	if local_player:
 		var player_UI: Node = local_player.get_node_or_null("PlayerUI")
 		if player_UI and player_UI.has_method("update_leaderboard_ui"):
 			player_UI.update_leaderboard_ui(leaderboard_text)
+		else:
+			printerr("No player UI")
+
 
 # Sets up the local client's UI and camera for the spectate phase.
 func start_spectating(killer_id: String) -> void:
@@ -164,7 +168,7 @@ func setup_upnp() -> void:
 
 # Attempts to connect to a server IP
 func _on_join_pressed() -> void:
-	var ip_to_join: String = $CanvasLayer/LineEdit.text
+	var ip_to_join: String = $CanvasLayer/InputIP.text
 	
 	if ip_to_join == "":
 		ip_to_join = "127.0.0.1"
@@ -179,7 +183,7 @@ func hide_out_of_game_info() -> void:
 	$CanvasLayer/HostButton.hide()
 	$CanvasLayer/HostOPButton.hide()
 	$CanvasLayer/JoinButton.hide()
-	$CanvasLayer/LineEdit.hide()
+	$CanvasLayer/InputIP.hide()
 	$CanvasLayer/Panel.hide()
 	$CanvasLayer/Panel2.hide()
 	respawn_button.hide()
