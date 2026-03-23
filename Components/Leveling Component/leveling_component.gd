@@ -56,7 +56,7 @@ var upgrade_increments: Dictionary = {
 	
 	#Spawning
 	"spawner_cooldown": 0.9,
-	"max_spawns": 1.2,
+	"max_spawns": 1.4,
 	
 	#Shield
 	"shield_health": 1.2
@@ -108,6 +108,52 @@ var stat_multipliers: Dictionary = {
 	
 	#Shield
 	"shield_health": 1.0
+}
+var max_stats: Dictionary = {
+	"player_speed": 1200.0,
+	"body_damage": 40.0,
+	
+	#Health & Regen
+	"max_health": 400.0,
+	"regen_speed": 0.5,
+	"regen_amount": 20.0,
+
+	#Ranged
+	"projectile_damage": 80.0,
+	"projectile_speed": 3000.0,
+	"reload_speed": 0.15,
+	"accuracy": 100.0,
+
+	#Melee
+	"melee_damage": 120.0,
+	"melee_knockback": 1600.0,
+	"melee_cooldown": 0.1,
+
+	#Area
+	"area_damage": 150.0,
+	"area_knockback": 2000.0,
+	"area_radius": 1000.0,
+	"area_cooldown": 1.0,
+
+	#Teleport
+	"teleport_cooldown": 1.0,
+	"teleport_range": 2000.0,
+
+	#Illusion
+	"illusion_cooldown": 4.0,
+	"illusion_duration": 10.0,
+	"illusions_count": 12.0,
+
+	#Stealth
+	"stealth_cooldown": 6.0,
+	"stealth_duration": 6.0,
+
+	#Spawning
+	"spawner_cooldown": 6.0,
+	"max_spawns": 10.0,
+
+	#Shield
+	"shield_health": 400.0
 }
 
 @onready var player: CharacterBody2D = get_parent().get_parent()

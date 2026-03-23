@@ -24,5 +24,4 @@ func _ready() -> void:
 
 # Emits the selected type_id to the listening components
 func _on_pressed() -> void:
-	print("Pressed")
 	type_chosen.emit(type_id)

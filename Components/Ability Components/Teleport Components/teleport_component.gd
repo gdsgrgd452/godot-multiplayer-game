@@ -107,7 +107,7 @@ func _spawn_teleport_illusion(spawn_pos: Vector2) -> void:
 		var sprite_dup: Sprite2D = player_sprite.duplicate(0) as Sprite2D
 		sprite_dup.scale = Vector2(0.1, 0.1)
 		#If you want to make the illusion a diff colour uncomment this #sprite_dup.modulate = player_sprite.modulate (DO NOT REMOVE)
-		_strip_physics_and_scripts(sprite_dup)
+		AbilityUtils.strip_physics_and_scripts(sprite_dup)
 		active_illusion.add_child(sprite_dup)
 		
 		var tween_sprite: Tween = create_tween()
@@ -131,33 +131,13 @@ func _spawn_teleport_illusion(spawn_pos: Vector2) -> void:
 	for comp: Node in active_comps:
 		if comp and comp.visible:
 			var comp_dup: Node = comp.duplicate(0)
-			_strip_physics_and_scripts(comp_dup)
+			AbilityUtils.strip_physics_and_scripts(comp_dup)
 			comp_container.add_child(comp_dup)
 			
 	# Grow the equipment container in tandem with the illusion sprite.
 	var tween_components: Tween = create_tween()
 	tween_components.bind_node(active_illusion)
 	tween_components.tween_property(comp_container, "scale", Vector2(0.3, 0.3), teleport_time).from(Vector2(0.1, 0.1))
-
-# Recursively removes logic and collisions from a node to ensure it only acts as a visual prop.
-func _strip_physics_and_scripts(node: Node) -> void:
-	# Disable all processing and script execution for the current node.
-	node.set_script(null)
-	node.process_mode = Node.PROCESS_MODE_DISABLED
-	
-	# Remove or disable any collision detection capabilities to prevent invisible interactions.
-	if node is CollisionShape2D or node is CollisionPolygon2D:
-		node.queue_free()
-	elif node is Area2D:
-		node.monitoring = false
-		node.monitorable = false
-	elif node is PhysicsBody2D:
-		node.collision_layer = 0
-		node.collision_mask = 0
-		
-	# Recursively apply the stripping process to all nested children.
-	for child: Node in node.get_children():
-		_strip_physics_and_scripts(child)
 
 # Draws a solid boundary representing the maximum valid teleport distance exclusively for the local player.
 func _draw() -> void:

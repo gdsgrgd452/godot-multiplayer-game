@@ -6,7 +6,6 @@ class_name MagicAreaWeaponComponent
 func trigger_visual_attack() -> void:
 	super() # Executes the show() command from the base AreaWeaponComponent class
 	
-	print("Triggering visual attack")
 	if active_tween and active_tween.is_valid():
 		active_tween.kill()
 		

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://0tlfye568x8d"
-path="res://.godot/imported/sword.png-fba5d48e030aed580c5b3bcf658505f7.ctex"
+uid="uid://csmhnva76ej5y"
+path="res://.godot/imported/mouse.png-46dcb18ee14b9c5af517da40f9b4b8b2.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://images/sword.png"
-dest_files=["res://.godot/imported/sword.png-fba5d48e030aed580c5b3bcf658505f7.ctex"]
+source_file="res://images/HowToPlay/mouse.png"
+dest_files=["res://.godot/imported/mouse.png-46dcb18ee14b9c5af517da40f9b4b8b2.ctex"]
 
 [params]
 

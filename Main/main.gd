@@ -132,11 +132,8 @@ func _on_host_pressed() -> void:
 	multiplayer.peer_connected.connect($SpawnedPlayers.add_player)
 	$SpawnedPlayers.add_player(multiplayer.get_unique_id())
 	
-	$CanvasLayer/HostButton.hide()
-	$CanvasLayer/HostOPButton.hide()
-	$CanvasLayer/JoinButton.hide()
-	$CanvasLayer/RespawnButton.hide()
-	$CanvasLayer/LineEdit.hide()
+	hide_out_of_game_info()
+	
 	is_hosting = true
 
 # Attempts to automatically forward the game port on the host's router.
@@ -174,11 +171,17 @@ func _on_join_pressed() -> void:
 	peer.create_client(ip_to_join, PORT)
 	multiplayer.multiplayer_peer = peer
 	
+	hide_out_of_game_info()
+
+
+func hide_out_of_game_info() -> void:
 	$CanvasLayer/HostButton.hide()
 	$CanvasLayer/HostOPButton.hide()
 	$CanvasLayer/JoinButton.hide()
-	$CanvasLayer/RespawnButton.hide()
 	$CanvasLayer/LineEdit.hide()
+	$CanvasLayer/Panel.hide()
+	$CanvasLayer/Panel2.hide()
+	respawn_button.hide()
 
 # Hides the button locally and asks the server for a new body.
 func _on_respawn_pressed() -> void:

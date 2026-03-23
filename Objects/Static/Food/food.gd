@@ -56,7 +56,7 @@ func set_type_and_health() -> void:
 		weight = 5
 	else:
 		shape_type = "Decagon"
-		temp_health = 200000
+		temp_health = 20000
 		points_value = randi_range(100000, 100000000)
 		weight = 12
 	

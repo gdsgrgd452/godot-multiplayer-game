@@ -15,11 +15,10 @@ var shield_component: Node
 
 var shielding: bool = false
 
-@export var current_class: String = "Ottoman_Knight":
+@export var current_class: String = "Pawn":
 	set(value):
 		current_class = value
 		if is_node_ready():
-			print(current_class)
 			sprite_component._on_promotion_applied(value)
 
 @export var current_melee_weapon: String = "Sword":
@@ -38,7 +37,6 @@ var shielding: bool = false
 	set(value):
 		current_first_ability = value
 		if is_node_ready():
-			print(value)
 			_change_first_ability(value)
 
 @export var current_shield: String = "Wooden":
@@ -85,7 +83,6 @@ func _ready() -> void:
 		$PlayerSprite.modulate = Color(1, 0, 0)
 		$HUD.hide()
 		$AbilityBar.hide()
-	print(team_id)
 
 func apply_team_color() -> void:
 	var sprite: Sprite2D = get_node_or_null("PlayerSprite") as Sprite2D
@@ -147,12 +144,12 @@ func check_first_ability_input() -> void:
 			"Spawner":
 				first_ability_component.request_spawn.rpc_id(1, position)
 			"Teleport_Crush":
-				first_ability_component.request_teleport_crush.rpc_id(1, get_global_mouse_position())
+				first_ability_component.request_teleport_area.rpc_id(1, get_global_mouse_position())
 
 # Evaluates continuous input to request shield activation and deactivation from the server.
 func check_shield_input() -> void:
 	if shield_component:
-		var shield_testing = true
+		var shield_testing = false
 		if not shield_testing:
 			if Input.is_action_just_pressed("shield"):
 				print("Trying to activate shield")
@@ -205,7 +202,6 @@ func take_damage(amount: int, attacker_id: String = "") -> void:
 # Awards points to the attacker, disables the player, and triggers the death UI.
 func _on_player_died(attacker_id: String) -> void:
 	give_points_on_death(attacker_id)
-	print("Called")
 	# Disable collisions and processing so the dead body doesn't interact with the world
 	process_mode = Node.PROCESS_MODE_DISABLED
 	hide()
@@ -259,7 +255,7 @@ func _show_upgrade_menu() -> void:
 			"Stealth":
 				valid_stats.append_array(["stealth_cooldown", "stealth_duration"])
 			"Spawner":
-				valid_stats.append_array(["spawner_cooldown", "spawner_limit"])
+				valid_stats.append_array(["spawner_cooldown", "max_spawns"])
 			"Teleport_Crush":
 				valid_stats.append_array(["teleport_cooldown", "teleport_range", "area_damage", "area_knockback", "area_radius"])
 		
@@ -305,7 +301,6 @@ func update_sprite_rpc(choice: String) -> void:
 
 # Updates the active melee weapon references, hides visuals, and disables processing for unused components.
 func _change_m_weapon(weapon_type: String) -> void:
-	#print("Trying to change melee weapon: " + weapon_type)
 	match weapon_type:
 		"Spear", "Sword":
 			var spear: Node2D = $Components/SpearComponent
@@ -324,7 +319,6 @@ func _change_m_weapon(weapon_type: String) -> void:
 					
 			melee_w_component.show()
 			melee_w_component.process_mode = Node.PROCESS_MODE_INHERIT
-			#print("Set melee weapon: " + weapon_type)
 		"None":
 			if melee_w_component:
 				melee_w_component.hide()

@@ -113,9 +113,10 @@ var class_base_stats: Dictionary = {
 		"regen_speed": 1.0,
 		"regen_amount": 2.0,
 		"body_damage": 15.0,
-		"melee_damage": 25.0,
-		"melee_knockback": 500.0,
-		"melee_cooldown": 1.2,
+		"projectile_damage": 8.0,
+		"projectile_speed": 300.0,
+		"reload_speed": 2.0,
+		"accuracy": 60.0,
 		"shield_health": 80.0
 	},
 
@@ -153,9 +154,10 @@ var class_base_stats: Dictionary = {
 		"regen_speed": 1.5,
 		"regen_amount": 4.0,
 		"body_damage": 25.0,
-		"melee_damage": 40.0,
-		"melee_knockback": 800.0,
-		"melee_cooldown": 1.5,
+		"projectile_damage": 10.0,
+		"projectile_speed": 400.0,
+		"reload_speed": 1.5,
+		"accuracy": 60.0,
 		"spawner_cooldown": 12.0,
 		"max_spawns": 3.0,
 		"shield_health": 120.0
@@ -197,9 +199,10 @@ var class_base_stats: Dictionary = {
 		"regen_speed": 1.5,
 		"regen_amount": 3.0,
 		"body_damage": 18.0,
-		"melee_damage": 35.0,
-		"melee_knockback": 600.0,
-		"melee_cooldown": 1.0,
+		"projectile_damage": 20.0,
+		"projectile_speed": 600.0,
+		"reload_speed": 1.0,
+		"accuracy": 80.0,
 		"teleport_range": 350.0,
 		"teleport_cooldown": 6.0,
 		"spawner_cooldown": 12.0,
@@ -257,6 +260,7 @@ var class_base_stats: Dictionary = {
 
 @onready var player: CharacterBody2D = get_parent().get_parent() as CharacterBody2D
 
+
 # Grants a pending promotion and notifies the client to open the UI.
 func add_pending_promotion(peer_id: int) -> void:
 	if multiplayer.is_server():
@@ -283,7 +287,6 @@ func request_promotion(choice: String) -> void:
 		return
 		
 	if pending_promotions > 0:
-		print("Trying to promote")
 		pending_promotions -= 1
 		
 		change_weapon(choice)
@@ -374,21 +377,37 @@ func change_weapon(class_choice: String) -> void:
 			new_first_ability = "Illusion"
 			new_shield = "Magic"
 			
-	print("New shield: " + new_shield)
 	player.current_melee_weapon = new_m_weapon
 	player.current_ranged_weapon = new_r_weapon
 	player.current_first_ability = new_first_ability
 	player.current_shield = new_shield
 
+#For testing
+func _get_capped_value(stat_name: String, new_val: float, cap_val: float, old_val: float, is_cooldown: bool = false) -> float:
+	var reached_cap: bool = new_val <= cap_val if is_cooldown else new_val >= cap_val
+	var final_val: float = cap_val if reached_cap else new_val
+	# Only proceed with logging if the rounded values differ.
+	if snapped(final_val, 0.01) != snapped(old_val, 0.01):
+		if reached_cap:
+			print("Stat Log: " + stat_name + " reached MAX CAP: " + str(cap_val))
+		else:
+			print("Stat Log: " + stat_name + " changed from " + str(snapped(old_val, 0.01)) + " to " + str(snapped(final_val, 0.01)))
+			
+	return final_val
+
 # Recalculates stats using the new class's baseline multiplied by the player's lifetime stat upgrades.
 func apply_promotion_stats(class_choice: String) -> void:
 	if not class_base_stats.has(class_choice):
+		printerr("Trying to upgrade a non existent class")
 		return
-		
+	print("\n")
+	print("Promoting: " + class_choice)
+	
 	var base_stats: Dictionary = class_base_stats[class_choice]
 	var leveling: Node = player.get_node("Components/LevelingComponent")
 	var upgrades: Dictionary = leveling.stat_multipliers
-	
+	var caps: Dictionary = leveling.max_stats
+
 	var components: Node = player.get_node("Components")
 	var health_comp: Node = components.get_node("HealthComponent")
 	var move_comp: Node = components.get_node("MovementComponent")
@@ -396,73 +415,106 @@ func apply_promotion_stats(class_choice: String) -> void:
 	var m_weapon_comp: Node = player.melee_w_component
 	var first_ability_comp: Node = player.first_ability_component
 	var shield_comp: Node = player.shield_component
-	
+
 	if move_comp and base_stats.has("player_speed"):
-		move_comp.player_speed = float(base_stats["player_speed"]) * float(upgrades["player_speed"])
+		move_comp.player_speed = _get_capped_value("player_speed", float(base_stats["player_speed"]) * float(upgrades["player_speed"]), caps["player_speed"], move_comp.player_speed)
 		
 	if health_comp:
 		if base_stats.has("max_health"):
-			health_comp.max_health = int(float(base_stats["max_health"]) * float(upgrades["max_health"]))
-			health_comp.health = health_comp.max_health # Full heal on promotion
+			health_comp.max_health = int(_get_capped_value("max_health", float(base_stats["max_health"]) * float(upgrades["max_health"]), caps["max_health"], health_comp.max_health))
+			health_comp.health = health_comp.max_health
 		if base_stats.has("regen_speed"):
-			health_comp.regen_speed = float(base_stats["regen_speed"]) * float(upgrades["regen_speed"])
+			health_comp.regen_speed = _get_capped_value("regen_speed", float(base_stats["regen_speed"]) * float(upgrades["regen_speed"]), caps["regen_speed"], health_comp.regen_speed, true)
 		if base_stats.has("regen_amount"):
-			health_comp.regen_amount = int(float(base_stats["regen_amount"]) * float(upgrades["regen_amount"]))
+			health_comp.regen_amount = int(_get_capped_value("regen_amount", float(base_stats["regen_amount"]) * float(upgrades["regen_amount"]), caps["regen_amount"], health_comp.regen_amount))
 			
 	if base_stats.has("body_damage"):
-		player.body_damage = int(float(base_stats["body_damage"]) * float(upgrades["body_damage"]))
+		player.body_damage = int(_get_capped_value("body_damage", float(base_stats["body_damage"]) * float(upgrades["body_damage"]), caps["body_damage"], player.body_damage))
 		
 	if shield_comp and base_stats.has("shield_health"):
-		shield_comp.max_shield_health = int(float(base_stats["shield_health"]) * float(upgrades["shield_health"]))
+		shield_comp.max_shield_health = int(_get_capped_value("shield_health", float(base_stats["shield_health"]) * float(upgrades["shield_health"]), caps["shield_health"], shield_comp.max_shield_health))
 		
 	if m_weapon_comp:
 		if base_stats.has("melee_damage"):
-			m_weapon_comp.melee_damage = int(float(base_stats["melee_damage"]) * float(upgrades["melee_damage"]))
+			m_weapon_comp.melee_damage = int(_get_capped_value("melee_damage", float(base_stats["melee_damage"]) * float(upgrades["melee_damage"]), caps["melee_damage"], m_weapon_comp.melee_damage))
 		if base_stats.has("melee_knockback"):
-			m_weapon_comp.knockback_force = minf(float(base_stats["melee_knockback"]) * float(upgrades["melee_knockback"]), 4000.0)
+			m_weapon_comp.knockback_force = _get_capped_value("melee_knockback", float(base_stats["melee_knockback"]) * float(upgrades["melee_knockback"]), caps["melee_knockback"], m_weapon_comp.knockback_force)
 		if base_stats.has("melee_cooldown"):
-			m_weapon_comp.attack_cooldown = float(base_stats["melee_cooldown"]) * float(upgrades["melee_cooldown"])
+			m_weapon_comp.attack_cooldown = _get_capped_value("melee_cooldown", float(base_stats["melee_cooldown"]) * float(upgrades["melee_cooldown"]), caps["melee_cooldown"], m_weapon_comp.attack_cooldown, true)
 			
 	if r_weapon_comp:
 		if base_stats.has("projectile_damage"):
-			r_weapon_comp.projectile_damage = int(float(base_stats["projectile_damage"]) * float(upgrades["projectile_damage"]))
+			r_weapon_comp.projectile_damage = int(_get_capped_value("projectile_damage", float(base_stats["projectile_damage"]) * float(upgrades["projectile_damage"]), caps["projectile_damage"], r_weapon_comp.projectile_damage))
 		if base_stats.has("projectile_speed"):
-			r_weapon_comp.projectile_speed = minf(float(base_stats["projectile_speed"]) * float(upgrades["projectile_speed"]), 2500.0)
+			r_weapon_comp.projectile_speed = _get_capped_value("projectile_speed", float(base_stats["projectile_speed"]) * float(upgrades["projectile_speed"]), caps["projectile_speed"], r_weapon_comp.projectile_speed)
 		if base_stats.has("reload_speed"):
-			r_weapon_comp.reload_speed = maxf(float(base_stats["reload_speed"]) * float(upgrades["reload_speed"]), 0.2)
+			r_weapon_comp.reload_speed = _get_capped_value("reload_speed", float(base_stats["reload_speed"]) * float(upgrades["reload_speed"]), caps["reload_speed"], r_weapon_comp.reload_speed, true)
 		if base_stats.has("accuracy"):
-			r_weapon_comp.accuracy = minf(float(base_stats["accuracy"]) * float(upgrades["accuracy"]), 100.0)
+			r_weapon_comp.accuracy = _get_capped_value("accuracy", float(base_stats["accuracy"]) * float(upgrades["accuracy"]), caps["accuracy"], r_weapon_comp.accuracy)
 			
 	if first_ability_comp:
 		match player.current_first_ability:
 			"Magic":
 				if base_stats.has("area_damage"):
-					first_ability_comp.area_damage = int(float(base_stats["area_damage"]) * float(upgrades["area_damage"]))
+					first_ability_comp.area_damage = int(_get_capped_value("area_damage", float(base_stats["area_damage"]) * float(upgrades["area_damage"]), caps["area_damage"], first_ability_comp.area_damage))
 				if base_stats.has("area_knockback"):
-					first_ability_comp.knockback_force = float(base_stats["area_knockback"]) * float(upgrades["area_knockback"])
+					first_ability_comp.knockback_force = _get_capped_value("area_knockback", float(base_stats["area_knockback"]) * float(upgrades["area_knockback"]), caps["area_knockback"], first_ability_comp.knockback_force)
 				if base_stats.has("area_radius"):
-					first_ability_comp.max_radius = float(base_stats["area_radius"]) * float(upgrades["area_radius"])
+					first_ability_comp.max_radius = _get_capped_value("area_radius", float(base_stats["area_radius"]) * float(upgrades["area_radius"]), caps["area_radius"], first_ability_comp.max_radius)
 				if base_stats.has("area_cooldown"):
-					first_ability_comp.max_cooldown = float(base_stats["area_cooldown"]) * float(upgrades["area_cooldown"])
-			"Teleport", "Teleport_Crush":
+					first_ability_comp.max_cooldown = _get_capped_value("area_cooldown", float(base_stats["area_cooldown"]) * float(upgrades["area_cooldown"]), caps["area_cooldown"], first_ability_comp.max_cooldown, true)
+			
+			"Teleport":
 				if base_stats.has("teleport_range"):
-					first_ability_comp.max_range = float(base_stats["teleport_range"]) * float(upgrades["teleport_range"])
+					first_ability_comp.max_range = _get_capped_value("teleport_range", float(base_stats["teleport_range"]) * float(upgrades["teleport_range"]), caps["teleport_range"], first_ability_comp.max_range)
 				if base_stats.has("teleport_cooldown"):
-					first_ability_comp.max_cooldown = float(base_stats["teleport_cooldown"]) * float(upgrades["teleport_cooldown"])
+					first_ability_comp.max_cooldown = _get_capped_value("teleport_cooldown", float(base_stats["teleport_cooldown"]) * float(upgrades["teleport_cooldown"]), caps["teleport_cooldown"], first_ability_comp.max_cooldown, true)
+			
+			"Teleport_Crush":
+				if base_stats.has("area_damage"):
+					first_ability_comp.area_damage = int(_get_capped_value("area_damage", float(base_stats["area_damage"]) * float(upgrades["area_damage"]), caps["area_damage"], first_ability_comp.area_damage))
+				if base_stats.has("area_knockback"):
+					first_ability_comp.knockback_force = _get_capped_value("area_knockback", float(base_stats["area_knockback"]) * float(upgrades["area_knockback"]), caps["area_knockback"], first_ability_comp.knockback_force)
+				if base_stats.has("area_radius"):
+					first_ability_comp.max_radius = _get_capped_value("area_radius", float(base_stats["area_radius"]) * float(upgrades["area_radius"]), caps["area_radius"], first_ability_comp.max_radius)
+				if base_stats.has("teleport_range"):
+					first_ability_comp.max_range = _get_capped_value("teleport_range", float(base_stats["teleport_range"]) * float(upgrades["teleport_range"]), caps["teleport_range"], first_ability_comp.max_range)
+				if base_stats.has("teleport_cooldown"):
+					first_ability_comp.max_cooldown = _get_capped_value("teleport_cooldown", float(base_stats["teleport_cooldown"]) * float(upgrades["teleport_cooldown"]), caps["teleport_cooldown"], first_ability_comp.max_cooldown, true)
+			
 			"Illusion":
 				if base_stats.has("illusion_cooldown"):
-					first_ability_comp.max_cooldown = float(base_stats["illusion_cooldown"]) * float(upgrades["illusion_cooldown"])
+					first_ability_comp.max_cooldown = _get_capped_value("illusion_cooldown", float(base_stats["illusion_cooldown"]) * float(upgrades["illusion_cooldown"]), caps["illusion_cooldown"], first_ability_comp.max_cooldown, true)
 				if base_stats.has("illusion_duration"):
-					first_ability_comp.illusion_duration = float(base_stats["illusion_duration"]) * float(upgrades["illusion_duration"])
+					first_ability_comp.illusion_duration = _get_capped_value("illusion_duration", float(base_stats["illusion_duration"]) * float(upgrades["illusion_duration"]), caps["illusion_duration"], first_ability_comp.illusion_duration)
 				if base_stats.has("illusions_count"):
-					first_ability_comp.illusions_count = int(float(base_stats["illusions_count"]) * float(upgrades["illusions_count"]))
+					first_ability_comp.illusions_count = int(_get_capped_value("illusions_count", float(base_stats["illusions_count"]) * float(upgrades["illusions_count"]), caps["illusions_count"], first_ability_comp.illusions_count))
+			
 			"Stealth":
 				if base_stats.has("stealth_cooldown"):
-					first_ability_comp.max_cooldown = float(base_stats["stealth_cooldown"]) * float(upgrades["stealth_cooldown"])
+					first_ability_comp.max_cooldown = _get_capped_value("stealth_cooldown", float(base_stats["stealth_cooldown"]) * float(upgrades["stealth_cooldown"]), caps["stealth_cooldown"], first_ability_comp.max_cooldown, true)
 				if base_stats.has("stealth_duration"):
-					first_ability_comp.stealth_duration = float(base_stats["stealth_duration"]) * float(upgrades["stealth_duration"])
+					first_ability_comp.stealth_duration = _get_capped_value("stealth_duration", float(base_stats["stealth_duration"]) * float(upgrades["stealth_duration"]), caps["stealth_duration"], first_ability_comp.stealth_duration)
+			
 			"Spawner":
-					if base_stats.has("spawner_cooldown"):
-						first_ability_comp.max_cooldown = float(base_stats["spawner_cooldown"]) * float(upgrades["spawner_cooldown"])
-					if base_stats.has("max_spawns"):
-						first_ability_comp.max_spawns = int(float(base_stats["max_spawns"]) * float(upgrades["max_spawns"]))
+				if base_stats.has("spawner_cooldown"):
+					first_ability_comp.max_cooldown = _get_capped_value("spawner_cooldown", float(base_stats["spawner_cooldown"]) * float(upgrades["spawner_cooldown"]), caps["spawner_cooldown"], first_ability_comp.max_cooldown, true)
+				if base_stats.has("max_spawns"):
+					first_ability_comp.max_spawns = int(_get_capped_value("max_spawns", float(base_stats["max_spawns"]) * float(upgrades["max_spawns"]), caps["max_spawns"], first_ability_comp.max_spawns))
+
+func is_stat_maxed(stat_name: String) -> bool:
+	if not class_base_stats.has(player.current_class):
+		return false
+
+	var leveling: Node = player.get_node("Components/LevelingComponent")
+	var base_val: float = float(class_base_stats[player.current_class].get(stat_name, 0.0))
+	var mult_val: float = float(leveling.stat_multipliers.get(stat_name, 1.0))
+	var cap_val: float = float(leveling.max_stats.get(stat_name, INF))
+
+	var current_total: float = base_val * mult_val
+
+	# Cooldowns and reload speeds are maxed when they hit the minimum allowable value.
+	if stat_name.contains("cooldown") or stat_name.contains("reload") or stat_name == "regen_speed":
+		return current_total <= cap_val
+		
+	return current_total >= cap_val
