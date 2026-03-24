@@ -27,11 +27,12 @@ bg_color = Color(0.3372549, 0.6156863, 0.62352943, 0.38039216)
 script = ExtResource("1_ig7tw")
 
 [node name="Background" type="ColorRect" parent="." unique_id=706016326]
+visible = false
 material = SubResource("ShaderMaterial_7mycd")
-offset_left = -5000.0
-offset_top = -5000.0
-offset_right = 5000.0
-offset_bottom = 5000.0
+offset_left = -2500.0
+offset_top = -2500.0
+offset_right = 2500.0
+offset_bottom = 2500.0
 rotation = -0.00014920316
 
 [node name="CommandConsole" parent="." unique_id=1812150508 instance=ExtResource("9_rj11h")]

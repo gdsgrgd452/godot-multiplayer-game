@@ -3,13 +3,13 @@ extends Node2D
 @export var food_scene: PackedScene = preload("res://Objects/Static/Food/food.tscn")
 
 var spawn_timer: float = 0.0
-var arena_size: float = 5000.0
+@onready var arena_size: float = owner.arena_size - 25
 
 # Handles the dynamic spawning interval for food entities exclusively on the server.
 func _process(delta: float) -> void:
 	if owner == null:
 		return
-		
+	
 	if multiplayer.is_server():
 		spawn_timer -= delta
 		
@@ -26,7 +26,7 @@ func try_spawn_food() -> void:
 	var success: bool = false
 	
 	while attempts < max_attempts and not success:
-		var attempted_position: Vector2 = Vector2(randf_range(-2500.0, 2500.0), randf_range(-2500.0, 2500.0))
+		var attempted_position: Vector2 = Vector2(randf_range(-arena_size/2, arena_size/2), randf_range(-arena_size/2, arena_size/2))
 		
 		if randf() < get_spawn_probability(attempted_position):
 			_spawn_food(attempted_position)

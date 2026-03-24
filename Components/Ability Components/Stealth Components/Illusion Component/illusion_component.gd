@@ -103,15 +103,18 @@ func request_scattered_illusions() -> void:
 		if is_instance_valid(player):
 			trigger_ui_visibility.rpc(false)
 
-# Calculates a valid random position for an illusion while ensuring it remains within map boundaries.
+# Calculates a valid random position for an illusion while ensuring it remains within map boundaries and avoiding infinite recursion.
 func get_position_for_illusion() -> Vector2:
-	var random_angle: float = randf() * TAU
-	var random_radius: float = randf_range(illusion_min_range, illusion_max_range)
-	var offset: Vector2 = Vector2(cos(random_angle), sin(random_angle)) * random_radius
-	if AbilityUtils.is_position_within_map(get_tree().current_scene, player.global_position + offset):
-		return player.global_position + offset
-	else:
-		return get_position_for_illusion()
+	var max_attempts: int = 15
+	for i: int in range(max_attempts):
+		var random_angle: float = randf() * TAU
+		var random_radius: float = randf_range(illusion_min_range, illusion_max_range)
+		var offset: Vector2 = Vector2(cos(random_angle), sin(random_angle)) * random_radius
+		var potential_pos: Vector2 = player.global_position + offset
+		if AbilityUtils.is_position_within_map(get_tree().current_scene, potential_pos):
+			return potential_pos
+	
+	return player.global_position
 
 # Spawns a complete temporary visual duplicate of the player and their active equipment across all clients.
 @rpc("authority", "call_local", "reliable")

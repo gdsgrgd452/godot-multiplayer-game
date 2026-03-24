@@ -66,6 +66,7 @@ func heal(amount: float) -> void:
 func take_damage(amount: int, attacker_id: String = "") -> void:
 	if multiplayer.is_server():
 		health -= amount
+		regen_cooldown = regen_speed
 		spawn_floating_text.rpc(amount, false)
 
 		if health <= 0:

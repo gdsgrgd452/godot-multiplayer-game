@@ -32,7 +32,7 @@ func _hide_all_components() -> void:
 			child.hide()
 			child.set_deferred("process_mode", Node.PROCESS_MODE_DISABLED)
 
-# Swaps the active melee weapon component and updates UI labels while deferring state changes to avoid physics conflicts.
+#Swaps the active melee weapon component and updates UI labels while ensuring node validity before property access.
 func change_melee_weapon(weapon_type: String) -> void:
 	var spear: Node2D = components_container.get_node_or_null("SpearComponent")
 	var sword: Node2D = components_container.get_node_or_null("SwordComponent")
@@ -47,13 +47,13 @@ func change_melee_weapon(weapon_type: String) -> void:
 	match weapon_type:
 		"Spear":
 			entity.set("melee_w_component", spear)
-			if is_player_and_UI_valid: ui_comp.melee_info_label.text = "Melee: Spear"
+			if is_player_and_UI_valid and is_instance_valid(ui_comp.melee_info_label): ui_comp.melee_info_label.text = "Melee: Spear"
 		"Sword":
 			entity.set("melee_w_component", sword)
-			if is_player_and_UI_valid: ui_comp.melee_info_label.text = "Melee: Sword"
+			if is_player_and_UI_valid and is_instance_valid(ui_comp.melee_info_label): ui_comp.melee_info_label.text = "Melee: Sword"
 		"None":
 			entity.set("melee_w_component", null)
-			if is_player_and_UI_valid: ui_comp.melee_info_label.text = "No Melee Weapon"
+			if is_player_and_UI_valid and is_instance_valid(ui_comp.melee_info_label): ui_comp.melee_info_label.text = "No Melee Weapon"
 			
 	var active_melee: Node2D = entity.get("melee_w_component")
 	if is_instance_valid(active_melee):

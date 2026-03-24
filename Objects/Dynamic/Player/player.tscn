@@ -282,7 +282,7 @@ scale = Vector2(0.81, 0.81)
 shape = SubResource("RectangleShape2D_onrkg")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=436632609]
-zoom = Vector2(0.8, 0.8)
+zoom = Vector2(0.5, 0.5)
 position_smoothing_enabled = true
 
 [node name="UIComponent" type="Node2D" parent="." unique_id=308885794]

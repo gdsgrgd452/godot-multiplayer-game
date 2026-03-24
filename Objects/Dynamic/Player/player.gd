@@ -178,7 +178,7 @@ func check_shield_input() -> void:
 func decrease_knockback(delta: float) -> void:
 	knockback = knockback.move_toward(Vector2.ZERO, delta * 1500)
 
-# Evaluates kinematic collisions for bouncing and contact damage.
+# Evaluates collisions for bouncing and contact damage.
 func handle_collisions() -> void:
 	for i: int in get_slide_collision_count():
 		var collision: KinematicCollision2D = get_slide_collision(i)
@@ -193,8 +193,8 @@ func handle_collisions() -> void:
 				collider.apply_bounce(-normal * knockback_force)
 				if collider.is_in_group("food"):
 					CandDUtils.knockback_and_damage(collider, body_damage, name, -normal, knockback_force)
-					@warning_ignore("integer_division")
-					health_component.take_damage(min(1, body_damage/8)) #This needs to be fixed to use the body damage of the other thing
+					var damage_to_self: int = maxi(1, int(float(body_damage) / 8.0))
+					health_component.take_damage(damage_to_self) #This needs to be fixed to use the body damage of the other thing
 
 # Applies an external physics impulse force to the player.
 func apply_bounce(force: Vector2) -> void:

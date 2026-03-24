@@ -1,0 +1,146 @@
+[gd_scene format=3 uid="uid://c7cu6gk13wi33"]
+
+[ext_resource type="Script" uid="uid://bt6nq7xaxu82r" path="res://Objects/Dynamic/AI/npc.gd" id="1_5yobt"]
+[ext_resource type="PackedScene" uid="uid://5mf4ol8pweaw" path="res://Components/Sprite Component/sprite_component.tscn" id="1_ge44a"]
+[ext_resource type="Script" uid="uid://d04412dn2ik0y" path="res://Objects/Dynamic/AI/npcui.gd" id="2_eflwn"]
+[ext_resource type="Script" uid="uid://grm2y86px8ee" path="res://Components/Movement Component/movement_component.gd" id="3_5yobt"]
+[ext_resource type="PackedScene" uid="uid://bah68f313cuc3" path="res://Components/Health Component/health_component.tscn" id="4_7k8bs"]
+[ext_resource type="PackedScene" uid="uid://drldjkjxrdrg" path="res://Components/Weapon Components/Ranged Weapon Components/Bow Component/bow_component.tscn" id="5_0gikb"]
+[ext_resource type="PackedScene" uid="uid://b0tv68ilswjsh" path="res://UI/Bars/Health Bar/health_bar.tscn" id="6_bl8rq"]
+[ext_resource type="Script" uid="uid://mcmoxtd5u8rq" path="res://Objects/Dynamic/AI/ai_controller_component.gd" id="6_eflwn"]
+[ext_resource type="PackedScene" uid="uid://bcpvgo3r5i7b3" path="res://Components/Weapon Components/Meele Weapon Component/Spear Component/spear_component.tscn" id="7_ijq6w"]
+[ext_resource type="Script" uid="uid://drtotaaepbr3t" path="res://Components/Promotion Component/promotion_component.gd" id="8_7k8bs"]
+[ext_resource type="Script" uid="uid://bcp4tn61yaump" path="res://Components/Leveling Component/leveling_component.gd" id="9_0gikb"]
+[ext_resource type="Script" uid="uid://chr66q06b4ar" path="res://Components/component_manager.gd" id="10_bl8rq"]
+[ext_resource type="PackedScene" uid="uid://c0n8o6qg5guih" path="res://Components/Weapon Components/Meele Weapon Component/Sword Component/sword_component.tscn" id="12_uk261"]
+[ext_resource type="PackedScene" uid="uid://2p2a116rfkeo" path="res://Components/Weapon Components/Ranged Weapon Components/Fireball Shooter Component/fireball_shooter_component.tscn" id="13_jjm0i"]
+[ext_resource type="PackedScene" uid="uid://c15lyias44lvs" path="res://Components/Weapon Components/Ranged Weapon Components/Pin Shooter Component/pin_shooter_component.tscn" id="14_snteq"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_t2tx2"]
+size = Vector2(72, 95)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_p2f8y"]
+radius = 100.0
+
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_c7qqn"]
+properties/0/path = NodePath(".:position")
+properties/0/spawn = true
+properties/0/replication_mode = 1
+properties/1/path = NodePath(".:team_id")
+properties/1/spawn = true
+properties/1/replication_mode = 2
+properties/2/path = NodePath(".:current_class")
+properties/2/spawn = true
+properties/2/replication_mode = 2
+properties/3/path = NodePath(".:current_melee_weapon")
+properties/3/spawn = true
+properties/3/replication_mode = 2
+properties/4/path = NodePath(".:current_ranged_weapon")
+properties/4/spawn = true
+properties/4/replication_mode = 2
+properties/5/path = NodePath(".:current_first_ability")
+properties/5/spawn = true
+properties/5/replication_mode = 2
+properties/6/path = NodePath(".:current_shield")
+properties/6/spawn = true
+properties/6/replication_mode = 2
+properties/7/path = NodePath("Components/HealthComponent:health")
+properties/7/spawn = true
+properties/7/replication_mode = 1
+properties/8/path = NodePath("Components/HealthComponent:max_health")
+properties/8/spawn = true
+properties/8/replication_mode = 2
+properties/9/path = NodePath("Components/LevelingComponent:entity_level")
+properties/9/spawn = true
+properties/9/replication_mode = 2
+properties/10/path = NodePath(".:knockback")
+properties/10/spawn = true
+properties/10/replication_mode = 1
+properties/11/path = NodePath("Components/HealthComponent:regen_amount")
+properties/11/spawn = true
+properties/11/replication_mode = 2
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_xfw1d"]
+bg_color = Color(0.6, 0.6, 0.9607843, 0.6)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[node name="NPC" type="CharacterBody2D" unique_id=1312732274]
+scale = Vector2(0.25, 0.25)
+script = ExtResource("1_5yobt")
+
+[node name="SpriteComponent" parent="." unique_id=1204712433 instance=ExtResource("1_ge44a")]
+
+[node name="Hitbox" type="CollisionShape2D" parent="." unique_id=915123551]
+position = Vector2(0, 4.5)
+scale = Vector2(1.5, 1.5)
+shape = SubResource("RectangleShape2D_t2tx2")
+debug_color = Color(0.125988, 0.4824381, 0.5932888, 0.41960785)
+
+[node name="NavAgent" type="NavigationAgent2D" parent="." unique_id=331456862]
+
+[node name="DetectionArea" type="Area2D" parent="." unique_id=1304377030]
+scale = Vector2(20, 20)
+
+[node name="DetectionHitbox" type="CollisionShape2D" parent="DetectionArea" unique_id=2122327938]
+shape = SubResource("CircleShape2D_p2f8y")
+
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="." unique_id=1525879322]
+replication_config = SubResource("SceneReplicationConfig_c7qqn")
+
+[node name="UIComponent" type="Node2D" parent="." unique_id=32059567]
+script = ExtResource("2_eflwn")
+
+[node name="Components" type="Node2D" parent="." unique_id=1926972529]
+
+[node name="MovementComponent" type="Node2D" parent="Components" unique_id=1778693923]
+script = ExtResource("3_5yobt")
+
+[node name="HealthComponent" parent="Components" unique_id=421527654 instance=ExtResource("4_7k8bs")]
+
+[node name="AIControllerComponent" type="Node2D" parent="Components" unique_id=1295278930]
+script = ExtResource("6_eflwn")
+
+[node name="PromotionComponent" type="Node2D" parent="Components" unique_id=822742509]
+script = ExtResource("8_7k8bs")
+
+[node name="LevelingComponent" type="Node2D" parent="Components" unique_id=1366646108]
+script = ExtResource("9_0gikb")
+
+[node name="ComponentManager" type="Node2D" parent="Components" unique_id=710131323]
+script = ExtResource("10_bl8rq")
+
+[node name="SpearComponent" parent="Components" unique_id=1242225676 instance=ExtResource("7_ijq6w")]
+
+[node name="BowComponent" parent="Components" unique_id=73394275 instance=ExtResource("5_0gikb")]
+
+[node name="SwordComponent" parent="Components" unique_id=179149588 instance=ExtResource("12_uk261")]
+
+[node name="FireballShooterComponent" parent="Components" unique_id=269407601 instance=ExtResource("13_jjm0i")]
+
+[node name="PinShooterComponent" parent="Components" unique_id=1351820741 instance=ExtResource("14_snteq")]
+
+[node name="HealthBar" parent="." unique_id=1748738400 instance=ExtResource("6_bl8rq")]
+offset_left = -60.0
+offset_top = 130.0
+offset_bottom = 145.0
+
+[node name="Name" type="Label" parent="." unique_id=865800907]
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -35.0
+offset_top = 189.0
+offset_right = 35.0
+offset_bottom = 223.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 50
+theme_override_styles/normal = SubResource("StyleBoxFlat_xfw1d")
+horizontal_alignment = 1
+vertical_alignment = 1

@@ -1,7 +1,7 @@
 extends Node
 class_name TargetingUtils
 
-static var all_passive: bool = false
+static var all_passive: bool = true
 
 # Evaluates targets within an area to find the closest enemy while prioritizing players/NPCs and filtering by score.
 static func get_closest_enemy(origin: Vector2, detection_area: Area2D, my_team: int, ignore_score: bool, my_score: int, exclude_target: Node2D = null) -> Node2D:
@@ -66,4 +66,6 @@ static func get_priority(body: Node2D) -> int:
 # Retrieves the total score from an entity's LevelingComponent if available.
 static func get_entity_score(entity: Node2D) -> int:
 	var level_comp: Node = entity.get_node_or_null("Components/LevelingComponent")
-	return level_comp.total_score if is_instance_valid(level_comp) else 0
+	if is_instance_valid(level_comp) and "total_score" in level_comp:
+		return level_comp.total_score as int
+	return 0 # Gives things without a score 0 (Towers)

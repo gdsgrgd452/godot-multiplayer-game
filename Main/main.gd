@@ -15,16 +15,19 @@ var respawn_timer: float = 0.0
 
 var leaderboard_timer: float = 0.0
 
-var top_left_x: int = -5000
-var top_left_y: int = -5000
-var bottom_left_x: int = 5000
-var arena_size: int = 10000
+
+var arena_size: float = 2000.0
+var top_left_x: float = -arena_size/2
+var top_left_y: float = -arena_size/2
+var bottom_left_x: float = arena_size/2
 
 # Connects buttons and initializes the game boundary
 func _ready() -> void:
 	$CanvasLayer/HostButton.pressed.connect(_on_host_pressed)
 	$CanvasLayer/HostOPButton.pressed.connect(_on_host_open_port_pressed)
 	$CanvasLayer/JoinButton.pressed.connect(_on_join_pressed)
+	$Background.size = Vector2(arena_size, arena_size)
+	$Background.position = Vector2(-arena_size/2, -arena_size/2)
 	respawn_button.pressed.connect(_on_respawn_pressed)
 	_create_boundaries()
 
@@ -221,7 +224,7 @@ func _on_respawn_pressed() -> void:
 	respawn_button.hide()
 	request_respawn.rpc_id(1)
 
-# Deletes the old dead player node and spawns a fresh one.
+# Deletes the old dead player node with a temporary unique name and spawns a fresh one to prevent synchronization race conditions.
 @rpc("any_peer", "call_local", "reliable")
 func request_respawn() -> void:
 	if not multiplayer.is_server():
@@ -231,9 +234,7 @@ func request_respawn() -> void:
 	var old_player: Node = $SpawnedPlayers.get_node_or_null(str(sender_id))
 	
 	if old_player:
+		old_player.name = str(sender_id) + "_dying_" + str(Time.get_ticks_msec())
 		old_player.queue_free()
 		
-	# Prevents race conditions
-	await get_tree().create_timer(0.1).timeout
-	
 	$SpawnedPlayers.add_player(sender_id)

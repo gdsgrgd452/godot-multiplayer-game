@@ -1,9 +1,9 @@
 extends Node2D
 class_name SpawningNPCs
 
-var max_npcs: int = 20
+var max_npcs: int = 3
 
-var npc_spawn_range: int = 4500
+@onready var npc_spawn_range: int = owner.arena_size/2 - 50
 
 # Periodically spawns NPCs on the server to maintain world population.
 func _process(delta: float) -> void:

@@ -18,12 +18,10 @@ func spawn_projectile(spawn_pos: Vector2, dir: Vector2, shooter_id: String, proj
 		projectile_type = "Arrow"
 	
 	var projectile: Projectile = projectile_scenes[projectile_type].instantiate() as Projectile
-	
-	# Locates the player node to determine the team ID for the projectile.
 	var shooter_node: Node2D = get_tree().current_scene.get_node_or_null("SpawnedPlayers/" + shooter_id) as Node2D
 	
 	projectile_counter += 1
-	projectile.name = "Projectile_" + str(projectile_counter)
+	projectile.name = "Proj_" + str(shooter_id) + "_" + str(Time.get_ticks_usec()) + "_" + str(projectile_counter)
 	projectile.position = spawn_pos + (dir * 30.0) 
 	projectile.direction = dir
 	projectile.rotation = dir.angle() + deg_to_rad(90.0)
