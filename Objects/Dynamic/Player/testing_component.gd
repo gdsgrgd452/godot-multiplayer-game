@@ -37,17 +37,20 @@ func execute_server_command(command_text: String) -> void:
 	print(cmd)
 	
 	match cmd:
-		"//spawn":
+		"1/spawn":
 			_handle_spawn(args)
-		"//promote":
+		"1/promote":
 			_handle_promote(args)
-		"//points":
+		"1/points":
 			_handle_points(args)
-		"//team":
+		"1/team":
 			_handle_team(args)
+		"1/tp":
+			_handle_tp(args)
+		"1/levels":
+			_handle_levels(args)
 
-# //spawn food 0,0 Circle
-
+# 1/spawn food 0,0 Circle
 # Instantiates a food entity at specific coordinates with a defined shape type.
 func _handle_spawn(args: PackedStringArray) -> void:
 	if args.size() < 4 or args[1] != "food":
@@ -64,12 +67,12 @@ func _handle_spawn(args: PackedStringArray) -> void:
 	if is_instance_valid(food_container):
 		var food_scene: PackedScene = load("res://Objects/Static/Food/food.tscn")
 		var food_instance: CharacterBody2D = food_scene.instantiate() as CharacterBody2D
-		food_instance.global_position = spawn_pos
+		food_instance.position = spawn_pos
+		print(str(food_instance.position))
 		food_instance.shape_type = shape
 		food_container.add_child(food_instance, true)
 
-# //promote Knight
-
+# 1/promote Knight
 # Forces a class promotion on the parent player through the promotion component.
 func _handle_promote(args: PackedStringArray) -> void:
 	if args.size() < 2:
@@ -79,8 +82,7 @@ func _handle_promote(args: PackedStringArray) -> void:
 	if is_instance_valid(promo_comp):
 		promo_comp.request_promotion(args[1])
 
-# //points 100
-
+# 1/points 100
 # Grants a specified amount of points to the parent player's leveling component.
 func _handle_points(args: PackedStringArray) -> void:
 	if args.size() < 2:
@@ -90,8 +92,30 @@ func _handle_points(args: PackedStringArray) -> void:
 	if is_instance_valid(level_comp):
 		level_comp.get_points(int(args[1]))
 
-# //team 1
+# 1/levels 10
+# Grants enough points to reach the requested level from the current level.
+func _handle_levels(args: PackedStringArray) -> void:
+	if args.size() < 2:
+		return
+	
+	var level_comp: Node = player.get_node_or_null("Components/LevelingComponent")
+	if not is_instance_valid(level_comp):
+		return
+	
+	var target_level: int = int(args[1])
+	if target_level <= level_comp.player_level:
+		return
+	
+	var points_needed: int = 0
+	for lvl in range(level_comp.player_level, target_level):
+		points_needed += int(pow(float(lvl), 1.5) * 10.0)
+	
+	# Subtract points already accumulated towards the next level
+	points_needed -= level_comp.points
+	
+	level_comp.get_points(points_needed)
 
+# 1/team 1
 # Updates the player's team ID and triggers the corresponding visual color update.
 func _handle_team(args: PackedStringArray) -> void:
 	if args.size() < 2:
@@ -100,3 +124,16 @@ func _handle_team(args: PackedStringArray) -> void:
 	player.team_id = int(args[1])
 	if player.has_method("apply_team_color"):
 		player.apply_team_color()
+
+# 1/tp 0,0
+# Teleports the player to the position specified
+func _handle_tp(args: PackedStringArray) -> void:
+	if args.size() < 2:
+		return
+		
+	var pos_data: PackedStringArray = args[1].split(",")
+	if pos_data.size() < 2:
+		return
+	var spawn_pos: Vector2 = Vector2(float(pos_data[0]), float(pos_data[1]))
+
+	player.position = spawn_pos

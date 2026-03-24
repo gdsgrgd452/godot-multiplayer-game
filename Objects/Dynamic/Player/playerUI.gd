@@ -45,9 +45,14 @@ func toggle_external_ui(is_hidden: bool) -> void:
 	if player.name != str(multiplayer.get_unique_id()):
 		name_label.visible = not is_hidden
 		health_bar.visible = not is_hidden
+		print("This needs checking: " + health_bar.visible)
 
 # Populates the upgrade UI with valid random stat choices based on equipped capabilities.
 func _show_upgrade_menu() -> void:
+	if leveling_component.pending_upgrades < 1:
+		printerr("Called to show upgrade menu without an upgrade")
+		return
+
 	var valid_stats: Array[String] = ["max_health", "regen_amount", "regen_speed", "body_damage", "player_speed"]
 	
 	if ranged_w_component:

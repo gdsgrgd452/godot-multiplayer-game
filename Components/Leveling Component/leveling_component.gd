@@ -168,7 +168,6 @@ func request_upgrade(stat_name: String) -> void:
 func apply_upgrade(stat_name: String) -> void:
 	if pending_upgrades > 0:
 		pending_upgrades -= 1
-		
 		if pending_upgrades > 0:
 			trigger_upgrade_ui.rpc_id(multiplayer.get_remote_sender_id())
 			

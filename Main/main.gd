@@ -163,22 +163,26 @@ func setup_upnp() -> void:
 	var discover_result: int = upnp.discover()
 	if discover_result != UPNP.UPNP_RESULT_SUCCESS:
 		print("UPNP Discover Failed! Error: %s" % discover_result)
+		$CanvasLayer/SharingIPLabel.text = "UPNP Discover Failed! Error: %s" % discover_result
 		return
 
 	# Verify the router is a valid gateway that accepts commands
 	if not upnp.get_gateway() or not upnp.get_gateway().is_valid_gateway():
 		print("UPNP Invalid Gateway!")
+		$CanvasLayer/SharingIPLabel.text = "UPNP Invalid Gateway!"
 		return
 
 	# Ask the router to open the UDP port (ENet uses UDP)
 	var map_result: int = upnp.add_port_mapping(PORT, PORT, "My Godot Game", "UDP")
 	if map_result != UPNP.UPNP_RESULT_SUCCESS:
 		print("UPNP Port Mapping Failed! Error: %s" % map_result)
+		$CanvasLayer/SharingIPLabel.text = "UPNP Port Mapping Failed! Error: %s" % map_result
 		return
 		
 	# Prints the public IP so the host can share it
 	print("UPNP Success! Port %s is open." % PORT)
 	print("Your public IP to give to friends is: %s" % upnp.query_external_address())
+	$CanvasLayer/SharingIPLabel.text = "Your public IP to give to friends is: %s" % upnp.query_external_address()
 
 # Attempts to connect to a server IP
 func _on_join_pressed() -> void:

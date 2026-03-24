@@ -31,38 +31,51 @@ func _ready() -> void:
 		
 	queue_redraw()
 
-# Randomly assigns a shape, health, and point value scaled by distance from the center.
+# Assigns attributes based on the current shape or picks a random shape if none is assigned.
 func set_type_and_health() -> void:
-	var max_roll: float = lerpf(1.0, 0.90, distance_factor)
-	var type_prop: float = randf() * max_roll
+	if shape_type == "":
+		var max_roll: float = lerpf(1.0, 0.90, distance_factor)
+		var type_prop: float = randf() * max_roll
+		
+		if type_prop <= 0.4: 
+			shape_type = "Circle"
+		elif type_prop <= 0.7: 
+			shape_type = "Triangle"
+		elif type_prop <= 0.9: 
+			shape_type = "Square"
+		elif type_prop <= 0.95: 
+			shape_type = "Hexagon"
+		else:
+			shape_type = "Decagon"
+
+	_apply_stats_for_shape()
+
+# Configures health, points, and weight based on the final shape_type string.
+func _apply_stats_for_shape() -> void:
 	var temp_health: int = 0
 	
-	if type_prop <= 0.4: 
-		shape_type = "Circle"
-		temp_health = 50
-		points_value = randi_range(5, 25)
-		weight = 1
-	elif type_prop <= 0.7: 
-		shape_type = "Triangle"
-		temp_health = 150
-		points_value = randi_range(10, 100)
-		weight = 2
-	elif type_prop <= 0.9: 
-		shape_type = "Square"
-		temp_health = 500
-		points_value = randi_range(50, 500)
-		weight = 3
-	elif type_prop <= 0.95: 
-		shape_type = "Hexagon"
-		temp_health = 2000
-		points_value = randi_range(100, 10000)
-		weight = 5
-	else:
-		shape_type = "Decagon"
-		temp_health = 100000
-		points_value = randi_range(10000, 100000)
-		weight = 12
-	
+	match shape_type:
+		"Circle":
+			temp_health = 50
+			points_value = randi_range(5, 25)
+			weight = 1
+		"Triangle":
+			temp_health = 150
+			points_value = randi_range(10, 100)
+			weight = 2
+		"Square":
+			temp_health = 500
+			points_value = randi_range(50, 500)
+			weight = 3
+		"Hexagon":
+			temp_health = 2000
+			points_value = randi_range(100, 10000)
+			weight = 5
+		"Decagon":
+			temp_health = 100000
+			points_value = randi_range(10000, 100000)
+			weight = 12
+
 	health_component.max_health = temp_health
 	health_component.health = temp_health
 
@@ -120,13 +133,8 @@ func handle_knockback(delta: float) -> void:
 func handle_collisions() -> void:
 	for i in get_slide_collision_count():
 		var collision: KinematicCollision2D = get_slide_collision(i)
-		#var collider: Object = collision.get_collider()
 		var normal: Vector2 = collision.get_normal()
 		knockback = knockback.bounce(normal)
-		
-		#if collider and collider.has_method("apply_bounce"): #TODO
-			#print("Applying bounce" + str(position))
-			#collider.apply_bounce(-normal * 100.0)
 
 # Accepts a physical push from an outside source.
 func apply_bounce(force: Vector2) -> void:
