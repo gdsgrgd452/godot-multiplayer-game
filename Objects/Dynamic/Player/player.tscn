@@ -48,6 +48,7 @@
 [ext_resource type="PackedScene" uid="uid://qsi0va4ssotc" path="res://Components/Ability Components/Spawner Component/spawner_component.tscn" id="43_psthg"]
 [ext_resource type="PackedScene" uid="uid://v2n3x7mkhsnw" path="res://Components/Ability Components/Teleport Components/Teleport Crush Component/teleport_crush_component.tscn" id="44_gn58l"]
 [ext_resource type="Script" uid="uid://chr66q06b4ar" path="res://Components/component_manager.gd" id="46_ohodf"]
+[ext_resource type="Script" uid="uid://bmxi0pfoy0a71" path="res://Objects/Dynamic/Player/testing_component.gd" id="49_8ikvy"]
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_sweqy"]
 properties/0/path = NodePath(".:position")
@@ -559,3 +560,6 @@ script = ExtResource("35_x2bxi")
 
 [node name="ComponentManager" type="Node2D" parent="Components" unique_id=1388107634]
 script = ExtResource("46_ohodf")
+
+[node name="TestingComponent" type="Node2D" parent="." unique_id=1977352903]
+script = ExtResource("49_8ikvy")
