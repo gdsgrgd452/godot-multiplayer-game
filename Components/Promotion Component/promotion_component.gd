@@ -5,7 +5,7 @@ signal show_promotion_menu(available_classes: Array[String])
 var pending_promotions: int = 1 # For the start when you promote to your starting class
 
 var promotion_tree: Dictionary = {
-	"Pawn": ["Pawn_I", "Knight", "Bishop", "Mini_Rook"], #Rank 1
+	"Pawn": ["Pawn_I"], #Rank 1
 	"Pawn_I": ["Pawn_II"], #Rank 2
 	"Pawn_II": ["Knight", "Mini_Rook"], #Rank 3
 	"Knight": ["Shadow_Knight", "Flowers_Knight", "Bishop"], #Rank 4
@@ -340,21 +340,24 @@ func request_promotion(choice: String) -> void:
 		change_weapon(choice)
 		apply_promotion_stats(choice)
 		
-		player.current_class = choice # TODO Add a check the class is in the dict !!1
+		player.current_class = choice # TODO Add a check the class is in the dict !!
 		
+		# Ensure we are not RPCing a client that hasn't finished loading sub-nodes
+		var peer_id: int = player.name.to_int()
+
 		# Notify the specific client's UI about the promotion.
 		var info_bar: Node = player.get_node_or_null("HUD/InfoLabel")
 		# Verify the node exists and is inside the tree before calling an RPC
 		if info_bar and info_bar.is_inside_tree():
 			var formatted_class: String = choice.replace("_", " ")
-			info_bar.display_message.rpc_id(player.name.to_int(), "Promoted to " + formatted_class)
+			info_bar.display_message.rpc_id(peer_id, "Promoted to " + formatted_class)
 		else:
 			printerr("No info bar when promoting")
 			
 		# Re rolls as player may now have new components > new things to upgrade
 		var level_comp: Node2D = player.get_node_or_null("Components/LevelingComponent")
-		if level_comp:
-			level_comp.trigger_upgrade_ui.rpc_id(player.name.to_int())
+		if level_comp and level_comp.is_inside_tree():
+			level_comp.trigger_upgrade_ui.rpc_id(peer_id)
 		
 		if pending_promotions > 0: # ERROR? Is this causing the duplicate promotion visuals
 			trigger_promotion_ui.rpc_id(multiplayer.get_remote_sender_id())

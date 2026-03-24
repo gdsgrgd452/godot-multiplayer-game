@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://c0n8o6qg5guih"]
 
 [ext_resource type="Script" uid="uid://2ojmplfb3hbc" path="res://Components/Weapon Components/Meele Weapon Component/Sword Component/sword_component.gd" id="1_00yqu"]
-[ext_resource type="Texture2D" uid="uid://0tlfye568x8d" path="res://images/sword.png" id="1_dq22f"]
+[ext_resource type="Texture2D" uid="uid://0tlfye568x8d" path="res://images/Weapons/sword.png" id="1_dq22f"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_00yqu"]
 size = Vector2(37, 275.68237)

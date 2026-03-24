@@ -115,6 +115,10 @@ func start_spectating(killer_id: String) -> void:
 func _create_boundaries() -> void:
 	var boundary_body: StaticBody2D = StaticBody2D.new()
 	boundary_body.add_to_group("boundary")
+		
+	# Set the boundary to Layer 2 (Bit 1, Value 2)
+	boundary_body.collision_layer = 2
+	boundary_body.collision_mask = 0
 	
 	var rects: Array = [
 		Rect2(top_left_x - 50, top_left_y - 50, arena_size + 100, 50),  # Top wall

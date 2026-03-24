@@ -10,6 +10,8 @@ var can_attack: bool = true
 var has_hit: bool = false
 var is_attacking: bool = false # Add this state tracker
 
+var retractable: bool = true
+
 var default_position: Vector2
 var active_tween: Tween
 
@@ -22,7 +24,6 @@ func _ready() -> void:
 	hitbox.add_to_group("shield_blockable")
 	hitbox.monitoring = true
 	hitbox_shape.disabled = false
-
 	hitbox.body_entered.connect(_on_target_entered)
 
 @rpc("any_peer", "call_local", "reliable")
@@ -36,26 +37,30 @@ func request_melee_attack(target_pos: Vector2) -> void:
 	look_at(target_pos)
 	
 	get_tree().create_timer(attack_duration).timeout.connect(_on_attack_finished)
-	get_tree().create_timer(attack_cooldown).timeout.connect(_on_cooldown_finished)
 	
 	trigger_visual_attack.rpc(target_pos)
 
 func _on_attack_finished() -> void:
 	is_attacking = false 
 	has_hit = false
+	get_tree().create_timer(attack_cooldown).timeout.connect(_on_cooldown_finished) # Starts the cooldown when attack is completely done
 
 # Handles collisions
 func _on_target_entered(target: Node2D) -> void:
+	print("F")
 	# Instantly ignore overlaps if we aren't swinging, or if we hit ourselves
 	if not is_attacking or target == player or has_hit:
 		return
+		
 
 	var dir: Vector2 = global_position.direction_to(target.global_position)
 	CandDUtils.knockback_and_damage(target, melee_damage, player.name, dir, knockback_force)
 
 	has_hit = true
 	is_attacking = false # Prevent double-hitting
-	trigger_visual_retract.rpc()
+	
+	if retractable:
+		trigger_visual_retract.rpc()
 
 func _on_cooldown_finished() -> void:
 	can_attack = true

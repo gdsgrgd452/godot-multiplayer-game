@@ -2,7 +2,7 @@ extends MeleeWeaponComponent
 class_name SwordComponent
 
 @export var swing_angle: float = 120.0
-@export var lunge_distance: float = 80.0
+@export var lunge_distance: float = 40.0
 
 var swing_direction: int = 1
 var base_aim_rotation: float
@@ -10,6 +10,7 @@ var base_aim_rotation: float
 func _init() -> void:
 	attack_cooldown = 0.4
 	attack_duration = 0.2
+	retractable = false
 
 # Commands all local clients to execute a directional lunging sweep animation.
 @rpc("authority", "call_local", "reliable")

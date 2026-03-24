@@ -25,8 +25,10 @@ func request_stealth() -> void:
 		# Store original physical states and remove the player from the collision world.
 		var original_layer: int = player.collision_layer
 		var original_mask: int = player.collision_mask
+
+		# Disable player interaction but maintain world collision.
 		player.collision_layer = 0
-		player.collision_mask = 0
+		player.collision_mask = player.LAYER_WORLD_BOUNDARIES
 		
 		trigger_stealth_visuals.rpc(true)
 		

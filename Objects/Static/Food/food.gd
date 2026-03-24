@@ -22,6 +22,9 @@ func _ready() -> void:
 	add_to_group("food")
 	add_to_group("shield_blockable")
 	health_component.died.connect(_on_food_died)
+
+	collision_layer = 1
+	collision_mask = 0
 	
 	if multiplayer.is_server():
 		set_type_and_health()

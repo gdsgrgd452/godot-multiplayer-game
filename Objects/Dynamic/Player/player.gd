@@ -20,7 +20,11 @@ var knockback: Vector2 = Vector2.ZERO
 var knockback_force: int = 200
 var body_damage: int
 
-@export var current_class: String = "Pawn_II":
+#Physics layers TODO use these
+const LAYER_PLAYER_AND_FOOD: int = 1
+const LAYER_WORLD_BOUNDARIES: int = 2
+
+@export var current_class: String = "Jester":
 	set(value):
 		current_class = value
 		if is_node_ready():
@@ -52,10 +56,16 @@ var body_damage: int
 
 # Initializes UI, colors, and connects component signals.
 func _ready() -> void:
+	
 	if is_node_ready():
 		sprite_component._on_promotion_applied(current_class)
+		
+	collision_layer = LAYER_PLAYER_AND_FOOD # Resides on
+	collision_mask = LAYER_PLAYER_AND_FOOD | LAYER_WORLD_BOUNDARIES # Collides with
 	
-	promotion_component.request_promotion.rpc_id(1, current_class) # Initialises the weapons and class
+	# Initialises the weapons and class, uses call_deferred to give the MultiplayerSpawner time to sync sub-nodes
+	if multiplayer.is_server() or name == str(multiplayer.get_unique_id()):
+		promotion_component.request_promotion.rpc_id.call_deferred(1, current_class)
 	
 	health_component.died.connect(_on_player_died)
 
@@ -166,8 +176,9 @@ func handle_collisions() -> void:
 			if collider.has_method("apply_bounce"):
 				collider.apply_bounce(-normal * knockback_force)
 				if collider.is_in_group("food"):
-					CandDUtils.knockback_and_damage(collider, body_damage, name, normal, knockback_force)
-					health_component.take_damage(2) #This needs to be fixed to use the body damage of the other thing
+					CandDUtils.knockback_and_damage(collider, body_damage, name, -normal, knockback_force)
+					@warning_ignore("integer_division")
+					health_component.take_damage(body_damage/8) #This needs to be fixed to use the body damage of the other thing
 
 # Applies an external physics impulse force to the player.
 func apply_bounce(force: Vector2) -> void:
