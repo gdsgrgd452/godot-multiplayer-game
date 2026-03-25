@@ -3,7 +3,6 @@ extends Node2D
 var peer: ENetMultiplayerPeer = ENetMultiplayerPeer.new() 
 const PORT: int = 8910 
 
-var max_food: int = 0
 @export var is_hosting: bool = false # Remove this?
 
 # --- New Spectator Variables ---
@@ -20,7 +19,11 @@ var top_left_x: float = -arena_size/2
 var top_left_y: float = -arena_size/2
 var bottom_left_x: float = arena_size/2
 
-var food_per_player: int = 2500
+var food_per_player: int = 5000
+var max_food: int = 0
+
+var bots_per_player: int = 15
+var max_bots: int = 0
 
 # Connects buttons and initializes the game boundary
 func _ready() -> void:

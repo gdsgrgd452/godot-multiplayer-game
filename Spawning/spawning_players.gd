@@ -2,7 +2,6 @@ extends Node2D
 
 @export var player_scene: PackedScene = preload("res://Objects/Dynamic/Player/player.tscn")
 
-@onready var food_per_player: int = get_parent().food_per_player
 
 func add_player(id: int) -> void:
 	var player_instance: CharacterBody2D = player_scene.instantiate() as CharacterBody2D
@@ -21,4 +20,5 @@ func add_player(id: int) -> void:
 	add_child(player_instance, true)
 	
 	if owner != null:
-		owner.max_food = get_child_count() * food_per_player
+		owner.max_food = get_child_count() * owner.food_per_player
+		owner.max_bots = get_child_count() * owner.bots_per_player

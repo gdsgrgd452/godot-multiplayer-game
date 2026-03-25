@@ -25,11 +25,11 @@ var wander_radius: float = 1000.0
 var attack_range: float = 400.0
 var melee_range: float = 70.0
 var current_target: Node2D = null
-var boldness_factor: float = 1.0
-var kindness_factor: float = 1.0
+var boldness_factor: float = 1.0 # Only runs away from things more than n * npc's score
+var kindness_factor: float = 1.0 # Doesnt go for things less than n * npc's score
 
 #Chasing
-var give_up_chase_time: float = 5.0 # For chasing
+var give_up_chase_time: float = 3.0 # For chasing
 var target_out_of_range_timer: float = 5.0
 var blacklisted_target: Node2D = null # Target you have just chased and failed to catch, to prevent constantly trying to chase the same target
 var blacklist_timer: float = 0.0
@@ -47,28 +47,27 @@ var action_to_take: bool = false
 # Chase if not in range
 
 func _ready() -> void:
-	boldness_factor = randf_range(0.9, 10.0)
-	
+	boldness_factor = randf_range(0.5, 10.0) 
+	kindness_factor = randf_range(0.1, 0.4) 
+	give_up_chase_time = randf_range(1.0, 3.0)
 
 # Orchestrates the AI decision-making loop, prioritizing flee persistence and combat state transitions.
 func _physics_process(delta: float) -> void:
 	if not multiplayer.is_server():
 		return
 	
-	npc.get_node("State").text = state
-	
 	var my_score: int = TargetingUtils.get_entity_score(npc)
 	var threat: Node2D = _get_dangerous_threat(my_score) # Gets the most dangerous threat 
+
+	npc.get_node("State").text = state + " B:" + str(snapped(boldness_factor,0.01)) + " K:" + str(snapped(kindness_factor,0.01)) + " S:" + str(my_score) + "G_C:" + str(snapped(give_up_chase_time,0.01))
+	
+
 
 	# Always try to clear blacklist. 
 	_clear_blacklist(delta)
 
 	# Stats and handles fleeing from threats, If you are still fleeing or have found something new to flee from > Do nothing else
 	if _process_fleeing(threat):
-		return
-	
-	if blacklisted_target != null and not is_instance_valid(blacklisted_target):
-		printerr("Invalid")
 		return
 		
 	# Create a safe reference that is guaranteed to be either a valid Node2D or null to satisfy the static type checker.
@@ -77,7 +76,7 @@ func _physics_process(delta: float) -> void:
 	# Handles targeting and re targeting to higher priority targets. New target found/ Switched Targets > Do nothing else
 	var best_visible_target: Node2D = TargetingUtils.get_closest_enemy(npc.global_position, detection_area, npc.team_id, false, my_score, safe_exclude)
 	
-	if best_visible_target != null and _process_targeting(best_visible_target):
+	if best_visible_target != null and _process_targeting(best_visible_target, my_score):
 		return
 	
 	# If there is a target to go for, look into combat options
@@ -192,9 +191,15 @@ func _action_flee(from_pos: Vector2) -> void:
 	move_comp.set_movement_direction(direction_to_target)
 
 # Re target to higher priority targets, or get new target from the best visible ones
-func _process_targeting(best_visible_target: Node2D) -> bool:
+func _process_targeting(best_visible_target: Node2D, my_score: int) -> bool:
 	var current_target_viable: bool = is_instance_valid(current_target) and current_target.is_inside_tree() and current_target in detection_area.get_overlapping_bodies() and current_target != blacklisted_target
 	
+	var target_points: int = TargetingUtils.get_entity_score(best_visible_target)
+	
+	if my_score * kindness_factor > target_points and target_points != 0: # Ignores low score players due to kindness
+		return false
+		
+	#print("NPC has higher score accounted: " + )
 	# If there is a current target check if the new one is better (If it is switch)
 	if current_target_viable:
 		var visible_target_viable: bool = is_instance_valid(best_visible_target) and TargetingUtils.get_priority(best_visible_target) > TargetingUtils.get_priority(current_target)

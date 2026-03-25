@@ -4,7 +4,7 @@ class_name TargetingUtils
 static var all_passive: bool = false
 
 # Evaluates targets within an area to find the closest enemy while prioritizing players/NPCs and filtering by score.
-static func get_closest_enemy(origin: Vector2, detection_area: Area2D, my_team: int, ignore_score: bool, my_score: int, exclude_target: Node = null) -> Node2D:
+static func get_closest_enemy(origin: Vector2, detection_area: Area2D, my_team: int, ignore_score: bool, my_score: int = 1, exclude_target: Node = null) -> Node2D:
 	var target_players_npcs: Array[Node2D] = []
 	var target_others: Array[Node2D] = []
 

@@ -91,7 +91,7 @@ script = ExtResource("3_jjm0i")
 
 [node name="LookingHitbox" type="CollisionPolygon2D" parent="LookingArea" unique_id=1932836793]
 modulate = Color(1, 0.30980393, 1, 1)
-polygon = PackedVector2Array(0, 0, 900, -250, 900, 250)
+polygon = PackedVector2Array(0, 0, 900, -400, 900, 400)
 
 [node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="." unique_id=1525879322]
 replication_config = SubResource("SceneReplicationConfig_c7qqn")
@@ -152,9 +152,9 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="State" type="Label" parent="." unique_id=1894124550]
-offset_left = -16.0
+offset_left = -400.0
 offset_top = -560.0
-offset_right = 24.0
+offset_right = -360.0
 offset_bottom = -464.0
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 1, 1)
