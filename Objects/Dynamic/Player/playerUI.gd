@@ -1,6 +1,6 @@
 extends Node2D
 
-@onready var player: CharacterBody2D = get_parent()
+@onready var entity: CharacterBody2D = get_parent()
 
 @onready var movement_component: Node = $"../Components/MovementComponent"
 @onready var health_component: Node = $"../Components/HealthComponent"
@@ -33,8 +33,8 @@ var current_first_ability: String
 @onready var leaderboard_label: Label = $"../HUD/LeaderboardLabel"
 
 func _ready() -> void:
-	name_label.text = "Player " + player.name.substr(0, 4)
-	if player.name == str(multiplayer.get_unique_id()):
+	name_label.text = "Player " + entity.name.substr(0, 4)
+	if entity.name == str(multiplayer.get_unique_id()):
 		leveling_component.show_upgrade_menu.connect(_show_upgrade_menu)
 		promotion_component.show_promotion_menu.connect(_show_promotion_menu)
 		if not health_component:
@@ -42,10 +42,9 @@ func _ready() -> void:
 
 # Toggles the visibility of identifying UI elements specifically for other players
 func toggle_external_ui(is_hidden: bool) -> void:
-	if player.name != str(multiplayer.get_unique_id()):
-		name_label.visible = not is_hidden
-		health_bar.visible = not is_hidden
-		print("This needs checking: " + str(health_bar.visible))
+	name_label.visible = not is_hidden
+	health_bar.hide_for_others = is_hidden
+	print("This needs checking: " + str(health_bar.visible))
 
 # Populates the upgrade UI with valid random stat choices based on equipped capabilities.
 func _show_upgrade_menu() -> void:
@@ -58,7 +57,7 @@ func _show_upgrade_menu() -> void:
 	for child: Node in ui_children: 
 		child.hide()
 	
-	var curr_class: String = player.current_class
+	var curr_class: String = entity.current_class
 	var valid_stats_dict: Dictionary = promotion_component.class_base_stats[curr_class] # The base stats
 	var valid_stats: Array = valid_stats_dict.keys() # The stats the class has
 	#print("Valid stats for your class: " + str(valid_stats) + "\n")
@@ -120,17 +119,56 @@ func update_leaderboard_ui(board_text: String) -> void:
 	else:
 		printerr("No leaderboard label")
 		
+@rpc("any_peer", "call_local", "reliable")
+func display_message(message: String) -> void:
+	var label = Label.new()
+	add_child(label)
+	
+	if message.contains("Upgraded"):
+		var stat_button: Node = get_parent().get_node_or_null("HUD/UpgradeUI/StatButton")
+		if stat_button:
+			label.text = stat_button.format_stat_name(message)
+			label.modulate = ColourUtils.get_colour_based_on_type(message.split(" ")[1])
+		else:
+			label.text = message
+	else:
+		label.text = message
+		label.modulate = Color(1.0, 1.0, 1.0, 1.0)
+
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	label.set_anchors_and_offsets_preset(Control.PRESET_CENTER_TOP)
+	
+	label.add_theme_font_size_override("font_size", 70)
+	
+	var vertical_offset: float = -200.0 * entity.scale.y
+	
+	label.global_position = entity.global_position + Vector2(-100, vertical_offset)
+	
+	var tween = create_tween()
+	tween.set_parallel(true)
+
+	tween.tween_property(label, "global_position:y", label.global_position.y - 50.0, 1.0).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	
+	label.scale = Vector2(0.5, 0.5)
+	tween.tween_property(label, "scale", Vector2(1.2, 1.2), 0.1)
+	tween.chain().tween_property(label, "scale", Vector2(1.0, 1.0), 0.2)
+	
+	var fade_tween = create_tween()
+	fade_tween.tween_interval(1.0)
+	fade_tween.tween_property(label, "modulate:a", 0.0, 2.0)
+
+	tween.chain().tween_callback(label.queue_free)
 
 # Updates the debug info display.
 func _process(_delta: float) -> void:
-	if player.name == str(multiplayer.get_unique_id()): 
+	if entity.name == str(multiplayer.get_unique_id()): 
 		show_debug_info()
 
 # Compiles and displays internal entity variables to the local HUD.
 func show_debug_info() -> void:
 	
 	#POSITION AND SPEED
-	var pos_text: String = "Position: " + str(Vector2(int(player.position.x), int(player.position.y))) + "\n"
+	var pos_text: String = "Position: " + str(Vector2(int(entity.position.x), int(entity.position.y))) + "\n"
 	var speed_text: String = "Speed: " + str(movement_component.move_speed) + "\n\n"
 
 	#HEALTH
@@ -141,8 +179,8 @@ func show_debug_info() -> void:
 	var regen_cooldown_text: String = "Regen Cooldown: " + str(snapped(health_component.regen_cooldown, 0.1)) + "\n\n"
 	
 	#KNOCKBACK AND BODY DAMAGE
-	var kb_text: String = "Knockback: " + str(Vector2(int(player.knockback.x), int(player.knockback.y))) + "\n"
-	var body_dmg_text: String = "Body Damage: " + str(player.body_damage) + "\n\n"
+	var kb_text: String = "Knockback: " + str(Vector2(int(entity.knockback.x), int(entity.knockback.y))) + "\n"
+	var body_dmg_text: String = "Body Damage: " + str(entity.body_damage) + "\n\n"
 	
 	stats_label_one.text = max_health_text + health_text + regen_amount_text + regen_speed_text + regen_cooldown_text + pos_text + speed_text + kb_text + body_dmg_text
 	

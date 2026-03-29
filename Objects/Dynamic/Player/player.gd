@@ -196,7 +196,7 @@ func handle_collisions() -> void:
 				if collider.is_in_group("food"):
 					CandDUtils.knockback_and_damage(collider, body_damage, name, -normal, knockback_force)
 					var damage_to_self: int = maxi(1, int(float(body_damage) / 8.0))
-					health_component.take_damage(damage_to_self) #This needs to be fixed to use the body damage of the other thing
+					health_component.take_damage(damage_to_self, "", true) #This needs to be fixed to use the body damage of the other thing
 
 # Applies an external physics impulse force to the player.
 func apply_bounce(force: Vector2) -> void:

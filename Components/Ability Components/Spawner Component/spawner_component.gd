@@ -28,9 +28,9 @@ func request_spawn(spawn_pos: Vector2) -> void:
 		if tower_manager and tower_manager.has_method("spawn_tower"):
 			current_cooldown = max_cooldown
 			
-			var info_label: Node = entity.get_node_or_null("HUD/InfoLabel")
-			if info_label:
-				info_label.display_message.rpc_id(entity.name.to_int(), "Ability Used: Spawn Tower")
+			var ui_comp: Node = entity.get_node_or_null("UIComponent")
+			if ui_comp and entity.is_in_group("player"):
+				ui_comp.display_message.rpc_id(entity.name.to_int(), "Spawned a sentry tower!")
 			
 			var new_tower: Node2D = tower_manager.spawn_tower(spawn_pos, entity.name, entity.team_id)
 			if new_tower:

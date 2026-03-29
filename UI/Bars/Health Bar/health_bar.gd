@@ -1,16 +1,17 @@
 extends EntityBar
 
-@onready var parent: Node = get_parent()
+@onready var entity: Node = get_parent()
 var health_component: Node = null
 var last_health: float = -1.0
 var fill_style: StyleBoxFlat
+var hide_for_others: bool = false
 
 # Locates the health component, initializes boundaries, and prepares the dynamic color stylebox.
 func _ready() -> void:
-	if parent.has_node("Components/HealthComponent"):
-		health_component = parent.get_node("Components/HealthComponent")
+	if entity.has_node("Components/HealthComponent"):
+		health_component = entity.get_node("Components/HealthComponent")
 	else:
-		health_component = parent
+		health_component = entity
 
 	if "max_health" in health_component:
 		max_value = float(health_component.max_health)
@@ -39,7 +40,13 @@ func _process(_delta: float) -> void:
 	if current_health >= current_max:
 		hide()
 	else:
-		show()
+		if hide_for_others:
+			if entity.name == str(multiplayer.get_unique_id()): # Only shows for you
+				show()
+			else:
+				hide()
+		else:
+			show()
 		
 	if fill_style and max_value > 0.0:
 		var health_ratio: float = value / max_value

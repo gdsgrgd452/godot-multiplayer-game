@@ -12,10 +12,10 @@ var last_player_position: Vector2 = Vector2.ZERO
 # Tracks player movement and updates all active illusion positions based on their assigned directions.
 func _physics_process(_delta: float) -> void:
 	if last_player_position == Vector2.ZERO:
-		last_player_position = player.global_position
+		last_player_position = entity.global_position
 		return
 
-	var movement_delta: float = player.global_position.distance_to(last_player_position)
+	var movement_delta: float = entity.global_position.distance_to(last_player_position)
 	
 	if movement_delta > 0.0:
 		for i: int in range(active_illusions.size() - 1, -1, -1):
@@ -27,7 +27,7 @@ func _physics_process(_delta: float) -> void:
 			else:
 				active_illusions.remove_at(i)
 
-	last_player_position = player.global_position
+	last_player_position = entity.global_position
 
 # Receives the requested single illusion execution and hides identifying UI until the end of the duration.
 @rpc("any_peer", "call_local", "reliable")
@@ -35,28 +35,28 @@ func request_illusion(spawn_pos: Vector2) -> void:
 	if multiplayer.is_server() and current_cooldown <= 0.0:
 		current_cooldown = max_cooldown
 		
-		var original_layer: int = player.collision_layer
-		var original_mask: int = player.collision_mask
-		player.collision_layer = 0
-		player.collision_mask = player.LAYER_WORLD_BOUNDARIES
+		var original_layer: int = entity.collision_layer
+		var original_mask: int = entity.collision_mask
+		entity.collision_layer = 0
+		entity.collision_mask = entity.LAYER_WORLD_BOUNDARIES
 		
 		trigger_ui_visibility.rpc(true)
-		trigger_stealth_visuals.rpc(true)
+		trigger_stealth_visuals.rpc(true) # invisible 
 		
 		await get_tree().create_timer(1.0).timeout
 		
-		if not is_instance_valid(player):
+		if not is_instance_valid(entity):
 			return
 			
-		player.collision_layer = original_layer
-		player.collision_mask = original_mask
+		entity.collision_layer = original_layer
+		entity.collision_mask = original_mask
 		trigger_stealth_visuals.rpc(false)
 		
 		var random_dir: Vector2 = Vector2.RIGHT.rotated(randf() * TAU)
 		trigger_illusion_visuals.rpc(spawn_pos, random_dir)
 		
 		await get_tree().create_timer(illusion_duration - 1.0).timeout
-		if is_instance_valid(player):
+		if is_instance_valid(entity):
 			trigger_ui_visibility.rpc(false)
 
 # Manages the scattered illusion sequence by keeping identifying UI hidden for the entire movement duration.
@@ -65,15 +65,15 @@ func request_scattered_illusions() -> void:
 	if multiplayer.is_server() and current_cooldown <= 0.0:
 		current_cooldown = max_cooldown
 		
-		var info_label: Node = player.get_node_or_null("HUD/InfoLabel")
-		if info_label:
-			info_label.display_message.rpc_id(player.name.to_int(), "Ability Used: Illusion")
+		var ui_comp: Node = entity.get_node_or_null("UIComponent")
+		if ui_comp and entity.is_in_group("player"):
+			ui_comp.display_message.rpc_id(entity.name.to_int(), "Used your illusion!")
 		
-		var original_layer: int = player.collision_layer
-		var original_mask: int = player.collision_mask
+		var original_layer: int = entity.collision_layer
+		var original_mask: int = entity.collision_mask
 
-		player.collision_layer = 0
-		player.collision_mask = player.LAYER_WORLD_BOUNDARIES
+		entity.collision_layer = 0
+		entity.collision_mask = entity.LAYER_WORLD_BOUNDARIES
 		
 		# Hide both alpha and identifying UI.
 		trigger_ui_visibility.rpc(true)
@@ -81,7 +81,7 @@ func request_scattered_illusions() -> void:
 		
 		await get_tree().create_timer(1.0).timeout
 		
-		if not is_instance_valid(player):
+		if not is_instance_valid(entity):
 			return
 			
 		var positions: Array[Vector2] = []
@@ -92,15 +92,15 @@ func request_scattered_illusions() -> void:
 			directions.append(Vector2.RIGHT.rotated(randf() * TAU))
 			
 		# Restore alpha so player is visible, but identifying UI stays hidden.
-		player.collision_layer = original_layer
-		player.collision_mask = original_mask
+		entity.collision_layer = original_layer
+		entity.collision_mask = original_mask
 		trigger_stealth_visuals.rpc(false)
 		trigger_scattered_illusions.rpc(positions, directions)
 		
 		# Wait for the moving stage to conclude before showing the username and health bar.
 		await get_tree().create_timer(illusion_duration).timeout
 		
-		if is_instance_valid(player):
+		if is_instance_valid(entity):
 			trigger_ui_visibility.rpc(false)
 
 # Calculates a valid random position for an illusion while ensuring it remains within map boundaries and avoiding infinite recursion.
@@ -110,11 +110,11 @@ func get_position_for_illusion() -> Vector2:
 		var random_angle: float = randf() * TAU
 		var random_radius: float = randf_range(illusion_min_range, illusion_max_range)
 		var offset: Vector2 = Vector2(cos(random_angle), sin(random_angle)) * random_radius
-		var potential_pos: Vector2 = player.global_position + offset
+		var potential_pos: Vector2 = entity.global_position + offset
 		if AbilityUtils.is_position_within_map(get_tree().current_scene, potential_pos):
 			return potential_pos
 	
-	return player.global_position
+	return entity.global_position
 
 # Spawns a complete temporary visual duplicate of the player and their active equipment across all clients.
 @rpc("authority", "call_local", "reliable")
@@ -179,7 +179,7 @@ func _build_illusion_node(spawn_pos: Vector2, parent_scene: Node) -> Node2D:
 	illusion_node.global_position = spawn_pos
 	parent_scene.add_child(illusion_node)
 	
-	var player_sprite: Sprite2D = player.get_node_or_null("PlayerSprite") as Sprite2D
+	var player_sprite: Sprite2D = entity.get_node_or_null("PlayerSprite") as Sprite2D
 	if player_sprite:
 		var sprite_dup: Sprite2D = player_sprite.duplicate(0) as Sprite2D
 		AbilityUtils.strip_physics_and_scripts(sprite_dup)
@@ -192,10 +192,10 @@ func _build_illusion_node(spawn_pos: Vector2, parent_scene: Node) -> Node2D:
 	illusion_node.add_child(comp_container)
 	
 	var active_comps: Array[Node] = [
-		player.melee_w_component,
-		player.ranged_w_component,
-		player.first_ability_component,
-		player.shield_component
+		entity.melee_w_component,
+		entity.ranged_w_component,
+		entity.first_ability_component,
+		entity.shield_component
 	]
 	
 	for comp: Node in active_comps:

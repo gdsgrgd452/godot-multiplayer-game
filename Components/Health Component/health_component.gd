@@ -63,31 +63,29 @@ func heal(amount: float) -> void:
 			spawn_floating_text.rpc(actual_heal, true)
 
 # Deducts health, emits death signal if empty, and triggers floating damage text.
-func take_damage(amount: int, attacker_id: String = "") -> void:
+func take_damage(amount: int, attacker_id: String = "", non_entity_attacker: bool = false) -> void:
 	if not multiplayer.is_server():
 		return
-		
-	# Friendly Fire Check
-	if attacker_id != "" and entity != null:
-		var attacker_node = _find_attacker_node(attacker_id)
-		
-		if attacker_node:
-			var attacker_team = attacker_node.get("team_id")
-			var my_team = entity.get("team_id")
-			
-			# If both have valid teams and they match, ignore the damage
-			# We check != -1 to ensure unassigned/neutral entities can still be damaged
-			if attacker_team != null and my_team != null:
-				if attacker_team == my_team and my_team != -1:
-					#print("Friendly fire blocked between " + attacker_id + " and " + entity.name)
-					return
-		
-		health -= amount
-		regen_cooldown = regen_speed
-		spawn_floating_text.rpc(amount, false)
 
-		if health <= 0:
-			died.emit(attacker_id)
+	# Friendly Fire Check
+	var attacker_node = _find_attacker_node(attacker_id)
+	if not non_entity_attacker and attacker_node: # The attacker is an entity and it exists
+		var attacker_team = attacker_node.get("team_id")
+		var my_team = entity.get("team_id")
+		
+		# If both have valid teams and they match, ignore the damage
+		# We check != -1 to ensure unassigned/neutral entities can still be damaged
+		if attacker_team != null and my_team != null:
+			if attacker_team == my_team and my_team != -1:
+				#print("Friendly fire blocked between " + attacker_id + " and " + entity.name)
+				return
+	
+	health -= amount
+	regen_cooldown = regen_speed
+	spawn_floating_text.rpc(amount, false)
+
+	if health <= 0:
+		died.emit(attacker_id)
 
 # Helper function to find the attacker node in the world
 func _find_attacker_node(id: String) -> Node:

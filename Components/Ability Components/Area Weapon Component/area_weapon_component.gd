@@ -11,7 +11,8 @@ var current_cooldown: float = 0.0
 var current_duration: float = 0.0
 var active_tween: Tween
 
-@onready var player: CharacterBody2D = get_parent().get_parent() as CharacterBody2D
+@onready var entity: CharacterBody2D = get_parent().get_parent() as CharacterBody2D
+@onready var ui_comp: Node2D = entity.get_node("UIComponent")
 @onready var hitbox: Area2D = $Hitbox
 @onready var hitbox_shape: CollisionShape2D = $Hitbox/Collision
 
@@ -51,10 +52,9 @@ func _process(delta: float) -> void:
 func request_area_attack() -> void:
 	if not multiplayer.is_server() or current_cooldown > 0.0:
 		return
-		
-	var info_label: Node = player.get_node_or_null("HUD/InfoLabel")
-	if info_label:
-		info_label.display_message.rpc_id(player.name.to_int(), "Ability Used: Area Attack")
+	
+	if entity.is_in_group("player"):
+		ui_comp.display_message.rpc_id(entity.name.to_int(), "Ability Used: Area Attack")
 		
 	current_cooldown = max_cooldown
 	current_duration = attack_duration
@@ -66,11 +66,11 @@ func request_area_attack() -> void:
 
 # Evaluates colliding bodies to apply immediate damage and directional knockback.
 func _on_body_entered(body: Node2D) -> void:
-	if body == player:
+	if body == entity:
 		return
 		
 	var dir: Vector2 = global_position.direction_to(body.global_position)
-	CandDUtils.knockback_and_damage(body, area_damage, player.name, dir, knockback_force)
+	CandDUtils.knockback_and_damage(body, area_damage, entity.name, dir, knockback_force)
 
 # Disables the physical hitbox and commands clients to hide the visual effect.
 func _on_attack_finished() -> void:
@@ -81,7 +81,7 @@ func _on_attack_finished() -> void:
 # Unhides the component and serves as a virtual function for child class animations.
 @rpc("authority", "call_local", "reliable")
 func trigger_visual_attack() -> void:
-	if player.name == str(multiplayer.get_unique_id()): #Hides for other players
+	if entity.name == str(multiplayer.get_unique_id()): #Hides for other players
 		show()
 
 # Hides the component across all clients when the attack window ends.
@@ -91,5 +91,5 @@ func trigger_visual_finished() -> void:
 
 # Draws the area shape dynamically based on the synchronized radius variable.
 func _draw() -> void:
-	if active_tween and player.name == str(multiplayer.get_unique_id()): # NOT HIDING FOR OTHER PLAYERS
+	if active_tween and entity.name == str(multiplayer.get_unique_id()): # NOT HIDING FOR OTHER PLAYERS
 		draw_circle(Vector2.ZERO, radius, Color(0, 0, 1, 0.4))

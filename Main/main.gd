@@ -13,7 +13,7 @@ var respawn_timer: float = 0.0
 @onready var respawn_label: Label = $CanvasLayer/RespawnTimerLabel
 
 const PRESETS: Dictionary = {
-	"1": { "game_type": "FFA", "arena_size": 2500.0, "food_per_player": 1500, "bots_per_player": 1, "bot_classes": ["Rook"]}, # 1 Bot for testing
+	"1": { "game_type": "FFA", "arena_size": 2500.0, "food_per_player": 1500, "bots_per_player": 1, "bot_classes": ["Shadow_Knight"]}, # 1 Bot for testing
 	"2": { "game_type": "FFA", "arena_size": 6000.0, "food_per_player": 2500, "bots_per_player": 20, "bot_classes": ["Pawn", "Pawn_I", "Pawn_II"] }, # Large game FFA
 	"3": { "game_type": "2_Teams", "arena_size": 6000.0, "food_per_player": 2500, "bots_per_player": 20, "bot_classes": ["Pawn_II"] } # Large game 2 teams
 }

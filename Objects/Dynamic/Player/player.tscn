@@ -13,7 +13,6 @@
 [ext_resource type="PackedScene" uid="uid://dqv8bguh4vdbj" path="res://Components/Ability Components/Area Weapon Component/Magic Area Weapon Component/magic_area_weapon_component.tscn" id="17_ws0sy"]
 [ext_resource type="Script" uid="uid://drtotaaepbr3t" path="res://Components/Promotion Component/promotion_component.gd" id="19_j1n4j"]
 [ext_resource type="Script" uid="uid://dk0pqntam1qlr" path="res://Objects/Dynamic/Player/playerUI.gd" id="22_d3u3q"]
-[ext_resource type="Script" uid="uid://cforq77l244y6" path="res://UI/info_label.gd" id="25_2rxi1"]
 [ext_resource type="PackedScene" uid="uid://d4bosy3p363kl" path="res://UI/Bars/Ability Bar/ability_bar.tscn" id="26_xyotm"]
 [ext_resource type="Script" uid="uid://dd6mlpw8tkkbb" path="res://Components/Ability Components/Teleport Components/teleport_component.gd" id="35_x2bxi"]
 [ext_resource type="PackedScene" uid="uid://3y2gt1rbgeo3" path="res://Components/Shield Components/Directional Shield Components/wooden_shield_component.tscn" id="36_xyotm"]
@@ -287,6 +286,7 @@ scale = Vector2(0.81, 0.81)
 shape = SubResource("RectangleShape2D_onrkg")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=436632609]
+zoom = Vector2(0.7, 0.7)
 position_smoothing_enabled = true
 
 [node name="UIComponent" type="Node2D" parent="." unique_id=308885794]
@@ -387,22 +387,6 @@ theme_override_colors/font_color = Color(0, 0.46666667, 1, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_font_sizes/font_size = 14
-
-[node name="InfoLabel" type="Label" parent="HUD" unique_id=742106657]
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = 1.0
-offset_top = -134.0
-offset_right = 2.0
-offset_bottom = -110.999954
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_shadow_color = Color(1, 1, 1, 1)
-script = ExtResource("25_2rxi1")
 
 [node name="PromotionInfoLabel" type="VBoxContainer" parent="HUD" unique_id=1869259831]
 anchors_preset = 4

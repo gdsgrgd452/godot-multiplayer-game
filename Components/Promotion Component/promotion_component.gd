@@ -25,8 +25,8 @@ var promotion_tree: Dictionary = {
 	"Queen": ["Super_Queen", "Holy_Queen"],
 	"Sultan": ["Super_Queen", "Holy_Queen"],
 	"Jester": ["Super_Queen", "Holy_Queen"],
-	"Super_Queen": ["Super_Queen", "Pawn_II"], #Rank 9
-	"Holy_Queen": ["Holy_Queen", "Pawn_II"]
+	"Super_Queen": ["Holy_Queen", "Pawn_II"], #Rank 9
+	"Holy_Queen": ["Super_Queen", "Pawn_II"]
 }
 
 
@@ -423,7 +423,7 @@ func _npc_auto_promote() -> void:
 	var current: String = entity.get("current_class")
 	#print("Ai promting from: " + current)
 	if current == "Super_Queen" or current == "Holy_Queen":
-		print("Ai maxed")
+		#print("Ai maxed")
 		return
 
 	if promotion_tree.has(current):
@@ -469,9 +469,9 @@ func request_promotion(choice: String) -> void:
 # Updates the players UI and re rolls their upgrades
 func player_promotion_UI_and_reroll(choice: String) -> void:
 	#Displays the promotion info to the player
-	var info: Node = entity.get_node_or_null("HUD/InfoLabel")
-	if info and info.is_inside_tree():
-		info.display_message.rpc_id(entity.name.to_int(), "Promoted to " + choice.replace("_", " "))
+	var ui_comp: Node = entity.get_node_or_null("UIComponent")
+	if ui_comp:
+		ui_comp.display_message.rpc_id(entity.name.to_int(), "Promoted to " + choice.replace("_", " "))
 
 	# Re rolls as player may now have new components > new things to upgrade
 	var level_comp: LevelingComponent = entity.get_node_or_null("Components/LevelingComponent") as LevelingComponent
@@ -597,6 +597,6 @@ func is_stat_maxed(stat_name: String) -> bool:
 func _get_capped_value(s_name: String, n_val: float, c_val: float, o_val: float, is_cd: bool = false) -> float:
 	var reached: bool = n_val <= c_val if is_cd else n_val >= c_val
 	var final: float = c_val if reached else n_val
-	if snapped(final, 0.01) != snapped(o_val, 0.01) and entity.is_in_group("player"):
+	if snapped(final, 0.001) != snapped(o_val, 0.001) and entity.is_in_group("player"):
 		print("Stat Log: " + s_name + (" reached MAX CAP: " if reached else " changed to ") + str(snapped(final, 0.01)))
 	return final

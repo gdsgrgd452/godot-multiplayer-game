@@ -5,7 +5,7 @@ class_name StealthComponent
 @export var stealth_duration: float = 3.0
 var current_cooldown: float = 0.0
 
-@onready var player: CharacterBody2D = get_parent().get_parent() as CharacterBody2D
+@onready var entity: CharacterBody2D = get_parent().get_parent() as CharacterBody2D
 
 # Reduces the active ability cooldown timer exclusively on the server.
 func _process(delta: float) -> void:
@@ -20,48 +20,48 @@ func request_stealth() -> void:
 		
 		print("Stealth activating")
 		
-		var info_label: Node = player.get_node_or_null("HUD/InfoLabel")
-		if info_label:
-			info_label.display_message.rpc_id(player.name.to_int(), "Ability Used: Stealth")
+		var ui_comp: Node = entity.get_node_or_null("UIComponent")
+		if ui_comp and entity.is_in_group("player"):
+			ui_comp.display_message.rpc_id(entity.name.to_int(), "Used Stealth!")
 		
-		var original_layer: int = player.collision_layer
-		var original_mask: int = player.collision_mask
+		var original_layer: int = entity.collision_layer
+		var original_mask: int = entity.collision_mask
 
-		player.collision_layer = 0
-		player.collision_mask = player.LAYER_WORLD_BOUNDARIES
+		entity.collision_layer = 0
+		entity.collision_mask = entity.LAYER_WORLD_BOUNDARIES
 		
 		trigger_ui_visibility.rpc(true)
 		trigger_stealth_visuals.rpc(true)
 		
 		await get_tree().create_timer(stealth_duration).timeout
 		
-		if not is_instance_valid(player):
+		if not is_instance_valid(entity):
 			return
 			
-		player.collision_layer = original_layer
-		player.collision_mask = original_mask
+		entity.collision_layer = original_layer
+		entity.collision_mask = original_mask
 		trigger_ui_visibility.rpc(false)
 		trigger_stealth_visuals.rpc(false)
 
 # Commands all clients to toggle identifying UI elements for remote observers.
 @rpc("authority", "call_local", "reliable")
 func trigger_ui_visibility(is_hidden: bool) -> void:
-	var ui_comp: Node = player.get_node_or_null("UIComponent")
+	var ui_comp: Node = entity.get_node_or_null("UIComponent")
 	if ui_comp and ui_comp.has_method("toggle_external_ui"):
 		ui_comp.toggle_external_ui(is_hidden)
 
 # Commands all clients to fade the player's primary sprite and equipment visibility.
 @rpc("authority", "call_local", "reliable")
 func trigger_stealth_visuals(is_stealth: bool) -> void:
-	var sprite: Sprite2D = player.get_node_or_null("PlayerSprite") as Sprite2D
-	var components: Node2D = player.get_node_or_null("Components") as Node2D
+	var sprite: Sprite2D = entity.get_node_or_null("SpriteComponent") as Sprite2D
+	var components: Node2D = entity.get_node_or_null("Components") as Node2D
 	
 	var target_alpha: float = 1.0
 	var duration: float = 0.75
 	
 	if is_stealth:
 		duration = 0.2 
-		target_alpha = 0.5 if player.name == str(multiplayer.get_unique_id()) else 0.0
+		target_alpha = 0.5 if entity.name == str(multiplayer.get_unique_id()) else 0.0
 			
 	if sprite:
 		var tween_sprite: Tween = create_tween()

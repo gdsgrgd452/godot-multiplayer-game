@@ -9,8 +9,8 @@ var teleport_time: float = 1.0
 		max_range = value
 		queue_redraw()
 
-@onready var player: CharacterBody2D = get_parent().get_parent() as CharacterBody2D
-@onready var move_comp: Node2D = player.get_node("Components/MovementComponent")
+@onready var entity: CharacterBody2D = get_parent().get_parent() as CharacterBody2D
+@onready var move_comp: Node2D = entity.get_node("Components/MovementComponent")
 var active_illusion: Node2D = null
 
 # Tracks the active tweens so they can be explicitly killed before setting manual scale values.
@@ -36,7 +36,7 @@ func request_teleport(target_pos: Vector2) -> void:
 # Calculates the clamped destination, updates the physical location, and broadcasts the visual trigger.
 func _perform_teleport(target_pos: Vector2) -> void:
 	# Calculate the final position bounded by the maximum teleport range.
-	var start_pos: Vector2 = player.global_position
+	var start_pos: Vector2 = entity.global_position
 	var direction: Vector2 = start_pos.direction_to(target_pos)
 	var distance: float = minf(start_pos.distance_to(target_pos), max_range)
 	var final_position: Vector2 = start_pos + (direction * distance)
@@ -49,22 +49,22 @@ func _perform_teleport(target_pos: Vector2) -> void:
 	await get_tree().create_timer(teleport_time + 0.1).timeout # + 0.1 so it doesnt teleport before the visuals are done
 	
 	# Allow movement, snap the player to the destination and restore their normal scale.
-	player.global_position = final_position
+	entity.global_position = final_position
 	trigger_teleport_visuals.rpc(false, final_position) 
 	move_comp.movement_blocked = false
 
 # Executes a localized scaling tween animation on all clients to visually emphasize the teleportation.
 @rpc("authority", "call_local", "reliable")
 func trigger_teleport_visuals(going_out: bool, target_pos: Vector2 = Vector2.ZERO) -> void:
-	var sprite: Sprite2D = player.get_node("SpriteComponent") as Sprite2D
-	var components: Node2D = player.get_node("Components") as Node2D
+	var sprite: Sprite2D = entity.get_node("SpriteComponent") as Sprite2D
+	var components: Node2D = entity.get_node("Components") as Node2D
 	if not sprite or not components:
 		return
 	
-	var info_label: Node = player.get_node_or_null("HUD/InfoLabel")
-	if info_label:
-		info_label.display_message.rpc_id(player.name.to_int(), "Ability Used: Teleport")
-	
+	var ui_comp: Node = entity.get_node_or_null("UIComponent")
+	if ui_comp and entity.is_in_group("player"):
+		ui_comp.display_message.rpc_id(entity.name.to_int(), "Used Stealth!")
+
 	# Kill any ongoing scaling tweens to prevent them from overriding the new manual scale.
 	if active_tween_sprite and active_tween_sprite.is_valid():
 		active_tween_sprite.kill()
@@ -102,9 +102,9 @@ func _spawn_teleport_illusion(spawn_pos: Vector2) -> void:
 	main_scene.add_child(active_illusion)
 	
 	# Duplicate the player's sprite, strip its logic, and set it to grow from 10% to 25% scale.
-	var player_sprite: Sprite2D = player.get_node_or_null("PlayerSprite") as Sprite2D
-	if player_sprite:
-		var sprite_dup: Sprite2D = player_sprite.duplicate(0) as Sprite2D
+	var entity_sprite: Sprite2D = entity.get_node_or_null("PlayerSprite") as Sprite2D
+	if entity_sprite:
+		var sprite_dup: Sprite2D = entity_sprite.duplicate(0) as Sprite2D
 		sprite_dup.scale = Vector2(0.1, 0.1)
 		#If you want to make the illusion a diff colour uncomment this #sprite_dup.modulate = player_sprite.modulate (DO NOT REMOVE)
 		AbilityUtils.strip_physics_and_scripts(sprite_dup)
@@ -121,10 +121,10 @@ func _spawn_teleport_illusion(spawn_pos: Vector2) -> void:
 	active_illusion.add_child(comp_container)
 	
 	var active_comps: Array[Node] = [
-		player.melee_w_component,
-		player.ranged_w_component,
-		player.first_ability_component,
-		player.shield_component
+		entity.melee_w_component,
+		entity.ranged_w_component,
+		entity.first_ability_component,
+		entity.shield_component
 	]
 	
 	# Iterate through equipped items, duplicate them, strip their logic, and attach them to the illusion.
@@ -141,5 +141,5 @@ func _spawn_teleport_illusion(spawn_pos: Vector2) -> void:
 
 # Draws a solid boundary representing the maximum valid teleport distance exclusively for the local player.
 func _draw() -> void:
-	if player.name == str(multiplayer.get_unique_id()):
+	if entity.name == str(multiplayer.get_unique_id()):
 		draw_arc(Vector2.ZERO, max_range*4, 0.0, TAU, 300, Color(1.0, 0.0, 1.0, 1.0), 2.0)
