@@ -15,9 +15,9 @@ var respawn_timer: float = 0.0
 const PRESETS: Dictionary = {
 	"Alone": { "game_type": "FFA", "arena_size": 2500.0, "food_per_player": 1500, "bots_per_player": 0, "bot_classes": ["Mini_Rook"]}, # Alone for testing
 	
-	"1-Bot": { "game_type": "FFA", "arena_size": 2500.0, "food_per_player": 1500, "bots_per_player": 1, "bot_classes": ["Mini_Rook"]}, # 1 Bot for testing
+	"1-Bot": { "game_type": "FFA", "arena_size": 2500.0, "food_per_player": 1500, "bots_per_player": 1, "bot_classes": ["Pawn"]}, # 1 Bot for testing
 	
-	"1 Bot": { "game_type": "FFA", "arena_size": 2500.0, "food_per_player": 1500, "bots_per_player": 1, "bot_classes": ["Mini_Rook"]}, # 1 Bot for testing
+	"1 Bot": { "game_type": "FFA", "arena_size": 2500.0, "food_per_player": 1500, "bots_per_player": 1, "bot_classes": ["Pawn"]}, # 1 Bot for testing
 	
 	"2-Bot": { "game_type": "FFA", "arena_size": 2500.0, "food_per_player": 1500, "bots_per_player": 2, "bot_classes": ["Pawn"]}, # 2 Bots for testing
 	

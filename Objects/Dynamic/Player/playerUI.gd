@@ -30,7 +30,7 @@ var current_first_ability: String
 @onready var upgrade_UI: VBoxContainer = $"../HUD/UpgradeUI"
 @onready var promotion_UI: HBoxContainer = $"../HUD/PromotionUI"
 
-@onready var leaderboard_container: VBoxContainer = $"../HUD/LBPanel/Leaderboard"
+@onready var leaderboard_container: VBoxContainer = $"../HUD/LBContainer/Leaderboard"
 @export var lb_entry_scene: PackedScene
 
 func _ready() -> void:
@@ -144,9 +144,13 @@ func update_leaderboard_ui(entries: Array) -> void:
 				lbl.text = entry_text
 				entry.add_child(lbl)
 				label_to_color = lbl
-			
-			if p_data["id"] == my_id and label_to_color:
-				label_to_color.modulate = Color.GREEN
+				
+			if label_to_color:
+				if p_data["id"] == my_id:
+					label_to_color.modulate = Color.GREEN
+				else:
+					label_to_color.modulate = Color.RED
+				
 				
 			leaderboard_container.add_child(entry)
 		

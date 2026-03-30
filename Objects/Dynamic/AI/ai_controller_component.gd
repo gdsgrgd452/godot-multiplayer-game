@@ -302,6 +302,7 @@ func _process_combat_state(target: Node2D, delta: float) -> bool:
 				return true
 	elif is_instance_valid(active_melee): # Has Melee 
 		if dist <= melee_range: # In Melee Range, attack
+			#print("In melee range")
 			_action_melee(active_melee, target)
 			return true
 		else: # Out of Melee Range

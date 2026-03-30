@@ -421,23 +421,17 @@ layout_mode = 2
 [node name="PromotionButton5" parent="HUD/PromotionUI" unique_id=1328671514 instance=ExtResource("5_n7ghd")]
 layout_mode = 2
 
-[node name="LBPanel" type="Panel" parent="HUD" unique_id=1927582597]
+[node name="LBContainer" type="MarginContainer" parent="HUD" unique_id=1837929343]
 anchors_preset = 4
 anchor_top = 0.5
 anchor_bottom = 0.5
-offset_left = 125.0
 offset_top = -20.0
-offset_right = 164.99997
+offset_right = 40.0
 offset_bottom = 20.0
 grow_vertical = 2
 
-[node name="Leaderboard" type="VBoxContainer" parent="HUD/LBPanel" unique_id=423456464]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+[node name="Leaderboard" type="VBoxContainer" parent="HUD/LBContainer" unique_id=423456464]
+layout_mode = 2
 alignment = 1
 
 [node name="HealthBar" parent="." unique_id=1748738400 instance=ExtResource("3_i3pqv")]
