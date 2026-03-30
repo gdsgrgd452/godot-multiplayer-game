@@ -20,7 +20,7 @@ signal show_upgrade_menu()
 var total_score: int = 0
 var pending_upgrades: int = 0
 
-var ai_gains_points: bool = false
+var ai_gains_points: bool = true
 
 # The static increments applied to the multiplier pool upon upgrade selection.
 var upgrade_increments: Dictionary = {

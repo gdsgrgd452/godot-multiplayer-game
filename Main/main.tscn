@@ -4,11 +4,11 @@
 [ext_resource type="Script" uid="uid://t8h5v33i1exp" path="res://Spawning/spawning_food.gd" id="2_0xm2m"]
 [ext_resource type="Script" uid="uid://bxkxyoc5ui4kf" path="res://Spawning/spawning_players.gd" id="2_1bvp3"]
 [ext_resource type="Shader" uid="uid://b5npgpaiuqcby" path="res://Main/main.gdshader" id="2_lquwl"]
+[ext_resource type="PackedScene" uid="uid://mn3do3kj2f54" path="res://UI/Commands/command_console.tscn" id="3_qac2q"]
 [ext_resource type="Texture2D" uid="uid://bq8sr0olo0k5r" path="res://images/HowToPlay/r-key.png" id="4_f6fdm"]
 [ext_resource type="Script" uid="uid://cx4o8l16ouh2j" path="res://Spawning/spawning_projectiles.gd" id="4_lquwl"]
 [ext_resource type="Texture2D" uid="uid://csmhnva76ej5y" path="res://images/HowToPlay/mouse.png" id="4_rj11h"]
 [ext_resource type="Script" uid="uid://c4gpkfscoiv78" path="res://Spawning/spawning_towers.gd" id="6_liyct"]
-[ext_resource type="PackedScene" uid="uid://mn3do3kj2f54" path="res://UI/command_console.tscn" id="9_rj11h"]
 [ext_resource type="Script" uid="uid://cyhwkk735ps0q" path="res://Spawning/spawning_npcs.gd" id="10_qac2q"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_7mycd"]
@@ -18,7 +18,7 @@ shader_parameter/color1 = Color(0.69, 0.69, 0.69, 1)
 shader_parameter/color2 = Color(0.3, 0.3, 0.3, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_rj11h"]
-bg_color = Color(0.4249679, 0.31949022, 0.62540627, 0.6666667)
+bg_color = Color(0.3372549, 0.6156863, 0.62352943, 0.38039216)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_f6fdm"]
 bg_color = Color(0.3372549, 0.6156863, 0.62352943, 0.38039216)
@@ -47,7 +47,7 @@ offset_right = 2500.0
 offset_bottom = 2500.0
 rotation = -0.00014920316
 
-[node name="CommandConsole" parent="." unique_id=1812150508 instance=ExtResource("9_rj11h")]
+[node name="CommandConsole" parent="." unique_id=1812150508 instance=ExtResource("3_qac2q")]
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=1275093181]
 

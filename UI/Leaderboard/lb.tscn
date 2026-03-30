@@ -1,4 +1,4 @@
-[gd_scene format=3 uid="uid://j1hh6shqik0f"]
+[gd_scene format=3 uid="uid://edwx33vq4kou"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_27m2f"]
 bg_color = Color(1, 1, 1, 0.38431373)
@@ -20,4 +20,4 @@ theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 1
 theme_override_font_sizes/font_size = 20
 theme_override_styles/normal = SubResource("StyleBoxFlat_27m2f")
-horizontal_alignment = 1
+text = "Number 2: Bob_2432"

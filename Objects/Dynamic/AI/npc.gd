@@ -88,10 +88,8 @@ func apply_team_color() -> void:
 func _physics_process(delta: float) -> void:
 	if multiplayer.is_server():
 		_decrease_knockback(delta)
-		if not movement_component.movement_blocked:
-			velocity = (movement_component.get_movement_velocity() * 0.8) + knockback
-		else:
-			velocity = Vector2.ZERO
+		var move_velocity: Vector2 = movement_component.get_movement_velocity(delta)
+		velocity = (move_velocity * 0.8) + knockback
 		move_and_slide()
 		_handle_collisions()
 

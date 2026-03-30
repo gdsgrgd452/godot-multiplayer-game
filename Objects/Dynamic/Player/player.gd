@@ -114,7 +114,8 @@ func _physics_process(delta: float) -> void:
 
 	if multiplayer.is_server():
 		decrease_knockback(delta)
-		velocity = movement_component.get_movement_velocity() + knockback
+		var move_velocity: Vector2 = movement_component.get_movement_velocity(delta)
+		velocity = move_velocity + knockback
 		move_and_slide()
 		handle_collisions()
 

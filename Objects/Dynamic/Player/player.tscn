@@ -6,9 +6,9 @@
 [ext_resource type="PackedScene" uid="uid://b0tv68ilswjsh" path="res://UI/Bars/Health Bar/health_bar.tscn" id="3_i3pqv"]
 [ext_resource type="PackedScene" uid="uid://bxfwklemd5f4o" path="res://UI/Upgrade Button/stat_button.tscn" id="4_sweqy"]
 [ext_resource type="PackedScene" uid="uid://ca4thm5hu2im0" path="res://UI/Promotion Button/promotion_button.tscn" id="5_n7ghd"]
-[ext_resource type="Script" uid="uid://grm2y86px8ee" path="res://Components/Movement Component/movement_component.gd" id="6_2hs0m"]
-[ext_resource type="PackedScene" uid="uid://edwx33vq4kou" path="res://UI/lb.tscn" id="8_4ge2x"]
+[ext_resource type="PackedScene" uid="uid://j1hh6shqik0f" path="res://UI/lb.tscn" id="8_4ge2x"]
 [ext_resource type="Script" uid="uid://bcp4tn61yaump" path="res://Components/Leveling Component/leveling_component.gd" id="8_dw050"]
+[ext_resource type="Script" uid="uid://3f5s7a527aj5" path="res://Components/Movement Component/player_movement.gd" id="10_imvv6"]
 [ext_resource type="PackedScene" uid="uid://c0n8o6qg5guih" path="res://Components/Weapon Components/Meele Weapon Component/Sword Component/sword_component.tscn" id="15_cmuwl"]
 [ext_resource type="PackedScene" uid="uid://bcpvgo3r5i7b3" path="res://Components/Weapon Components/Meele Weapon Component/Spear Component/spear_component.tscn" id="16_xw66s"]
 [ext_resource type="PackedScene" uid="uid://dqv8bguh4vdbj" path="res://Components/Ability Components/Area Weapon Component/Magic Area Weapon Component/magic_area_weapon_component.tscn" id="17_ws0sy"]
@@ -287,7 +287,8 @@ scale = Vector2(0.81, 0.81)
 shape = SubResource("RectangleShape2D_onrkg")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=436632609]
-zoom = Vector2(0.7, 0.7)
+position = Vector2(0, -8)
+zoom = Vector2(0.5, 0.5)
 position_smoothing_enabled = true
 
 [node name="UIComponent" type="Node2D" parent="." unique_id=308885794]
@@ -474,7 +475,7 @@ vertical_alignment = 1
 [node name="Components" type="Node2D" parent="." unique_id=1775574074]
 
 [node name="MovementComponent" type="Node2D" parent="Components" unique_id=795235486]
-script = ExtResource("6_2hs0m")
+script = ExtResource("10_imvv6")
 
 [node name="LevelingComponent" type="Node2D" parent="Components" unique_id=1888361447]
 position = Vector2(0, 12)

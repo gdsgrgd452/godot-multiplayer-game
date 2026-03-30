@@ -1,8 +1,6 @@
 extends Node2D
 class_name AIControllerComponent
 
-
-
 @export var give_up_attack_time: float = 30.0 # For attacking
 @onready var npc: CharacterBody2D = get_parent().get_parent() as CharacterBody2D
 @onready var move_comp: Node2D = npc.get_node("Components/MovementComponent")
@@ -13,7 +11,11 @@ class_name AIControllerComponent
 var curr_class: String = "Pawn"
 var state: String = "Wander"
 
+#Score
+var my_score: int = 0
+
 #Fleeing
+var threat: Node2D = null
 var flee_target: Vector2 = Vector2.ZERO # Position to flee to
 var is_fleeing: bool = false
 var last_threat_pos: Vector2 = Vector2.ZERO
@@ -39,6 +41,7 @@ var blacklisted_target: Node2D = null # Target you have just chased and failed t
 var blacklist_timer: float = 0.0
 var last_dist_to_target: float = INF # For checking if you are getting closer/further in a chase
 
+#Input delay
 var inp_delay: float = 1.0 # Delay in taking actions
 var inp_delay_timer: float = 1.0 
 var action_to_take: bool = false
@@ -70,12 +73,10 @@ func _physics_process(delta: float) -> void:
 	curr_class = npc.current_class
 	health_scale = health_comp.health/health_comp.max_health
 	
-	var my_score: int = TargetingUtils.get_entity_score(npc)
-	var threat: Node2D = _get_dangerous_threat(my_score) # Gets the most dangerous threat 
+	my_score = TargetingUtils.get_entity_score(npc)
+	threat = _get_dangerous_threat() # Gets the most dangerous threat 
 
-	npc.get_node("State").text = state + "  B:" + str(snapped(boldness_factor,0.01)) + "  K:" + str(snapped(kindness_factor,0.01)) + "  S:" + str(my_score)
-	npc.get_node("State").text += "  G_C:" + str(snapped(give_up_chase_time,0.01)) + "  T:" + str(npc.team_id) + " H: " + str(snapped(health_scale,0.01))
-	npc.get_node("State").text += "  RT: " + str(snapped(inp_delay,0.01))
+
 	
 	# Always try to clear blacklist. 
 	_clear_blacklist(delta)
@@ -85,23 +86,21 @@ func _physics_process(delta: float) -> void:
 		_spawn_towers()
 	
 	if threat:
-		_adj_last_stand(threat)
+		_adj_last_stand()
 
 		# Stats and handles fleeing from threats, If you are still fleeing or have found something new to flee from > Do nothing else
-		if state != "Last Stand" and _process_fleeing(threat):
+		if state != "Last Stand" and _process_fleeing():
 			return
 
-
-	# Create a safe reference that is guaranteed to be either a valid Node2D or null to satisfy the static type checker.
+	# # In case the blacklister target no longer exist
 	var safe_exclude: Node2D = blacklisted_target if is_instance_valid(blacklisted_target) else null
 	
-	# Handles targeting and re targeting to higher priority targets. New target found/ Switched Targets > Do nothing else
+	# # Handles targeting and re targeting to higher priority targets. New target found/ Switched Targets > Do nothing else
 	var best_visible_target: Node2D = TargetingUtils.get_closest_enemy(npc.global_position, detection_area, npc.team_id, false, my_score, safe_exclude)
-	
-	if best_visible_target != null and _process_targeting(best_visible_target, my_score):
+	if best_visible_target != null and _process_targeting(best_visible_target):
 		return
-	
-	# If there is a target to go for, look into combat options
+
+	# # If there is a target to go for, look into combat options
 	var in_combat: bool = false
 	if is_instance_valid(current_target) and not current_target.is_queued_for_deletion():
 		in_combat = _process_combat_state(current_target, delta)
@@ -133,7 +132,7 @@ func _clear_blacklist(delta) -> void:
 
 # Finds the most imminent threat among nearby enemies, weighted by distance and score.
 # Distance is more important
-func _get_dangerous_threat(my_score: int) -> Node2D:
+func _get_dangerous_threat() -> Node2D:
 	var highest_threat: Node2D = null
 	var highest_threat_rating: float = 0.0
 	
@@ -181,14 +180,14 @@ func _get_dangerous_threat(my_score: int) -> Node2D:
 	return highest_threat
 
 # Handles taking final stands when being hunted down
-func _adj_last_stand(threat: Node2D) -> void:
+func _adj_last_stand() -> void:
 	var active_melee: MeleeWeaponComponent = npc.get("melee_w_component")
 	if active_melee != null and threat in kill_zone.get_overlapping_bodies():
 		state = "Last Stand"
 
 
 # Handles whether to keep fleeing, is far enough away 
-func _process_fleeing(threat: Node2D) -> bool:
+func _process_fleeing() -> bool:
 	
 	if is_instance_valid(threat): # If there is a threat, flee
 		last_threat_pos = threat.global_position
@@ -252,7 +251,7 @@ func _action_flee(from_pos: Vector2) -> void:
 	move_comp.set_movement_direction(direction_to_target)
 
 # Re target to higher priority targets, or get new target from the best visible ones
-func _process_targeting(best_visible_target: Node2D, my_score: int) -> bool:
+func _process_targeting(best_visible_target: Node2D) -> bool:
 	var current_target_viable: bool = is_instance_valid(current_target) and current_target.is_inside_tree() and current_target in detection_area.get_overlapping_bodies() and current_target != blacklisted_target
 	
 	var target_points: int = TargetingUtils.get_entity_score(best_visible_target)
@@ -293,13 +292,22 @@ func _process_combat_state(target: Node2D, delta: float) -> bool:
 	var active_melee: MeleeWeaponComponent = npc.get("melee_w_component")
 	var active_ranged: RangedWeaponComponent = npc.get("ranged_w_component")
 	
-	if is_instance_valid(active_melee) and is_instance_valid(active_ranged): # Melee and Ranged (Currently defaults to ranged)
+	if is_instance_valid(active_melee) and is_instance_valid(active_ranged): # Melee and Ranged does both (Tries ranged first)
 		if dist <= attack_range: # In Range, fire
 			_action_ranged(active_ranged, target)
-			return true
+
+			if dist <= melee_range: # In Melee Range, attack
+				#print("In melee range")
+				_action_melee(active_melee, target)
+				return true
+			else: # Out of Melee Range
+				if _move_towards(npc.global_position, target.global_position):
+					return true
+
 		else: # Out of range
 			if _move_towards(npc.global_position, target.global_position):
 				return true
+
 	elif is_instance_valid(active_melee): # Has Melee 
 		if dist <= melee_range: # In Melee Range, attack
 			#print("In melee range")
@@ -385,8 +393,27 @@ func _get_valid_wander_pos() -> Vector2:
 	return npc.global_position
 
 # ACTION
-# Moves towards a direction
+# Updates the NPC's movement direction based on the high-level AI state and context-aware steering.
 func _move_towards(pos: Vector2, t_pos: Vector2) -> bool:
-	var direction_to_target: Vector2 = (t_pos - pos).normalized()
-	move_comp.set_movement_direction(direction_to_target)
+	var dist: float = pos.distance_to(t_pos)
+	var arrival_threshold: float = 120.0
+	var min_speed_ratio: float = 0.2
+	
+	if state == "Chasing" or state == "Melee_Attack":
+		move_comp.speed_limit_multiplier = clamp(dist / arrival_threshold, min_speed_ratio, 1.0)
+	else:
+		move_comp.speed_limit_multiplier = 1.0
+		
 	return true
+
+
+
+# Provides the raw heading toward the current target for the context steering system.
+func get_desired_direction() -> Vector2:
+	if is_instance_valid(current_target):
+		return global_position.direction_to(current_target.global_position)
+	elif state == "Wandering" and wander_target != Vector2.ZERO:
+		return global_position.direction_to(wander_target)
+	elif state == "Fleeing":
+		return last_threat_pos.direction_to(npc.global_position)
+	return Vector2.ZERO

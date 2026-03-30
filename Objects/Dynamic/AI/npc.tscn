@@ -3,9 +3,8 @@
 [ext_resource type="Script" uid="uid://bt6nq7xaxu82r" path="res://Objects/Dynamic/AI/npc.gd" id="1_5yobt"]
 [ext_resource type="PackedScene" uid="uid://5mf4ol8pweaw" path="res://Components/Sprite Component/sprite_component.tscn" id="1_ge44a"]
 [ext_resource type="Script" uid="uid://d04412dn2ik0y" path="res://Objects/Dynamic/AI/npcui.gd" id="2_eflwn"]
-[ext_resource type="Script" uid="uid://grm2y86px8ee" path="res://Components/Movement Component/movement_component.gd" id="3_5yobt"]
-[ext_resource type="Script" uid="uid://bkhfort3xr3a8" path="res://Objects/Dynamic/AI/looking_area.gd" id="3_jjm0i"]
 [ext_resource type="PackedScene" uid="uid://bah68f313cuc3" path="res://Components/Health Component/health_component.tscn" id="4_7k8bs"]
+[ext_resource type="Script" uid="uid://bihqjl51yapha" path="res://Components/Movement Component/ai_movement.gd" id="4_l1orh"]
 [ext_resource type="PackedScene" uid="uid://drldjkjxrdrg" path="res://Components/Weapon Components/Ranged Weapon Components/Bow Component/bow_component.tscn" id="5_0gikb"]
 [ext_resource type="PackedScene" uid="uid://b0tv68ilswjsh" path="res://UI/Bars/Health Bar/health_bar.tscn" id="6_bl8rq"]
 [ext_resource type="Script" uid="uid://mcmoxtd5u8rq" path="res://Objects/Dynamic/AI/ai_controller_component.gd" id="6_eflwn"]
@@ -26,10 +25,10 @@ size = Vector2(72, 95)
 [sub_resource type="CircleShape2D" id="CircleShape2D_p2f8y"]
 radius = 50.0
 
-[sub_resource type="ConvexPolygonShape2D" id="ConvexPolygonShape2D_l1orh"]
-points = PackedVector2Array(0, 0, 900, -400, 900, 400)
-
 [sub_resource type="CircleShape2D" id="CircleShape2D_q7cir"]
+radius = 50.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_l1orh"]
 radius = 50.0
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_c7qqn"]
@@ -99,19 +98,19 @@ scale = Vector2(25, 25)
 shape = SubResource("CircleShape2D_p2f8y")
 debug_color = Color(0, 0.6, 0.69803923, 0.05882353)
 
-[node name="LookingArea" type="Area2D" parent="." unique_id=1195215265]
-script = ExtResource("3_jjm0i")
-
-[node name="LookingHitbox" type="CollisionShape2D" parent="LookingArea" unique_id=584567132]
-shape = SubResource("ConvexPolygonShape2D_l1orh")
-debug_color = Color(0.9843137, 0.05882353, 0.3019608, 0.2901961)
-
 [node name="KillArea" type="Area2D" parent="." unique_id=133820070]
 scale = Vector2(10, 10)
 
 [node name="KillHitbox" type="CollisionShape2D" parent="KillArea" unique_id=1852263935]
 shape = SubResource("CircleShape2D_q7cir")
 debug_color = Color(0.7764706, 0.42352942, 0.35686275, 0.1764706)
+
+[node name="LookingArea" type="Area2D" parent="." unique_id=275248731]
+scale = Vector2(12, 12)
+
+[node name="LookingHitbox" type="CollisionShape2D" parent="LookingArea" unique_id=1897812908]
+shape = SubResource("CircleShape2D_l1orh")
+debug_color = Color(0.5176471, 0.5764706, 0, 0.101960786)
 
 [node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="." unique_id=1525879322]
 replication_config = SubResource("SceneReplicationConfig_c7qqn")
@@ -122,7 +121,7 @@ script = ExtResource("2_eflwn")
 [node name="Components" type="Node2D" parent="." unique_id=1926972529]
 
 [node name="MovementComponent" type="Node2D" parent="Components" unique_id=1778693923]
-script = ExtResource("3_5yobt")
+script = ExtResource("4_l1orh")
 
 [node name="HealthComponent" parent="Components" unique_id=421527654 instance=ExtResource("4_7k8bs")]
 
@@ -177,7 +176,7 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_xfw1d")
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="State" type="Label" parent="." unique_id=1894124550]
+[node name="InfoLabel" type="Label" parent="." unique_id=1894124550]
 offset_left = -400.0
 offset_top = -360.0
 offset_right = -360.0
