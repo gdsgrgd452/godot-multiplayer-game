@@ -27,7 +27,7 @@ func _physics_process(delta: float) -> void:
 			#print(entity.name + " " + str(shot_cooldown))
 		shooting = shot_cooldown > (reload_speed - 0.1)
 
-# Processes the shooting logic and resets the cooldown timer exclusively on the server for AI or locally for players.
+# Processes the shooting logic and resets the cooldown timer exclusively on the server for NPC or locally for players.
 func shoot(click_pos: Vector2) -> void:
 	if shot_cooldown > 0.0:
 		return

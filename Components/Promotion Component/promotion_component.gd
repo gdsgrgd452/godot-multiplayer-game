@@ -421,9 +421,9 @@ func add_pending_promotion(peer_id: int) -> void:
 func _npc_auto_promote() -> void:
 	var options: Array[String] = []
 	var current: String = entity.get("current_class")
-	#print("Ai promting from: " + current)
+	#print("NPC promting from: " + current)
 	if current == "Super_Queen" or current == "Holy_Queen":
-		#print("Ai maxed")
+		#print("NPC maxed")
 		return
 
 	if promotion_tree.has(current):

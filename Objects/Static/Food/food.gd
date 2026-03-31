@@ -8,7 +8,7 @@ var distance_factor: float = 0.0
 @export var points_value: int
 var team_id: int = 999
 
-const LAYER_AI_PLAYER_AND_FOOD: int = 1
+const LAYER_NPC_PLAYER_AND_FOOD: int = 1
 const LAYER_WORLD_BOUNDARIES: int = 2
 
 @export var shape_type: String = "":
@@ -26,8 +26,8 @@ func _ready() -> void:
 	add_to_group("shield_blockable")
 	health_component.died.connect(_on_food_died)
 
-	collision_layer = LAYER_AI_PLAYER_AND_FOOD # Resides on
-	collision_mask = LAYER_AI_PLAYER_AND_FOOD | LAYER_WORLD_BOUNDARIES # Collides with
+	collision_layer = LAYER_NPC_PLAYER_AND_FOOD # Resides on
+	collision_mask = LAYER_NPC_PLAYER_AND_FOOD | LAYER_WORLD_BOUNDARIES # Collides with
 	
 	if multiplayer.is_server():
 		set_type_and_health()

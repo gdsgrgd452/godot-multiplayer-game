@@ -15,19 +15,19 @@ var respawn_timer: float = 0.0
 @onready var ip_label: Label = $CanvasLayer/SharingIPLabel
 
 const PRESETS: Dictionary = {
-	"Alone": { "game_type": "FFA", "arena_size": 2500.0, "food_per_player": 1500, "bots_per_player": 0, "bot_classes": ["Bishop"]}, # Alone for testing
+	"Alone": { "game_type": "FFA", "arena_size": 2500.0, "food_per_player": 1500, "bots_per_player": 0, "bot_classes": ["Bishop"], "npc_points": false}, # Alone for testing
 	
-	"1-Bot": { "game_type": "FFA", "arena_size": 2500.0, "food_per_player": 1500, "bots_per_player": 1, "bot_classes": ["Bishop"]}, # 1 Bot for testing
+	"1-Bot": { "game_type": "FFA", "arena_size": 2500.0, "food_per_player": 1500, "bots_per_player": 1, "bot_classes": ["Bishop"], "npc_points": false}, # 1 Bot for testing
 	
-	"1 Bot": { "game_type": "FFA", "arena_size": 2500.0, "food_per_player": 1500, "bots_per_player": 1, "bot_classes": ["Bishop"]}, # 1 Bot for testing
+	"1 Bot": { "game_type": "FFA", "arena_size": 2500.0, "food_per_player": 1500, "bots_per_player": 1, "bot_classes": ["Bishop"], "npc_points": false}, # 1 Bot for testing
 	
-	"2-Bot": { "game_type": "FFA", "arena_size": 2500.0, "food_per_player": 1500, "bots_per_player": 2, "bot_classes": ["Pawn"]}, # 2 Bots for testing
+	"2-Bot": { "game_type": "FFA", "arena_size": 2500.0, "food_per_player": 1500, "bots_per_player": 2, "bot_classes": ["Pawn"], "npc_points": false}, # 2 Bots for testing
 	
-	"FFA": { "game_type": "FFA", "arena_size": 6000.0, "food_per_player": 7500, "bots_per_player": 20, "bot_classes": ["Pawn"] }, # Large game FFA
-	"2T": { "game_type": "2_Teams", "arena_size": 6000.0, "food_per_player": 2500, "bots_per_player": 20, "bot_classes": ["Pawn"] }, # Large game 2 teams
+	"FFA": { "game_type": "FFA", "arena_size": 6000.0, "food_per_player": 7500, "bots_per_player": 20, "bot_classes": ["Pawn"], "npc_points": true}, # Large game FFA
+	"2T": { "game_type": "2_Teams", "arena_size": 6000.0, "food_per_player": 2500, "bots_per_player": 20, "bot_classes": ["Pawn"], "npc_points": true}, # Large game 2 teams
 	
-	"FFA-L": { "game_type": "FFA", "arena_size": 12000.0, "food_per_player": 12000, "bots_per_player": 40, "bot_classes": ["Pawn"] }, # Large game FFA
-	"2T-L": { "game_type": "2_Teams", "arena_size": 12000.0, "food_per_player": 12000, "bots_per_player": 40, "bot_classes": ["Pawn"] } # Large game 2 teams
+	"FFA-L": { "game_type": "FFA", "arena_size": 12000.0, "food_per_player": 12000, "bots_per_player": 40, "bot_classes": ["Pawn"], "npc_points": true}, # Large game FFA
+	"2T-L": { "game_type": "2_Teams", "arena_size": 12000.0, "food_per_player": 12000, "bots_per_player": 40, "bot_classes": ["Pawn"], "npc_points": true} # Large game 2 teams
 }
 
 var leaderboard_timer: float = 0.0
@@ -42,6 +42,7 @@ var max_food: int = 0
 
 var bots_per_player: int = 2
 var max_bots: int = 0
+var npc_gains_points: bool = true
 var bot_spawn_classes: Array = ["Pawn", "Pawn_I"]
 
 var game_type = "2_Teams"
@@ -71,12 +72,13 @@ func _apply_preset_or_custom() -> void:
 		food_per_player  = preset["food_per_player"]
 		bots_per_player  = preset["bots_per_player"]
 		bot_spawn_classes = preset["bot_classes"]
+		npc_gains_points = preset["npc_points"]
 		print(str(food_per_player))
 		return
 
 	# Otherwise expect: game_type, arena_size, food_per_player, bots_per_player
-	if parts.size() != 4:
-		printerr("Preset input must be a preset number or 4 comma-separated values.")
+	if parts.size() != 5:
+		printerr("Preset input must be a preset number or 5 comma-separated values.")
 		return
 
 	game_type       = parts[0].strip_edges()
@@ -84,6 +86,7 @@ func _apply_preset_or_custom() -> void:
 	food_per_player = int(parts[2].strip_edges())
 	bots_per_player = int(parts[3].strip_edges())
 	bot_spawn_classes = Array(parts[4].strip_edges())
+	npc_gains_points = bool(parts[5].strip_edges())
 
 # Handles the countdown timer and smoothly pans the spectator camera to the killer.
 func _process(delta: float) -> void:
@@ -231,7 +234,7 @@ func setup_upnp() -> void:
 
 # Attempts to connect to a server IP
 func _on_join_pressed() -> void:
-	var ip_to_join: String = $TitleScreen/InputIP.text
+	var ip_to_join: String = $TitleScreen/JoinPanel/InputIP.text
 	
 	if ip_to_join == "":
 		ip_to_join = "127.0.0.1"

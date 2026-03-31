@@ -53,7 +53,7 @@ func execute_server_command(command_text: String) -> void:
 
 # 1/spawn food 0,0 Circle
 # 1/spawn ai 0,0 Knight
-# Instantiates either a food entity or an AI pawn at specific coordinates with a defined sub-type or class.
+# Instantiates either a food entity or an NPC pawn at specific coordinates with a defined sub-type or class.
 func _handle_spawn(args: PackedStringArray) -> void:
 	if args.size() < 4:
 		return
@@ -75,10 +75,10 @@ func _handle_spawn(args: PackedStringArray) -> void:
 				food_instance.shape_type = sub_type
 				food_container.add_child(food_instance, true)
 		"ai":
-			print("Trying to spawn AI")
+			print("Trying to spawn NPC")
 			var npc_container: Node = get_tree().current_scene.get_node_or_null("SpawnedNPCs")
 			if is_instance_valid(npc_container):
-				var npc_scene: PackedScene = load("res://Objects/Dynamic/AI/npc.tscn")
+				var npc_scene: PackedScene = load("res://Objects/Dynamic/NPC/npc.tscn")
 				var npc_instance: CharacterBody2D = npc_scene.instantiate() as CharacterBody2D
 				npc_instance.position = spawn_pos
 				npc_instance.current_class = sub_type

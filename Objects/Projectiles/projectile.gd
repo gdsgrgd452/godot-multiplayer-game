@@ -9,15 +9,15 @@ var time_to_live: float = 3.0
 var bullet_knockback: float = 250.0
 
 #Physics layers TODO use these
-const LAYER_AI_PLAYER_AND_FOOD: int = 1
+const LAYER_NPC_PLAYER_AND_FOOD: int = 1
 const LAYER_WORLD_BOUNDARIES: int = 2
 
 # Connects the collision signal on the server
 func _ready() -> void:
 	add_to_group("shield_blockable")
 	
-	collision_layer = LAYER_AI_PLAYER_AND_FOOD # Resides on
-	collision_mask = LAYER_AI_PLAYER_AND_FOOD | LAYER_WORLD_BOUNDARIES # Collides with
+	collision_layer = LAYER_NPC_PLAYER_AND_FOOD # Resides on
+	collision_mask = LAYER_NPC_PLAYER_AND_FOOD | LAYER_WORLD_BOUNDARIES # Collides with
 	
 	if multiplayer.is_server():
 		body_entered.connect(_on_body_entered)

@@ -21,7 +21,7 @@ func _hide_all_components() -> void:
 		"PromotionComponent",
 		"ComponentManager",
 		"UIComponent",
-		"AIControllerComponent"
+		"NPCControllerComponent"
 	]
 	
 	for child: Node in components_container.get_children():

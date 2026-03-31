@@ -7,7 +7,7 @@ extends Node2D
 
 @onready var info: Label = $"../InfoLabel"
 
-@onready var ai: Node2D = $"../Components/AIControllerComponent"
+@onready var ai: Node2D = $"../Components/NPCControllerComponent"
 @onready var move_comp = $"../Components/MovementComponent"
 
 func _ready() -> void:

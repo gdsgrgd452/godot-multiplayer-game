@@ -11,6 +11,7 @@ var current_velocity: Vector2 = Vector2.ZERO
 @onready var entity: CharacterBody2D = get_parent().get_parent() as CharacterBody2D
 
 # Updates the intended movement direction based on server-validated client input.
+@rpc("any_peer", "call_remote", "reliable")
 func receive_input(dir: Vector2) -> void:
 	if multiplayer.is_server():
 		if str(multiplayer.get_remote_sender_id()) == entity.name:

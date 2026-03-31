@@ -25,6 +25,12 @@ var current_heal: int = 0
 var dmg_tween: Tween = null
 var heal_tween: Tween = null
 
+var mass_heal_amount: int = 50
+var max_cooldown: float = 5.0
+var current_cooldown: float = 0.0
+var mass_heal_duration: float = 5.0
+var mass_heal_time: float = 0.0
+
 # Sets initial health to max health.
 func _ready() -> void:
 	health_bar = entity.get_node("HealthBar") as ProgressBar
@@ -103,6 +109,14 @@ func _find_attacker_node(id: String) -> Node:
 		if n: return n
 		
 	return null
+
+@rpc("authority", "call_local", "unreliable")
+func request_mass_heal() -> void:
+	var ui_comp: Node = entity.get_node_or_null("UIComponent")
+	if ui_comp and entity.is_in_group("player"):
+		ui_comp.display_message.rpc_id(entity.name.to_int(), "Healing Up!")
+	
+	heal(mass_heal_amount)
 
 # Spawns or updates a floating, vanishing label on all clients to stack health changes dynamically from the base position.
 @rpc("authority", "call_local", "unreliable")

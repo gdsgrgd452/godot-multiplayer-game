@@ -20,7 +20,7 @@ const MAX_DETECTION_DIST: float = 600.0
 
 @onready var entity: CharacterBody2D = get_parent().get_parent() as CharacterBody2D
 @onready var looking_area: Area2D = entity.get_node("LookingArea") as Area2D
-@onready var ai_controller: AIControllerComponent = entity.get_node("Components/AIControllerComponent") as AIControllerComponent
+@onready var ai_controller: NPCControllerComponent = entity.get_node("Components/NPCControllerComponent")
 
 # Initializes the 32-direction arrays for context mapping.
 func _ready() -> void:
@@ -89,7 +89,7 @@ func _compute_context_steering(delta: float) -> void:
 				
 		elif ai_controller.state == "Repositioning":
 			# Slow down as we approach the "Safe Distance" (min_shoot_range)
-			# This prevents the AI from overshooting the retreat
+			# This prevents the NPC from overshooting the retreat
 			var safe_dist = ai_controller.min_shoot_range * 1.1
 			if dist_to_target > safe_dist:
 				target_arrival_mult = 0.0
@@ -130,6 +130,6 @@ func _compute_context_steering(delta: float) -> void:
 		context_dir = context_dir.lerp(chosen_dir.normalized(), delta * 18.0).normalized()
 		looking_area.rotation = context_dir.angle()
 
-# Virtual function maintained for compatibility with AI state transitions.
+# Virtual function maintained for compatibility with NPC state transitions.
 func set_movement_direction(_dir: Vector2) -> void:
 	pass

@@ -20,7 +20,7 @@ signal show_upgrade_menu()
 var total_score: int = 0
 var pending_upgrades: int = 0
 
-var ai_gains_points: bool = false
+@onready var npc_gains_points: bool = get_tree().current_scene.npc_gains_points
 
 # The static increments applied to the multiplier pool upon upgrade selection.
 var upgrade_increments: Dictionary = {
@@ -131,8 +131,8 @@ func request_level_up_math() -> void:
 	if not multiplayer.is_server():
 		return
 		
-	if entity.is_in_group("npc") and not ai_gains_points:
-		print("Blocked AI from gaining points")
+	if entity.is_in_group("npc") and not npc_gains_points: # Blocks NPCs from gaining points
+		print("Blocked NPC from gaining points")
 		return
 		
 	var is_player: bool = entity.is_in_group("player")
@@ -151,8 +151,6 @@ func request_level_up_math() -> void:
 		pending_upgrades += 1
 		points = leftover
 		
-		#print(str(stat_multipliers))
-		
 		if not is_player and entity_level % 3 == 0:
 			var promo: Node = entity.get_node("Components/PromotionComponent")
 			promo.add_pending_promotion(peer_id)
@@ -166,7 +164,7 @@ func request_level_up_math() -> void:
 		
 	if pending_upgrades > 0:
 		if is_player:
-			trigger_upgrade_ui.rpc_id(peer_id)
+			trigger_upgrade_ui.rpc_id(peer_id, pending_upgrades)
 		else:
 			_npc_auto_upgrade()
 
@@ -182,7 +180,7 @@ func _npc_auto_upgrade() -> void:
 			
 	if not available_choices.is_empty():
 		var chosen: String = available_choices.pick_random()
-		#print("Ai upgraded: " + chosen)
+		#print("NPC upgraded: " + chosen)
 		apply_upgrade(chosen)
 	else:
 		printerr("No valid")

@@ -22,7 +22,7 @@ var body_damage: int
 var input_needed: bool = false # An input is needed, block everything until then
 
 #Physics layers TODO use these
-const LAYER_AI_PLAYER_AND_FOOD: int = 1
+const LAYER_NPC_PLAYER_AND_FOOD: int = 1
 const LAYER_WORLD_BOUNDARIES: int = 2
 
 @export var current_class: String = "Holy_Queen":
@@ -49,6 +49,14 @@ const LAYER_WORLD_BOUNDARIES: int = 2
 		if is_node_ready():
 			manager_component.change_first_ability(value)
 
+# Defines the secondary ability slot and its associated tracking variables.
+var second_ability_component: Node
+@export var current_second_ability: String = "None":
+	set(value):
+		current_second_ability = value
+		if is_node_ready():
+			manager_component.change_second_ability(value)
+
 @export var current_shield: String = "None":
 	set(value):
 		current_shield = value
@@ -61,8 +69,8 @@ func _ready() -> void:
 	if is_node_ready():
 		sprite_component._on_promotion_applied(current_class)
 		
-	collision_layer = LAYER_AI_PLAYER_AND_FOOD # Resides on
-	collision_mask = LAYER_AI_PLAYER_AND_FOOD | LAYER_WORLD_BOUNDARIES # Collides with
+	collision_layer = LAYER_NPC_PLAYER_AND_FOOD # Resides on
+	collision_mask = LAYER_NPC_PLAYER_AND_FOOD | LAYER_WORLD_BOUNDARIES # Collides with
 	
 	# Initialises the weapons and class, uses call_deferred to give the MultiplayerSpawner time to sync sub-nodes
 	if multiplayer.is_server() or name == str(multiplayer.get_unique_id()):
@@ -168,6 +176,8 @@ func check_first_ability_input() -> void:
 				first_ability_component.request_teleport_area.rpc_id(1, get_global_mouse_position())
 			"WOF":
 				first_ability_component.request_wof.rpc_id(1, get_global_mouse_position())
+			"Heal":
+				health_component.request_mass_heal.rpc_id(1)
 
 # Gets the second input for the wall of fire
 func check_second_input_wof() -> void:

@@ -1,5 +1,5 @@
 extends Node2D
-class_name AIControllerComponent
+class_name NPCControllerComponent
 
 @export var give_up_attack_time: float = 30.0 # For attacking
 @onready var npc: CharacterBody2D = get_parent().get_parent() as CharacterBody2D
@@ -31,7 +31,7 @@ var wander_radius: float = 1000.0
 
 #Combat
 @onready var max_shoot_range: float = detection_area.get_node("DetectionHitbox").shape.radius * 0.9 * npc.global_scale.x # They can shoot nearly as far as they can see
-@onready var min_shoot_range: float = max_shoot_range * 0.4
+@onready var min_shoot_range: float = max_shoot_range * 0.2
 @onready var melee_range: float = 280.0 * npc.global_scale.x
 var current_target: Node2D = null
 var move_target:Vector2 = Vector2.ZERO  # The position to re-position to
@@ -65,7 +65,7 @@ func _ready() -> void:
 	inp_delay_timer = inp_delay
 
 
-# Orchestrates the AI decision-making loop, prioritizing flee persistence and combat state transitions.
+# Orchestrates the NPC decision-making loop, prioritizing flee persistence and combat state transitions.
 func _physics_process(delta: float) -> void:
 	if not multiplayer.is_server():
 		return
@@ -81,8 +81,6 @@ func _physics_process(delta: float) -> void:
 	my_score = TargetingUtils.get_entity_score(npc)
 	threat = _get_dangerous_threat() # Gets the most dangerous threat 
 
-
-	
 	# Always try to clear blacklist. 
 	_clear_blacklist(delta)
 	
@@ -119,7 +117,7 @@ func _spawn_towers():
 	var spawn_comp: SpawnerComponent = npc.get("first_ability_component")
 	if is_instance_valid(spawn_comp) and spawn_comp.current_cooldown <= 0.0:
 		spawn_comp.request_spawn.rpc(npc.global_position)
-		#print("AI spawned tower")
+		#print("NPC spawned tower")
 		return true
 	return false
 
@@ -306,18 +304,24 @@ func _process_combat_state(target: Node2D, delta: float) -> bool:
 	
 	var active_melee: MeleeWeaponComponent = npc.get("melee_w_component")
 	var active_ranged: RangedWeaponComponent = npc.get("ranged_w_component")
-	#print("Distance from target: " + str(dist) + " Min " + str(min_shoot_range) + " Max " + str(max_shoot_range))
-	#print(" In range: "  + str(dist <= max_shoot_range) + " In Reposition Range: " + str(dist < min_shoot_range * 0.95))
-	if is_instance_valid(active_melee) and dist <= melee_range:
+
+	# Logic for melee attacks: Stop and swing if in range
+	if is_instance_valid(active_melee):
+		if dist <= melee_range: 
+			state = "Melee_Attack"
+			move_comp.set_movement_direction(Vector2.ZERO)
+			_action_melee(active_melee, target)
+			return true
 		
-		_action_melee(active_melee, target)
+		# If melee only, we must continue chasing
 		if not is_instance_valid(active_ranged):
+			state = "Chasing"
 			_move_towards(npc.global_position, target.global_position)
+			move_comp.set_movement_direction(npc.global_position.direction_to(target.global_position))
 			return true
 	
 	if is_instance_valid(active_ranged):
-		
-		
+		# Buffer zones to prevent jittering during repositioning
 		var reposition_threshold = min_shoot_range * 0.95
 		
 		if dist <= max_shoot_range:
@@ -329,23 +333,22 @@ func _process_combat_state(target: Node2D, delta: float) -> bool:
 			return true
 		elif dist > max_shoot_range:
 			state = "Chasing"
-			return _move_towards(npc.global_position, target.global_position)
+			_move_towards(npc.global_position, target.global_position)
+			move_comp.set_movement_direction(npc.global_position.direction_to(target.global_position))
+			return true
 		else:
+			# Valid range for shooting: Stop moving
 			state = "Ranged_Attack"
 			move_comp.set_movement_direction(Vector2.ZERO)
 			return true
 
-	if is_instance_valid(active_melee):
-		state = "Chasing"
-		return _move_towards(npc.global_position, target.global_position)
-			
 	return false
 
 # Handles chasing 
 func _update_chase_timers(delta: float, dist: float) -> void:
 	state = "Chasing"
 	
-	# Reset the timer if the AI is getting closer, otherwise decrement
+	# Reset the timer if the NPC is getting closer, otherwise decrement
 	if dist < last_dist_to_target:
 		target_out_of_range_timer = give_up_chase_time
 	elif not current_target.is_in_group("food"):
@@ -381,6 +384,7 @@ func _action_reposition(from_pos: Vector2):
 	var move_dir: Vector2 = from_pos.direction_to(npc.global_position)
 	var probe_pos = npc.global_position + (move_dir * 50.0)
 	
+	# Clamp the flee target within map boundaries to prevent logic loops at map edges.
 	if not AbilityUtils.is_position_within_map(get_tree().current_scene, probe_pos):
 		move_dir = Vector2(-move_dir.y, move_dir.x)
 	
@@ -413,12 +417,11 @@ func _get_valid_wander_pos() -> Vector2:
 	return npc.global_position
 
 # ACTION
-# Updates the NPC's movement direction based on the high-level AI state and context-aware steering.
+# Updates the NPC's movement direction based on the high-level NPC state and context-aware steering.
 func _move_towards(pos: Vector2, t_pos: Vector2) -> bool:
 	var dist: float = pos.distance_to(t_pos)
 	var arrival_threshold: float = 120.0
 	var min_speed_ratio: float = 0.2
-	print("Dist: " + str(dist))
 	if state == "Chasing" or state == "Melee_Attack":
 		move_comp.speed_limit_multiplier = clamp(dist / arrival_threshold, min_speed_ratio, 1.0)
 	else:
@@ -435,6 +438,10 @@ func get_desired_direction() -> Vector2:
 	if state == "Repositioning" and is_instance_valid(current_target):
 		return current_target.global_position.direction_to(npc.global_position)
 	
+	# Stop steering rays if we are currently in an attack state to stand ground
+	if state in ["Ranged_Attack", "Melee_Attack"]:
+		return Vector2.ZERO
+
 	# Moving towards a target
 	if is_instance_valid(current_target):
 		return global_position.direction_to(current_target.global_position)

@@ -51,7 +51,7 @@ static func _find_closest_in_array(origin: Vector2, targets: Array[Node2D]) -> N
 			
 	return closest
 
-# Returns a priority integer based on node groups to assist AI in target selection.
+# Returns a priority integer based on node groups to assist NPC in target selection.
 static func get_priority(body: Node2D) -> int:
 	if not is_instance_valid(body):
 		return 0
