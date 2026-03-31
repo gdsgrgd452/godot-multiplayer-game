@@ -55,6 +55,10 @@ const LAYER_WORLD_BOUNDARIES: int = 2
 func _ready() -> void:
 	add_to_group("npc")
 	
+	print("Peer ", multiplayer.get_unique_id(), " NPC Path: ", get_path())
+	if not has_node("MultiplayerSynchronizer"):
+		printerr("Peer ", multiplayer.get_unique_id(), " missing Synchronizer on ", name)
+		
 	if is_node_ready():
 		sprite_component._on_promotion_applied(current_class)
 	

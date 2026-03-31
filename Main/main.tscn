@@ -512,7 +512,7 @@ spawn_path = NodePath("../SpawnedTraps")
 script = ExtResource("10_qac2q")
 
 [node name="NPCSpawner" type="MultiplayerSpawner" parent="." unique_id=1025014070]
-_spawnable_scenes = PackedStringArray("uid://c7cu6gk13wi33")
+_spawnable_scenes = PackedStringArray("res://Objects/Dynamic/AI/npc.tscn")
 spawn_path = NodePath("../SpawnedNPCs")
 
 [node name="SpectatorCamera" type="Camera2D" parent="." unique_id=1223713430]

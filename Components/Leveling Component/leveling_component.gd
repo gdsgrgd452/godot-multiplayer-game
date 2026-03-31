@@ -206,22 +206,20 @@ func apply_upgrade(button_info: String) -> void:
 		
 		var ui_comp = entity.get_node_or_null("UIComponent")
 
-		# If the stat is maxed
 		if promo.is_stat_maxed(stat_name):
 			printerr("Trying to upgrade manual but maxed: " + stat_name)
 			pending_upgrades += 1
-			trigger_upgrade_ui.rpc_id(multiplayer.get_remote_sender_id()) # Re show the upgrade buttons
+			trigger_upgrade_ui.rpc_id(multiplayer.get_remote_sender_id(), pending_upgrades) # Re show the stat - this shouldnt happen
 			
 			if entity.is_in_group("player") and ui_comp:
 				ui_comp.display_message.rpc_id(entity.name.to_int(), "ERROR MAX: " + stat_name)
 			
 		if entity.is_in_group("player"):
 			if pending_upgrades > 0: 
-				trigger_upgrade_ui.rpc_id(multiplayer.get_remote_sender_id())  # Re show the upgrade buttons
+				trigger_upgrade_ui.rpc_id(multiplayer.get_remote_sender_id(), pending_upgrades)
 
 			if ui_comp:
 				ui_comp.display_message.rpc_id(entity.name.to_int(), "Upgraded: " + stat_name)
-
 # Spawns or updates a floating, vanishing label on all clients to stack level changes dynamically from the base position.
 @rpc("authority", "call_local", "unreliable")
 func spawn_floating_text(amount: int) -> void:
@@ -250,8 +248,8 @@ func spawn_floating_text(amount: int) -> void:
 
 # Commands the local client to open the upgrade selection interface via signal.
 @rpc("authority", "call_local", "reliable")
-func trigger_upgrade_ui() -> void:
-	show_upgrade_menu.emit()
+func trigger_upgrade_ui(upgrade_count: int) -> void:
+	show_upgrade_menu.emit(upgrade_count)
 
 # Commands the client to update the level bar
 @rpc("authority", "call_local", "reliable")

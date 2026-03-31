@@ -48,28 +48,25 @@ func toggle_external_ui(is_hidden: bool) -> void:
 	print("This needs checking: " + str(health_bar.visible))
 
 # Populates the upgrade UI with valid random stat choices based on equipped capabilities.
-func _show_upgrade_menu() -> void:
-	if leveling_component.pending_upgrades < 1:
+func _show_upgrade_menu(upgrade_count: int) -> void:
+	if upgrade_count < 1:
 		printerr("Called to show upgrade menu without an upgrade")
 		return
 	
-	# Hides all (Incl "Upgrade")
 	var ui_children: Array[Node] = upgrade_UI.get_children()
 	for child: Node in ui_children: 
 		child.hide()
 	
 	var curr_class: String = entity.current_class
 	var valid_stats_dict: Dictionary = promotion_component.class_base_stats[curr_class] # The base stats
-	var valid_stats: Array = valid_stats_dict.keys() # The stats the class has
-	#print("Valid stats for your class: " + str(valid_stats) + "\n")
-	valid_stats = valid_stats.filter(func(stat): return not promotion_component.is_stat_maxed(stat)) # Remove any stats that are already maxed
-	#print("Valid stats (Not max) for your class: " + str(valid_stats)) 
+	var valid_stats: Array = valid_stats_dict.keys()
+	valid_stats = valid_stats.filter(func(stat: String) -> bool: return not promotion_component.is_stat_maxed(stat)) # Stats that arent maxed
 
 	if valid_stats.size() <= 0:
 		upgrade_UI.hide()
 		return
 	
-	var buttons: Array[Node] = ui_children.filter(func(b): return b is Button)  # Removes the label
+	var buttons: Array[Node] = ui_children.filter(func(b: Node) -> bool: return b is Button)
 
 	valid_stats.shuffle()
 
@@ -83,16 +80,13 @@ func _show_upgrade_menu() -> void:
 		if not valid_stats_dict.keys().has(stat):
 			printerr("Not found " + stat + " In " + curr_class )
 		
-		var curr_class_stat_base = valid_stats_dict[stat]
-		if not promotion_component.max_stats.has(stat):
-			printerr("Stat not in max stats: " + str(promotion_component.max_stats))
-
-		var stat_max = promotion_component.max_stats[stat]
+		var curr_class_stat_base: float = valid_stats_dict[stat]
+		var stat_max: float = promotion_component.max_stats[stat]
 		
-		buttons[i].update_progress_bar((curr_class_stat_base/stat_max)*100)
+		buttons[i].update_progress_bar((curr_class_stat_base / stat_max) * 100)
 		buttons[i].show()
 	
-	ui_children[0].show() # Shows "Upgrades"
+	ui_children[0].show()
 	upgrade_UI.show()
 
 # Populates the promotion UI with the available class types
@@ -126,7 +120,7 @@ func update_leaderboard_ui(entries: Array) -> void:
 	
 	for i: int in range(entries.size()):
 		var p_data: Dictionary = entries[i]
-		var entry_text = str(i + 1) + ". " + p_data["id"].left(7) + " - Score: " + str(p_data["score"]) + " - T: " + str(p_data["team_id"])
+		var entry_text = str(i + 1) + ". " + p_data["id"] + " - Score: " + str(p_data["score"]) + " - T: " + str(p_data["team_id"])
 		
 		if lb_entry_scene:
 			var entry = lb_entry_scene.instantiate()

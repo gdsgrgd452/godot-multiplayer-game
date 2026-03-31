@@ -25,7 +25,7 @@ var input_needed: bool = false # An input is needed, block everything until then
 const LAYER_NPC_PLAYER_AND_FOOD: int = 1
 const LAYER_WORLD_BOUNDARIES: int = 2
 
-@export var current_class: String = "Holy_Queen":
+@export var current_class: String = "Mini_Rook":
 	set(value):
 		current_class = value
 		if is_node_ready():

@@ -4,10 +4,10 @@
 [ext_resource type="PackedScene" uid="uid://5mf4ol8pweaw" path="res://Components/Sprite Component/sprite_component.tscn" id="1_ge44a"]
 [ext_resource type="Script" uid="uid://d04412dn2ik0y" path="res://Objects/Dynamic/NPC/npcui.gd" id="2_eflwn"]
 [ext_resource type="PackedScene" uid="uid://bah68f313cuc3" path="res://Components/Health Component/health_component.tscn" id="4_7k8bs"]
-[ext_resource type="Script" uid="uid://bihqjl51yapha" path="res://Components/Movement Component/ai_movement.gd" id="4_l1orh"]
+[ext_resource type="Script" uid="uid://bihqjl51yapha" path="res://Components/Movement Component/npc_movement.gd" id="4_l1orh"]
 [ext_resource type="PackedScene" uid="uid://drldjkjxrdrg" path="res://Components/Weapon Components/Ranged Weapon Components/Bow Component/bow_component.tscn" id="5_0gikb"]
 [ext_resource type="PackedScene" uid="uid://b0tv68ilswjsh" path="res://UI/Bars/Health Bar/health_bar.tscn" id="6_bl8rq"]
-[ext_resource type="Script" uid="uid://mcmoxtd5u8rq" path="res://Objects/Dynamic/NPC/ai_controller_component.gd" id="6_eflwn"]
+[ext_resource type="Script" uid="uid://mcmoxtd5u8rq" path="res://Objects/Dynamic/NPC/npc_controller_component.gd" id="6_eflwn"]
 [ext_resource type="PackedScene" uid="uid://bcpvgo3r5i7b3" path="res://Components/Weapon Components/Meele Weapon Component/Spear Component/spear_component.tscn" id="7_ijq6w"]
 [ext_resource type="Script" uid="uid://drtotaaepbr3t" path="res://Components/Promotion Component/promotion_component.gd" id="8_7k8bs"]
 [ext_resource type="Script" uid="uid://bcp4tn61yaump" path="res://Components/Leveling Component/leveling_component.gd" id="9_0gikb"]
@@ -34,7 +34,7 @@ radius = 600.0
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_c7qqn"]
 properties/0/path = NodePath(".:position")
 properties/0/spawn = true
-properties/0/replication_mode = 1
+properties/0/replication_mode = 2
 properties/1/path = NodePath(".:team_id")
 properties/1/spawn = true
 properties/1/replication_mode = 2
@@ -55,7 +55,7 @@ properties/6/spawn = true
 properties/6/replication_mode = 2
 properties/7/path = NodePath("Components/HealthComponent:health")
 properties/7/spawn = true
-properties/7/replication_mode = 1
+properties/7/replication_mode = 2
 properties/8/path = NodePath("Components/HealthComponent:max_health")
 properties/8/spawn = true
 properties/8/replication_mode = 2
@@ -64,13 +64,13 @@ properties/9/spawn = true
 properties/9/replication_mode = 2
 properties/10/path = NodePath(".:knockback")
 properties/10/spawn = true
-properties/10/replication_mode = 1
+properties/10/replication_mode = 2
 properties/11/path = NodePath("Components/HealthComponent:regen_amount")
 properties/11/spawn = true
 properties/11/replication_mode = 2
 properties/12/path = NodePath("Components/StealthComponent:current_cooldown")
 properties/12/spawn = true
-properties/12/replication_mode = 1
+properties/12/replication_mode = 2
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_xfw1d"]
 bg_color = Color(0.6, 0.6, 0.9607843, 0.6)

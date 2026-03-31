@@ -20,7 +20,7 @@ const MAX_DETECTION_DIST: float = 600.0
 
 @onready var entity: CharacterBody2D = get_parent().get_parent() as CharacterBody2D
 @onready var looking_area: Area2D = entity.get_node("LookingArea") as Area2D
-@onready var ai_controller: NPCControllerComponent = entity.get_node("Components/NPCControllerComponent")
+@onready var npc_controller: NPCControllerComponent = entity.get_node("Components/NPCControllerComponent")
 
 # Initializes the 32-direction arrays for context mapping.
 func _ready() -> void:
@@ -55,7 +55,7 @@ func get_movement_velocity(delta: float) -> Vector2:
 
 # Evaluates steering maps and applies tactical deceleration while permitting full-speed repositioning and fleeing.
 func _compute_context_steering(delta: float) -> void:
-	var desired_dir: Vector2 = ai_controller.get_desired_direction()
+	var desired_dir: Vector2 = npc_controller.get_desired_direction()
 	var obstacles: Array[Node2D] = looking_area.get_overlapping_bodies()
 	
 	var avoidance_speed_mult: float = 1.0
@@ -64,9 +64,9 @@ func _compute_context_steering(delta: float) -> void:
 	# Determine stopping distance
 	var stop_threshold: float = 0.0
 	if is_instance_valid(entity.get("melee_w_component")):
-		stop_threshold = ai_controller.melee_range * 0.75
+		stop_threshold = npc_controller.melee_range * 0.75
 	elif is_instance_valid(entity.get("ranged_w_component")):
-		stop_threshold = ai_controller.min_shoot_range
+		stop_threshold = npc_controller.min_shoot_range
 	else:
 		stop_threshold = 60.0 
 	
@@ -76,21 +76,21 @@ func _compute_context_steering(delta: float) -> void:
 		danger[i] = 0.0
 
 	# Scales movement speed based on proximity to the tactical stop threshold, but only when pursuing a target.
-	if is_instance_valid(ai_controller.current_target):
-		var dist_to_target: float = entity.global_position.distance_to(ai_controller.current_target.global_position)
+	if is_instance_valid(npc_controller.current_target):
+		var dist_to_target: float = entity.global_position.distance_to(npc_controller.current_target.global_position)
 		
 		# Deceleration logic for both moving TOWARD and moving AWAY
-		if ai_controller.state in ["Chasing", "Wandering", "Melee_Attack"]:
+		if npc_controller.state in ["Chasing", "Wandering", "Melee_Attack"]:
 			if dist_to_target < stop_threshold:
 				target_arrival_mult = 0.0
 				for i: int in range(NUM_RAYS): interest[i] = 0.0
 			else:
 				target_arrival_mult = clamp((dist_to_target - stop_threshold) / 150.0, 0.0, 1.0)
 				
-		elif ai_controller.state == "Repositioning":
+		elif npc_controller.state == "Repositioning":
 			# Slow down as we approach the "Safe Distance" (min_shoot_range)
 			# This prevents the NPC from overshooting the retreat
-			var safe_dist = ai_controller.min_shoot_range * 1.1
+			var safe_dist = npc_controller.min_shoot_range * 1.1
 			if dist_to_target > safe_dist:
 				target_arrival_mult = 0.0
 			else:

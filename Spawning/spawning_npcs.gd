@@ -21,7 +21,8 @@ func _handle_npc_spawning(_delta: float) -> void:
 func _spawn_npc(spawn_pos: Vector2) -> void:
 	var npc_scene: PackedScene = load("res://Objects/Dynamic/NPC/npc.tscn")
 	var npc_instance: CharacterBody2D = npc_scene.instantiate() as CharacterBody2D
-	npc_instance.name = NPC_NAMES.pick_random() + "-" + str(Time.get_ticks_msec()) + "_" + str(randi())
+	npc_instance.name = NPC_NAMES.pick_random() + "-" + str(randi_range(1, 999))
+	print(str(npc_instance.name))
 	npc_instance.global_position = spawn_pos
 	
 	match owner.game_type:

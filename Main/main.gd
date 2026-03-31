@@ -102,7 +102,6 @@ func _process(delta: float) -> void:
 		if respawn_timer <= 0.0:
 			respawn_label.hide()
 			respawn_button.show()
-			spectate_target = null # Stop tracking the killer so they can spawn in peace
 			
 	# Server handles leaderboard calculation
 	if multiplayer.is_server():
@@ -274,6 +273,7 @@ func start_spectating(killer_id: String) -> void:
 
 # Hides the button locally and asks the server for a new body.
 func _on_respawn_pressed() -> void:
+	spectate_target = null
 	respawn_button.hide()
 	$RespawnLayer.hide()
 	request_respawn.rpc_id(1)

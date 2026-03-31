@@ -52,7 +52,7 @@ func execute_server_command(command_text: String) -> void:
 			_handle_levels(args)
 
 # 1/spawn food 0,0 Circle
-# 1/spawn ai 0,0 Knight
+# 1/spawn npc 0,0 Knight
 # Instantiates either a food entity or an NPC pawn at specific coordinates with a defined sub-type or class.
 func _handle_spawn(args: PackedStringArray) -> void:
 	if args.size() < 4:
@@ -74,7 +74,7 @@ func _handle_spawn(args: PackedStringArray) -> void:
 				food_instance.position = spawn_pos
 				food_instance.shape_type = sub_type
 				food_container.add_child(food_instance, true)
-		"ai":
+		"npc":
 			print("Trying to spawn NPC")
 			var npc_container: Node = get_tree().current_scene.get_node_or_null("SpawnedNPCs")
 			if is_instance_valid(npc_container):

@@ -7,7 +7,7 @@ extends Node2D
 
 @onready var info: Label = $"../InfoLabel"
 
-@onready var ai: Node2D = $"../Components/NPCControllerComponent"
+@onready var npc: Node2D = $"../Components/NPCControllerComponent"
 @onready var move_comp = $"../Components/MovementComponent"
 
 func _ready() -> void:
@@ -17,9 +17,9 @@ func _process(_delta: float) -> void:
 	show_debug_info()
 
 func show_debug_info() -> void:
-	info.text = ai.state + "  B:" + str(snapped(ai.boldness_factor,0.01)) + "  K:" + str(snapped(ai.kindness_factor,0.01)) + "  S:" + str(ai.my_score)
-	info.text += "  G_C:" + str(snapped(ai.give_up_chase_time,0.01)) + "  T:" + str(entity.team_id) + " H: " + str(snapped(ai.health_scale,0.01))
-	info.text += "  RT: " + str(snapped(ai.inp_delay,0.01)) + " ST: " + str(move_comp.context_dir)
+	info.text = npc.state + "  B:" + str(snapped(npc.boldness_factor,0.01)) + "  K:" + str(snapped(npc.kindness_factor,0.01)) + "  S:" + str(npc.my_score)
+	info.text += "  G_C:" + str(snapped(npc.give_up_chase_time,0.01)) + "  T:" + str(entity.team_id) + " H: " + str(snapped(npc.health_scale,0.01))
+	info.text += "  RT: " + str(snapped(npc.inp_delay,0.01)) + " ST: " + str(move_comp.context_dir)
 	
 # Toggles the visibility of identifying UI elements specifically for other players
 func toggle_external_ui(is_hidden: bool) -> void:
