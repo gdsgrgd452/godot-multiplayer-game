@@ -70,52 +70,61 @@ var upgrade_increments: Dictionary = {
 	"shield_health": 1.2
 }
 
-# The cumulative multipliers tracked continuously throughout the player's life.
-var stat_multipliers: Dictionary = {
-	"move_speed": 1.0,
-	"body_damage": 1.0,
+# How levelled a stat is
+var stat_levels: Dictionary = {
+	"move_speed": 1,
+	"body_damage": 1,
 	
 	#Health & Regen
-	"max_health": 1.0,
-	"regen_speed": 1.0,
-	"regen_amount": 1.0,
+	"max_health": 1,
+	"regen_speed": 1,
+	"regen_amount": 1,
 	
 	#Ranged
-	"projectile_damage": 1.0,
-	"projectile_speed": 1.0,
-	"reload_speed": 0.9,
-	"accuracy": 1.0,
+	"projectile_damage": 1,
+	"projectile_speed": 1,
+	"reload_speed": 1,
+	"accuracy": 1,
 	
 	#Melee
-	"melee_damage": 1.0,
-	"melee_knockback": 1.0,
-	"melee_cooldown": 1.0,
+	"melee_damage": 1,
+	"melee_knockback": 1,
+	"melee_cooldown": 1,
 	
 	#Area
-	"area_damage": 1.0,
-	"area_knockback": 1.0,
-	"area_radius": 1.0,
-	"area_cooldown": 1.0,
+	"area_damage": 1,
+	"area_knockback": 1,
+	"area_radius": 1,
+	"area_cooldown": 1,
 	
 	#Teleport
-	"teleport_cooldown": 1.0,
-	"teleport_range": 1.0,
+	"teleport_cooldown": 1,
+	"teleport_range": 1,
 	
 	#Illusion
-	"illusion_cooldown": 1.0,
-	"illusion_duration": 1.0,
-	"illusions_count": 1.0,
+	"illusion_cooldown": 1,
+	"illusion_duration": 1,
+	"illusions_count": 1,
 
 	#Stealth
-	"stealth_cooldown": 1.0,
-	"stealth_duration": 1.0,
+	"stealth_cooldown": 1,
+	"stealth_duration": 1,
 	
 	#Spawning
-	"spawner_cooldown": 1.0,
-	"max_spawns": 1.0,
-	
+	"spawner_cooldown": 1,
+	"max_spawns": 1,
+
+	#Healing
+	"mass_heal_amount": 1,
+	"healing_cooldown": 1,
+
+	#WOF
+	"max_cooldown": 1,
+	"max_length": 1,
+	"max_damage": 1,
+
 	#Shield
-	"shield_health": 1.0
+	"shield_health": 1
 }
 
 # Grants score and initiates level up verification.
@@ -198,9 +207,10 @@ func apply_upgrade(button_info: String) -> void:
 		
 		var stat_name: String = button_info.split(" ")[0]
 		
-		var increment: float = upgrade_increments.get(stat_name, 1.0)
-		stat_multipliers[stat_name] *= increment
-		
+		print("Stat b4: " + str(stat_levels[stat_name]))
+		stat_levels[stat_name] += 1
+		print("Stat after: " + str(stat_levels[stat_name]))
+
 		var promo: PromotionComponent = entity.get_node("Components/PromotionComponent") as PromotionComponent
 		promo.apply_promotion_stats(entity.get("current_class"))
 		
@@ -220,6 +230,7 @@ func apply_upgrade(button_info: String) -> void:
 
 			if ui_comp:
 				ui_comp.display_message.rpc_id(entity.name.to_int(), "Upgraded: " + stat_name)
+			
 # Spawns or updates a floating, vanishing label on all clients to stack level changes dynamically from the base position.
 @rpc("authority", "call_local", "unreliable")
 func spawn_floating_text(amount: int) -> void:

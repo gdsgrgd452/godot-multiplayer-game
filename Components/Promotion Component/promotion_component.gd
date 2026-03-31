@@ -483,6 +483,7 @@ func change_weapon(class_choice: String) -> void:
 	var new_m: String = "None"
 	var new_r: String = "None"
 	var new_a: String = "None"
+	var new_a_2: String = "None"
 	var new_s: String = "None"
 	
 	match class_choice:
@@ -495,7 +496,7 @@ func change_weapon(class_choice: String) -> void:
 		"Sultans_Knight", "King_Knight":
 			new_m = "Sword"; new_a = "Teleport_Crush"; new_s = "Wooden"
 		"Mini_Rook": 
-			new_r = "Bow"
+			new_r = "Bow"; new_a = "Mass_Heal";
 		"Rook", "Rook_Knight", "King_Rook": 
 			new_r = "Bow"; new_a = "Spawner"
 		"Bishop", "Bishop_Knight", "King_Bishop": 
@@ -503,7 +504,7 @@ func change_weapon(class_choice: String) -> void:
 		"King": 
 			new_m = "Sword"; new_a = "Magic"; new_s = "Wooden"
 		"Sultan": 
-			new_m = "Spear"; new_a = "Spawner"; new_s = "Wooden"
+			new_m = "Spear"; new_a = "Mass_Heal"; new_a_2 = "Spawner"; new_s = "Wooden"
 		"Queen": 
 			new_r = "Fireball_Shooter"; new_a = "Teleport_Crush"; new_s = "Magic"
 		"Jester": 
@@ -516,6 +517,7 @@ func change_weapon(class_choice: String) -> void:
 	entity.set("current_melee_weapon", new_m)
 	entity.set("current_ranged_weapon", new_r)
 	entity.set("current_first_ability", new_a)
+	entity.set("current_second_ability", new_a_2)
 	entity.set("current_shield", new_s)
 
 
@@ -526,7 +528,7 @@ func apply_promotion_stats(class_choice: String) -> void:
 	
 	var base: Dictionary = class_base_stats[class_choice]
 	var level: LevelingComponent = entity.get_node("Components/LevelingComponent") as LevelingComponent
-	var mults: Dictionary = level.stat_multipliers
+	var mults: Dictionary = level.stat_levels
 	
 	var comps: Node = entity.get_node("Components")
 	var h_comp: Node = comps.get_node("HealthComponent")
@@ -534,6 +536,7 @@ func apply_promotion_stats(class_choice: String) -> void:
 	var r_w_comp: Node = entity.get("ranged_w_component")
 	var m_w_comp: Node = entity.get("melee_w_component")
 	var a_comp: Node = entity.get("first_ability_component")
+	var a_2_comp: Node = entity.get("second_ability_component")
 	var s_comp: Node = entity.get("shield_component")
 
 	if m_comp and base.has("move_speed"):
@@ -560,11 +563,13 @@ func apply_promotion_stats(class_choice: String) -> void:
 		if base.has("reload_speed"): r_w_comp.reload_speed = _get_capped_value("reload_speed", base["reload_speed"] * mults["reload_speed"], max_stats["reload_speed"], r_w_comp.reload_speed, true)
 		if base.has("accuracy"): r_w_comp.accuracy = _get_capped_value("accuracy", base["accuracy"] * mults["accuracy"], max_stats["accuracy"], r_w_comp.accuracy)
 	if a_comp:
-		_apply_ability_stats(a_comp, base, mults)
+		_apply_ability_stats("current_first_ability", a_comp, base, mults)
+	if a_2_comp:
+		_apply_ability_stats("current_second_ability", a_2_comp, base, mults)
 
 # Applies ability upgrades
-func _apply_ability_stats(a: Node, b: Dictionary, m: Dictionary) -> void:
-	match entity.get("current_first_ability"):
+func _apply_ability_stats(first_second: String, a: Node, b: Dictionary, m: Dictionary) -> void:
+	match entity.get(first_second):
 		"Magic":
 			if b.has("area_damage"): a.area_damage = int(_get_capped_value("area_damage", b["area_damage"] * m["area_damage"], max_stats["area_damage"], a.area_damage))
 			if b.has("area_radius"): a.max_radius = _get_capped_value("area_radius", b["area_radius"] * m["area_radius"], max_stats["area_radius"], a.max_radius)
@@ -586,14 +591,12 @@ func _apply_ability_stats(a: Node, b: Dictionary, m: Dictionary) -> void:
 		"Spawner":
 			if b.has("spawner_cooldown"): a.max_cooldown = _get_capped_value("spawner_cooldown", b["spawner_cooldown"] * m["spawner_cooldown"], max_stats["spawner_cooldown"], a.max_cooldown, true)
 			if b.has("max_spawns"): a.max_spawns = int(_get_capped_value("max_spawns", b["max_spawns"] * m["max_spawns"], max_stats["max_spawns"], a.max_spawns))
+		"Spawner":
+			printerr("Add this")
 
-# Checks if a specific stat has reached its defined maximum or minimum allowable value.
 func is_stat_maxed(stat_name: String) -> bool:
-	if not class_base_stats.has(entity.get("current_class")): return false
-	var level: LevelingComponent = entity.get_node("Components/LevelingComponent")
-	var current: float = float(class_base_stats[entity.get("current_class")].get(stat_name, 0.0)) * float(level.stat_multipliers.get(stat_name, 1.0))
-	var cap: float = max_stats.get(stat_name, INF)
-	return current <= cap if (stat_name.contains("cooldown") or stat_name.contains("reload") or stat_name == "regen_speed") else current >= cap
+	var level_comp: LevelingComponent = entity.get_node("Components/LevelingComponent")
+	return level_comp.maxed_stats_list.contains(stat_name)
 
 # Calculates and logs stat changes, returning the clamped result.
 func _get_capped_value(s_name: String, n_val: float, c_val: float, o_val: float, is_cd: bool = false) -> float:

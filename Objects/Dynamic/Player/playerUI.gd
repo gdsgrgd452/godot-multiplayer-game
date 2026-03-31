@@ -11,14 +11,17 @@ extends Node2D
 @onready var melee_info_label: Label = $"../HUD/PromotionInfoLabel/MeleeWeapon"
 @onready var ranged_info_label: Label = $"../HUD/PromotionInfoLabel/RangedWeapon"
 @onready var ability_info_label: Label = $"../HUD/PromotionInfoLabel/Ability"
+@onready var second_ability_info_label: Label = $"../HUD/PromotionInfoLabel/Ability2"
 
 var melee_w_component: Node
 var ranged_w_component: Node
 var area_w_component: Node
 var first_ability_component: Node
+var second_ability_component: Node
 var shield_component: Node
 
 var current_first_ability: String
+var current_second_ability: String
 
 @onready var health_bar: ProgressBar = $"../HealthBar"
 
@@ -74,16 +77,15 @@ func _show_upgrade_menu(upgrade_count: int) -> void:
 
 	for i: int in button_w_valid_count:
 		var stat: String = valid_stats[i]
-		buttons[i].stat_id = stat + " X" + str(snapped(leveling_component.stat_multipliers.get(stat), 0.01))
+		buttons[i].stat_id = stat + " X" + str(snapped(leveling_component.stat_levels.get(stat), 0.01))
 		buttons[i].refresh_text()
 		
 		if not valid_stats_dict.keys().has(stat):
 			printerr("Not found " + stat + " In " + curr_class )
 		
 		var curr_class_stat_base: float = valid_stats_dict[stat]
-		var stat_max: float = promotion_component.max_stats[stat]
 		
-		buttons[i].update_progress_bar((curr_class_stat_base / stat_max) * 100)
+		buttons[i].update_progress_bar((curr_class_stat_base / 10))
 		buttons[i].show()
 	
 	ui_children[0].show()
@@ -287,11 +289,29 @@ func show_debug_info() -> void:
 			"WOF":
 				var wof_cd_text = "WOF Cooldown: " + str(first_ability_component.max_cooldown) + "\n"
 				var wof_time_text: String = "Til next: " + str(snapped(first_ability_component.current_cooldown, 0.1)) + "\n"
-				var wof_start_text = "WOF Start: " + str(first_ability_component.start_pos) + "\n\n"
-				stats_label_two.text = wof_cd_text + wof_time_text + wof_start_text
+				var wof_length_text: String = "Max Length: " + str(snapped(first_ability_component.max_length, 0.1)) + "\n"
+				var wof_damage_text = "WOF Max Damage: " + str(first_ability_component.max_damage) + "\n\n"
+				stats_label_two.text = wof_cd_text + wof_time_text + wof_length_text + wof_damage_text
+			"Mass_Heal":
+				var heal_cd_text = "Heal Cooldown: " + str(first_ability_component.max_cooldown) + "\n"
+				var heal_time_text: String = "Til next: " + str(snapped(first_ability_component.current_cooldown, 0.1)) + "\n"
+				var heal_amount_text = "Heal Amount: " + str(first_ability_component.mass_heal_amount) + "\n\n"
+				stats_label_two.text = heal_cd_text + heal_time_text + heal_amount_text
 	else:
 		var no_ability_text: String = "No First Ability" + "\n" + "\n"
 		stats_label_two.text = no_ability_text
+	
+	if second_ability_component:
+		match current_second_ability:
+			"Spawner":
+				var spawner_cd_text: String = "Spawner Cooldown: " + str(second_ability_component.max_cooldown) + "\n"
+				var spawner_time_text: String = "Til next: " + str(snapped(second_ability_component.current_cooldown, 0.1)) + "\n"
+				var spawner_spawns_text: String = "Current spawns: " + str(second_ability_component.current_spawns) + "\n"
+				var spawner_max_spawns_text: String = "Max spawns: " + str(second_ability_component.max_spawns) + "\n\n"
+				stats_label_two.text += spawner_cd_text + spawner_time_text + spawner_spawns_text + spawner_max_spawns_text
+	else:
+		var no_ability_text: String = "No First Ability" + "\n" + "\n"
+		stats_label_two.text += no_ability_text
 		
 	# SHIELD
 	if shield_component:

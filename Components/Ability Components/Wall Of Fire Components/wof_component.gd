@@ -9,6 +9,7 @@ var current_cooldown: float = 0.0
 var start_pos: Vector2
 var end_pos: Vector2
 var max_length: float = 400
+var max_damage: int = 10
 
 var waiting_for_end: bool = false
 
@@ -57,6 +58,7 @@ func request_second_pos(input_pos: Vector2) -> void:
 			var new_wall: Node2D = trap_manager.spawn_wof(start_pos, end_pos, entity.name, entity.team_id)
 			if new_wall:
 				active_walls.append(new_wall)
+				new_wall.base_contact_damage = max_damage # Sets the max damage here
 
 func _draw() -> void:
 	if waiting_for_end:

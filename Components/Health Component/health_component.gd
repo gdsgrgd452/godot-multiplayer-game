@@ -41,6 +41,9 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	if not multiplayer.is_server():
 		return
+	
+	if current_cooldown > 0.0:
+		current_cooldown -= delta
 
 	# Handles regeneration only when the object is damaged.
 	if healing and health < max_health:
@@ -112,11 +115,12 @@ func _find_attacker_node(id: String) -> Node:
 
 @rpc("authority", "call_local", "unreliable")
 func request_mass_heal() -> void:
-	var ui_comp: Node = entity.get_node_or_null("UIComponent")
-	if ui_comp and entity.is_in_group("player"):
-		ui_comp.display_message.rpc_id(entity.name.to_int(), "Healing Up!")
-	
-	heal(mass_heal_amount)
+	if current_cooldown <= 0.0:
+		var ui_comp: Node = entity.get_node_or_null("UIComponent")
+		if ui_comp and entity.is_in_group("player"):
+			ui_comp.display_message.rpc_id(entity.name.to_int(), "Healing Up!")
+		current_cooldown = max_cooldown
+		heal(mass_heal_amount)
 
 # Spawns or updates a floating, vanishing label on all clients to stack health changes dynamically from the base position.
 @rpc("authority", "call_local", "unreliable")

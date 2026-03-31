@@ -123,6 +123,7 @@ func _physics_process(delta: float) -> void:
 		check_ranged_input()
 		check_melee_input()
 		check_first_ability_input()
+		check_second_ability_input()
 		check_shield_input()
 
 	if multiplayer.is_server():
@@ -147,18 +148,18 @@ func check_player_input() -> void:
 		if not multiplayer.is_server():
 			movement_component.receive_input.rpc_id(1, new_dir)
 
-# Evaluates and triggers continuous shooting input.
+# Triggers a ranged attack
 func check_ranged_input() -> void:
 	if ranged_w_component and Input.is_action_pressed("shoot"):
 		ranged_w_component.shoot(get_global_mouse_position())
 
-# Evaluates discrete input to request a localized melee strike from the server.
+# Triggers a melee strike
 func check_melee_input() -> void:
 	if melee_w_component and Input.is_action_pressed("meele"): # Map "melee" to Spacebar or Right Click in Project Settings
 		var target_pos: Vector2 = get_global_mouse_position()
 		melee_w_component.request_melee_attack.rpc_id(1, target_pos)
 
-# Evaluates input and triggers the appropriate logic based on the current ability type.
+# Triggers the first ability
 func check_first_ability_input() -> void:
 	if first_ability_component and Input.is_action_just_pressed("first_ability"):
 		match current_first_ability:
@@ -176,13 +177,20 @@ func check_first_ability_input() -> void:
 				first_ability_component.request_teleport_area.rpc_id(1, get_global_mouse_position())
 			"WOF":
 				first_ability_component.request_wof.rpc_id(1, get_global_mouse_position())
-			"Heal":
+			"Mass_Heal":
 				health_component.request_mass_heal.rpc_id(1)
 
 # Gets the second input for the wall of fire
 func check_second_input_wof() -> void:
 	if first_ability_component and current_first_ability == "WOF" and Input.is_action_just_pressed("first_ability"):
 		first_ability_component.request_second_pos.rpc_id(1, get_global_mouse_position())
+
+# Triggers the second ability 
+func check_second_ability_input() -> void:
+	if second_ability_component and Input.is_action_just_pressed("second_ability"):
+		match current_second_ability:
+			"Spawner":
+				second_ability_component.request_spawn.rpc_id(1, get_global_mouse_position())
 
 # Evaluates continuous input to request shield activation and deactivation from the server.
 func check_shield_input() -> void:

@@ -289,13 +289,28 @@ lb_entry_scene = ExtResource("8_4ge2x")
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = -45.0
-offset_top = 7.0
-offset_right = -25.0
-offset_bottom = 30.0
+offset_left = -66.0
+offset_top = 11.0
+offset_right = -32.0
+offset_bottom = 34.0
 grow_horizontal = 0
 theme_override_constants/line_spacing = 2
 theme_override_font_sizes/font_size = 13
+text = "Label"
+horizontal_alignment = 2
+
+[node name="StatsLabel2" type="Label" parent="HUD" unique_id=472733984]
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -220.0
+offset_top = 9.0
+offset_right = -178.0
+offset_bottom = 27.0
+grow_horizontal = 0
+theme_override_constants/line_spacing = 2
+theme_override_font_sizes/font_size = 13
+text = "Label2"
 horizontal_alignment = 2
 
 [node name="LevelBar" parent="HUD" unique_id=1244872040 instance=ExtResource("3_hqtel")]
@@ -356,15 +371,6 @@ layout_mode = 2
 [node name="StatButton5" parent="HUD/UpgradeUI" unique_id=1873888271 instance=ExtResource("4_sweqy")]
 layout_mode = 2
 
-[node name="StatsLabel2" type="Label" parent="HUD" unique_id=472733984]
-offset_left = 20.000002
-offset_top = 27.0
-offset_right = 21.000002
-offset_bottom = 44.0
-theme_override_constants/line_spacing = 2
-theme_override_font_sizes/font_size = 13
-horizontal_alignment = 2
-
 [node name="PromotionInfoLabel" type="VBoxContainer" parent="HUD" unique_id=1869259831]
 anchors_preset = 4
 anchor_top = 0.5
@@ -383,6 +389,9 @@ layout_mode = 2
 layout_mode = 2
 
 [node name="Ability" type="Label" parent="HUD/PromotionInfoLabel" unique_id=1753966926]
+layout_mode = 2
+
+[node name="Ability2" type="Label" parent="HUD/PromotionInfoLabel" unique_id=527429442]
 layout_mode = 2
 
 [node name="PromotionUI" type="HBoxContainer" parent="HUD" unique_id=982234864]
@@ -411,13 +420,10 @@ layout_mode = 2
 layout_mode = 2
 
 [node name="LBContainer" type="MarginContainer" parent="HUD" unique_id=1837929343]
-anchors_preset = 4
-anchor_top = 0.5
-anchor_bottom = 0.5
-offset_top = -20.0
-offset_right = 40.0
-offset_bottom = 20.0
-grow_vertical = 2
+offset_left = 5.0
+offset_top = 5.0
+offset_right = 45.0
+offset_bottom = 45.0
 
 [node name="Leaderboard" type="VBoxContainer" parent="HUD/LBContainer" unique_id=423456464]
 layout_mode = 2
@@ -480,6 +486,7 @@ knockback_force = 400.0
 attack_cooldown = 2.0
 
 [node name="MagicAreaWeaponComponent" parent="Components" unique_id=1293441058 instance=ExtResource("17_ws0sy")]
+visible = false
 
 [node name="PromotionComponent" type="Node2D" parent="Components" unique_id=768163417]
 script = ExtResource("19_j1n4j")

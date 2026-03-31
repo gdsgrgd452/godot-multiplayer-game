@@ -453,6 +453,6 @@ func get_desired_direction() -> Vector2:
 
 func _draw() -> void:
 	var active_ranged: Node = npc.get("ranged_w_component")
-	if is_instance_valid(active_ranged):
+	if not is_instance_valid(active_ranged):
 		draw_circle(Vector2.ZERO, max_shoot_range, Color(1.0, 0.0, 0.0, 0.1), false, 10.0)
 		draw_circle(Vector2.ZERO, max_shoot_range, Color(1.0, 0.0, 0.0, 0.1), false, 10.0)

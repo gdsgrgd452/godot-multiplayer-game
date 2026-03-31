@@ -17,9 +17,9 @@ var dead_scores_dict: Dictionary
 const PRESETS: Dictionary = {
 	"Alone": { "game_type": "FFA", "arena_size": 2500.0, "food_per_player": 1500, "bots_per_player": 0, "bot_classes": ["Bishop"], "npc_points": false}, # Alone for testing
 	
-	"1-Bot": { "game_type": "FFA", "arena_size": 2500.0, "food_per_player": 1500, "bots_per_player": 1, "bot_classes": ["Bishop"], "npc_points": false}, # 1 Bot for testing
+	"1-Bot": { "game_type": "FFA", "arena_size": 2500.0, "food_per_player": 1500, "bots_per_player": 1, "bot_classes": ["Jester"], "npc_points": false}, # 1 Bot for testing
 	
-	"1 Bot": { "game_type": "FFA", "arena_size": 2500.0, "food_per_player": 1500, "bots_per_player": 1, "bot_classes": ["Bishop"], "npc_points": false}, # 1 Bot for testing
+	"1 Bot": { "game_type": "FFA", "arena_size": 2500.0, "food_per_player": 1500, "bots_per_player": 1, "bot_classes": ["Jester"], "npc_points": false}, # 1 Bot for testing
 	
 	"2-Bot": { "game_type": "FFA", "arena_size": 2500.0, "food_per_player": 1500, "bots_per_player": 2, "bot_classes": ["Pawn"], "npc_points": false}, # 2 Bots for testing
 	

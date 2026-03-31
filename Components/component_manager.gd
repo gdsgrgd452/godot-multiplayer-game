@@ -114,40 +114,58 @@ func change_ranged_weapon(weapon_type: String) -> void:
 		active_ranged.set_deferred("process_mode", Node.PROCESS_MODE_INHERIT)
 		if is_player_and_UI_valid: ui_comp.ranged_w_component = active_ranged
 
-# Swaps the active ability component and updates UI labels while deferring state changes to avoid physics conflicts.
-func change_first_ability(ability_type: String) -> void:
-	var abilities: Dictionary = {
+# Returns a mapping of ability types to their respective scene components.
+func _get_ability_node_map() -> Dictionary:
+	return {
 		"Magic": components_container.get_node_or_null("MagicAreaWeaponComponent"),
 		"Teleport": components_container.get_node_or_null("TeleportComponent"),
 		"Illusion": components_container.get_node_or_null("IllusionComponent"),
 		"Stealth": components_container.get_node_or_null("StealthComponent"),
 		"Spawner": components_container.get_node_or_null("SpawnerComponent"),
 		"Teleport_Crush": components_container.get_node_or_null("TeleportCrushComponent"),
-		"WOF": components_container.get_node_or_null("WOFComponent")
+		"WOF": components_container.get_node_or_null("WOFComponent"),
+		"Mass_Heal": components_container.get_node_or_null("HealthComponent")
 	}
+
+# Synchronizes the visibility and processing state of all ability components based on current slot assignments.
+func _update_ability_states() -> void:
+	var abilities: Dictionary = _get_ability_node_map()
+	var first_node: Node2D = entity.get("first_ability_component")
+	var second_node: Node2D = entity.get("second_ability_component")
 	
 	for key: String in abilities:
-		if is_instance_valid(abilities[key]):
-			abilities[key].hide()
-			abilities[key].set_deferred("process_mode", Node.PROCESS_MODE_DISABLED)
+		var node: Node2D = abilities[key]
+		if not is_instance_valid(node):
+			continue
 			
+		if node == first_node or node == second_node:
+			node.show()
+			node.set_deferred("process_mode", Node.PROCESS_MODE_INHERIT)
+		else:
+			if node.name == "HealthComponent":
+				continue
+			node.hide()
+			node.set_deferred("process_mode", Node.PROCESS_MODE_DISABLED)
+
+# Swaps the active first ability component and updates associated UI elements.
+func change_first_ability(ability_type: String) -> void:
+	var abilities: Dictionary = _get_ability_node_map()
 	var msg: String = ""
+	
 	if abilities.has(ability_type) and is_instance_valid(abilities[ability_type]):
 		entity.set("first_ability_component", abilities[ability_type])
-		var active_ability: Node2D = entity.get("first_ability_component")
-		active_ability.show()
-		active_ability.set_deferred("process_mode", Node.PROCESS_MODE_INHERIT)
 		if is_player_and_UI_valid: 
-			ui_comp.ability_info_label.text = "Ability: " + ability_type.replace("_", " ")
+			ui_comp.ability_info_label.text = "Ability 1: " + ability_type.replace("_", " ")
 		msg = "First Ability Now: " + ability_type.replace("_", " ")
 	else:
 		entity.set("first_ability_component", null)
 		if is_player_and_UI_valid: ui_comp.ability_info_label.text = "No First Ability"
 		msg = "No First Ability"
 		
-	# Sequence the UI Message
+	_update_ability_states()
+	
 	if is_player_and_UI_valid and msg != "":
-		get_tree().create_timer(1.5).timeout.connect(func():
+		get_tree().create_timer(1.5).timeout.connect(func() -> void:
 			if is_instance_valid(ui_comp):
 				ui_comp.display_message.rpc_id(entity.name.to_int(), msg)
 		)
@@ -155,6 +173,33 @@ func change_first_ability(ability_type: String) -> void:
 	if is_player_and_UI_valid:
 		ui_comp.first_ability_component = entity.get("first_ability_component")
 		ui_comp.current_first_ability = ability_type
+
+# Swaps the active second ability component and updates associated UI elements.
+func change_second_ability(ability_type: String) -> void:
+	var abilities: Dictionary = _get_ability_node_map()
+	var msg: String = ""
+	
+	if abilities.has(ability_type) and is_instance_valid(abilities[ability_type]):
+		entity.set("second_ability_component", abilities[ability_type])
+		if is_player_and_UI_valid: 
+			ui_comp.second_ability_info_label.text = "Ability 2: " + ability_type.replace("_", " ")
+		msg = "Second Ability Now: " + ability_type.replace("_", " ")
+	else:
+		entity.set("second_ability_component", null)
+		if is_player_and_UI_valid: ui_comp.second_ability_info_label.text = "No Second Ability"
+		msg = "No Second Ability"
+		
+	_update_ability_states()
+	
+	if is_player_and_UI_valid and msg != "":
+		get_tree().create_timer(2.0).timeout.connect(func() -> void:
+			if is_instance_valid(ui_comp):
+				ui_comp.display_message.rpc_id(entity.name.to_int(), msg)
+		)
+		
+	if is_player_and_UI_valid:
+		ui_comp.second_ability_component = entity.get("second_ability_component")
+		ui_comp.current_second_ability = ability_type
 
 # Swaps the active shield component and updates the physical state while deferring property assignments.
 func change_shield(shield_type: String) -> void:

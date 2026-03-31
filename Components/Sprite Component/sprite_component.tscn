@@ -7,7 +7,7 @@
 [ext_resource type="Texture2D" uid="uid://b6grref5skx1o" path="res://images/chess-pieces/white-rook4.png" id="5_26bk5"]
 [ext_resource type="Texture2D" uid="uid://b26rvhpfp288a" path="res://images/chess-pieces/white-knight.png" id="6_x7kpl"]
 [ext_resource type="Texture2D" uid="uid://bti2nc5m3le0j" path="res://images/chess-pieces/white-nightrd.png" id="7_ukcgm"]
-[ext_resource type="Texture2D" uid="uid://pljcosvt7t4d" path="res://images/chess-pieces/white-augnf.png" id="8_mccdb"]
+[ext_resource type="Texture2D" uid="uid://c4m8ppfrrf8em" path="res://images/chess-pieces/white-augnf.png" id="8_mccdb"]
 [ext_resource type="Texture2D" uid="uid://cniblbm6wnaui" path="res://images/chess-pieces/white-bishop.png" id="9_rrsxc"]
 [ext_resource type="Texture2D" uid="uid://fb7p2l5bl7vo" path="res://images/chess-pieces/white-rook.png" id="10_byo6g"]
 [ext_resource type="Texture2D" uid="uid://cprl6jr11gq2y" path="res://images/chess-pieces/white-centaur.png" id="11_bbe1c"]
