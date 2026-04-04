@@ -235,10 +235,10 @@ func _process(_delta: float) -> void:
 
 # Gathers all internal entity and component variables on the server to format the HUD strings.
 func _server_compile_debug_info() -> void:
-	if not entity.is_in_group("player"):
+	if not is_instance_valid(entity) or not entity.is_in_group("player"):
 		return
 		
-	var peer_id: int = entity.name.to_int()
+	var target_peer: int = entity.peer_id
 	
 	var stats_1: String = "Position: " + str(Vector2(int(entity.position.x), int(entity.position.y))) + "\n"
 	stats_1 += "Speed: " + str(movement_component.get("move_speed")) + "\n\n"
@@ -288,7 +288,7 @@ func _server_compile_debug_info() -> void:
 	level_text += "  Pts: " + str(leveling_component.points) 
 	level_text += "  Score: " + str(leveling_component.total_score)
 
-	update_debug_labels.rpc_id(peer_id, stats_1, stats_2, level_text)
+	update_debug_labels.rpc_id(target_peer, stats_1, stats_2, level_text)
 
 # Returns a formatted string containing all specific stat variables for a given ability component.
 func _get_ability_debug_text(comp: Node2D, type_name: String, slot_label: String) -> String:
@@ -325,8 +325,8 @@ func _get_ability_debug_text(comp: Node2D, type_name: String, slot_label: String
 			text += "TPC Range: " + str(comp.get("max_range")) + "\n"
 		"WOF":
 			text += "WOF CD: " + str(comp.get("wof_cooldown")) + "\n"
-			text += "WOF Length: " + str(comp.get("wof_length")) + "\n"
-			text += "WOF Dmg: " + str(comp.get("wof_damage")) + "\n"
+			text += "WOF Max Length: " + str(comp.get("max_length")) + "\n"
+			text += "WOF Dmg: " + str(comp.get("max_damage")) + "\n"
 		"Mass_Heal":
 			text += "Heal CD: " + str(comp.get("mass_heal_cooldown")) + "\n"
 			text += "Heal Amt: " + str(comp.get("mass_heal_amount")) + "\n"

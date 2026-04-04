@@ -180,6 +180,10 @@ func stop_illusion_visuals() -> void:
 			tween.tween_callback(illusion_node.queue_free)
 	active_illusions.clear()
 
+# Instantly removes all active illusions associated with this component upon entity death.
+func cleanup() -> void:
+	_cleanup_illusions()
+
 # Instantly removes all currently active illusions to prevent orphaned visual nodes.
 func _cleanup_illusions() -> void:
 	print(str(active_illusions))

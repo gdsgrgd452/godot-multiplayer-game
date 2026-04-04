@@ -20,16 +20,16 @@
 [ext_resource type="PackedScene" uid="uid://dn8boj5kwnei2" path="res://Components/Ability Components/Stealth Components/Illusion Component/illusion_component.tscn" id="18_q7cir"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_t2tx2"]
-size = Vector2(72, 95)
+size = Vector2(140, 180)
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_p2f8y"]
-radius = 1250.0
+radius = 600.0
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_q7cir"]
-radius = 350.0
+radius = 150.0
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_l1orh"]
-radius = 600.0
+radius = 300.0
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_c7qqn"]
 properties/0/path = NodePath(".:position")
@@ -68,9 +68,6 @@ properties/10/replication_mode = 2
 properties/11/path = NodePath("Components/HealthComponent:regen_amount")
 properties/11/spawn = true
 properties/11/replication_mode = 2
-properties/12/path = NodePath("Components/StealthComponent:current_cooldown")
-properties/12/spawn = true
-properties/12/replication_mode = 2
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_xfw1d"]
 bg_color = Color(0.6, 0.6, 0.9607843, 0.6)
@@ -83,10 +80,11 @@ corner_radius_bottom_left = 5
 script = ExtResource("1_5yobt")
 
 [node name="SpriteComponent" parent="." unique_id=1204712433 instance=ExtResource("1_ge44a")]
+scale = Vector2(0.5, 0.5)
 
 [node name="Hitbox" type="CollisionShape2D" parent="." unique_id=915123551]
 position = Vector2(0, 4.5)
-scale = Vector2(1.5, 1.5)
+scale = Vector2(0.3, 0.3)
 shape = SubResource("RectangleShape2D_t2tx2")
 debug_color = Color(0.125988, 0.4824381, 0.5932888, 0.41960785)
 
@@ -114,6 +112,69 @@ replication_config = SubResource("SceneReplicationConfig_c7qqn")
 
 [node name="UIComponent" type="Node2D" parent="." unique_id=32059567]
 script = ExtResource("2_eflwn")
+
+[node name="UI" type="Control" parent="." unique_id=1660187117]
+layout_mode = 3
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -20.0
+offset_right = 20.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="HealthBar" parent="UI" unique_id=1748738400 instance=ExtResource("6_bl8rq")]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -20.0
+offset_top = 20.0
+offset_right = 20.0
+offset_bottom = 26.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="Name" type="Label" parent="UI" unique_id=865800907]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -20.0
+offset_top = 35.0
+offset_right = 24.0
+offset_bottom = 57.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 15
+theme_override_styles/normal = SubResource("StyleBoxFlat_xfw1d")
+text = "NAME"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="InfoLabel" type="Label" parent="UI" unique_id=1894124550]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -20.0
+offset_top = -50.0
+offset_right = 24.0
+offset_bottom = -27.0
+grow_horizontal = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 1, 1)
+theme_override_font_sizes/font_size = 14
+horizontal_alignment = 1
 
 [node name="Components" type="Node2D" parent="." unique_id=1926972529]
 
@@ -149,45 +210,3 @@ script = ExtResource("10_bl8rq")
 [node name="SpawnerComponent" parent="Components" unique_id=1294504567 instance=ExtResource("17_l1orh")]
 
 [node name="IllusionComponent" parent="Components" unique_id=1196718733 instance=ExtResource("18_q7cir")]
-
-[node name="UI" type="Control" parent="." unique_id=1660187117]
-layout_mode = 3
-anchors_preset = 0
-offset_right = 40.0
-offset_bottom = 40.0
-
-[node name="HealthBar" parent="UI" unique_id=1748738400 instance=ExtResource("6_bl8rq")]
-layout_mode = 0
-offset_left = -60.0
-offset_top = 100.0
-offset_bottom = 115.0
-
-[node name="Name" type="Label" parent="UI" unique_id=865800907]
-layout_mode = 1
-anchors_preset = 7
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
-anchor_bottom = 1.0
-offset_left = -55.0
-offset_top = 87.0
-offset_right = 15.0
-offset_bottom = 183.0
-grow_horizontal = 2
-grow_vertical = 0
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_font_sizes/font_size = 70
-theme_override_styles/normal = SubResource("StyleBoxFlat_xfw1d")
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="InfoLabel" type="Label" parent="UI" unique_id=1894124550]
-layout_mode = 0
-offset_left = -400.0
-offset_top = -360.0
-offset_right = -360.0
-offset_bottom = -264.0
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_colors/font_outline_color = Color(0, 0, 1, 1)
-theme_override_font_sizes/font_size = 70
-horizontal_alignment = 1

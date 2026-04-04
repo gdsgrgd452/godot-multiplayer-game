@@ -430,12 +430,12 @@ func player_promotion_UI_and_reroll(choice: String) -> void:
 	#Displays the promotion info to the player
 	var ui_comp: Node = entity.get_node_or_null("UIComponent")
 	if ui_comp:
-		ui_comp.display_message.rpc_id(entity.name.to_int(), "Promoted to " + choice.replace("_", " "))
+		ui_comp.display_message.rpc_id(entity.peer_id, "Promoted to " + choice.replace("_", " "))
 
 	# Re rolls as player may now have new components > new things to upgrade
 	var level_comp: LevelingComponent = entity.get_node_or_null("Components/LevelingComponent") as LevelingComponent
 	if level_comp and level_comp.is_inside_tree() and level_comp.pending_upgrades > 0:
-		level_comp.trigger_upgrade_ui.rpc_id(entity.name.to_int(), level_comp.pending_upgrades)
+		level_comp.trigger_upgrade_ui.rpc_id(entity.peer_id, level_comp.pending_upgrades)
 
 # Updates weapon and ability strings based on the selected class template.
 func change_weapon(class_choice: String) -> void:

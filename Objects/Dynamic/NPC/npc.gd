@@ -112,11 +112,10 @@ func _handle_collisions() -> void:
 
 # Grants points to the attacker and removes the NPC from the scene tree.
 func _on_npc_died(attacker_id: String) -> void:
-	PointsUtil.give_points_on_death(get_tree().current_scene, attacker_id, leveling_component.total_score + 50)
-	# Disable collisions and processing so the dead body doesn't interact with the world
-	process_mode = Node.PROCESS_MODE_DISABLED
+	PointsUtil.give_points_on_death(get_tree().current_scene, attacker_id, leveling_component.total_score)
+	manager_component.cleanup_all_abilities() # Triggers the component manager to remove lingering ability visuals
+	process_mode = Node.PROCESS_MODE_DISABLED# Disable collisions and processing so the dead body doesn't interact with the world
 	hide()
-	await get_tree().create_timer(3.0).timeout # To prevent it being removed
 	queue_free()
 
 # Accepts an external physics force applied to the NPC.

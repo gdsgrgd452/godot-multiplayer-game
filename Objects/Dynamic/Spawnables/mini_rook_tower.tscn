@@ -28,7 +28,7 @@ properties/3/spawn = true
 properties/3/replication_mode = 2
 properties/4/path = NodePath("Components/HealthComponent:max_health")
 properties/4/spawn = true
-properties/4/replication_mode = 1
+properties/4/replication_mode = 2
 
 [node name="Mini_Rook_Tower" type="StaticBody2D" unique_id=228438802]
 scale = Vector2(0.4, 0.4)

@@ -37,7 +37,7 @@ func request_teleport(target_pos: Vector2) -> void:
 		
 	if not AbilityUtils.is_position_within_map(get_tree().current_scene, target_pos):
 		if is_instance_valid(ui_comp) and entity.is_in_group("player"):
-			ui_comp.display_message.rpc_id(entity.name.to_int(), "Naughty Naughty, Cant teleport outside the arena")
+			ui_comp.display_message.rpc_id(entity.peer_id, "Naughty Naughty, Cant teleport outside the arena")
 		return
 		
 	if is_instance_valid(ui_comp) and entity.is_in_group("player"):
@@ -149,6 +149,13 @@ func attach_components_to_visual_duplicate() -> Node2D:
 			comp_container.add_child(comp_dup)
 
 	return comp_container
+
+# Destroys any lingering teleport illusions and cancels active scaling tweens.
+func cleanup() -> void:
+	if is_instance_valid(active_illusion):
+		active_illusion.queue_free()
+	if active_tween and active_tween.is_valid():
+		active_tween.kill()
 
 # Renders the maximum range boundary
 func _draw() -> void:

@@ -1,5 +1,7 @@
 extends CharacterBody2D
 
+var peer_id: int = 0
+
 @onready var movement_component: Node = $Components/MovementComponent
 @onready var health_component: Node = $Components/HealthComponent
 @onready var leveling_component: Node = $Components/LevelingComponent
@@ -13,7 +15,7 @@ var area_w_component: Node
 var first_ability_component: Node
 var shield_component: Node
 
-@export var team_id: int = 0
+var team_id: int = 0
 var shielding: bool = false
 var knockback: Vector2 = Vector2.ZERO
 var knockback_force: int = 200
@@ -23,6 +25,15 @@ var input_needed: bool = false # An input is needed, block everything until then
 #Physics layers TODO use these
 const LAYER_NPC_PLAYER_AND_FOOD: int = 1
 const LAYER_WORLD_BOUNDARIES: int = 2
+
+# Stores the authoritative username synchronized across all network peers.
+@export var player_username: String = "Guest":
+	set(value):
+		player_username = value
+		# Ensures the UI label is updated immediately when the synchronized name arrives.
+		var ui: Node = get_node_or_null("UIComponent")
+		if is_instance_valid(ui) and ui.has_node("UI/Name"):
+			ui.get_node("UI/Name").text = value
 
 @export var current_class: String = "Pawn":
 	set(value):
@@ -251,30 +262,21 @@ func _on_apply_recoil(force: Vector2) -> void:
 
 # Awards points to the attacker, disables the player, and triggers the death UI.
 func _on_player_died(attacker_id: String) -> void:
-	PointsUtil.give_points_on_death(get_tree().current_scene, attacker_id, leveling_component.total_score)
+	var total_score: int = leveling_component.get("total_score")
+	PointsUtil.give_points_on_death(get_tree().current_scene, attacker_id, total_score)
+
+	# Triggers the component manager to remove lingering ability visuals
+	manager_component.cleanup_all_abilities()
 	
-	if current_first_ability == "Illusion" or current_second_ability == "Illusion":
-		printerr("Died whilst illusioning")
-	
-	if current_first_ability == "Teleport" or current_second_ability == "Teleport":
-		printerr("Died whilst tping")
-	
-	if current_first_ability == "Teleport_Crush" or current_second_ability == "Teleport_Crush":
-		printerr("Died whilst tping-crush")
+	# Calls the main script on the server to record the score before the node is disabled.
+	var main_node: Node = get_tree().current_scene
+	if multiplayer.is_server() and main_node.has_method("player_died"):
+		main_node.player_died(name, total_score, attacker_id)
 	
 	# Disable collisions and processing so the dead body doesn't interact with the world
 	process_mode = Node.PROCESS_MODE_DISABLED
 	hide()
-	
-	# Tell the specific client who owns this player that they died, and pass the killer's ID
-	trigger_death_screen.rpc_id(name.to_int(), attacker_id)
-
-# Tells the local client to initiate the spectate sequence on the main scene.
-@rpc("authority", "call_local", "reliable")
-func trigger_death_screen(attacker_id: String) -> void:
-	var main_scene = get_tree().current_scene
-	if main_scene and main_scene.has_method("player_died"):
-		main_scene.player_died(name, leveling_component.total_score, attacker_id)
+	$HUD.hide()
 
 func _update_points(new_points: int):
 	$HUD/LevelBar.queue_points(new_points)

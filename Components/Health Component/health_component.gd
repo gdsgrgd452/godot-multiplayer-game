@@ -114,8 +114,11 @@ func _find_attacker_node(id: String) -> Node:
 	return null
 
 # Request a mass heal up ability
-@rpc("authority", "call_local", "unreliable")
+@rpc("any_peer", "call_local", "reliable")
 func request_mass_heal() -> void:
+	if not multiplayer.is_server():
+		return
+		
 	if current_cooldown <= 0.0 and health < max_health:
 		# Triggers a message above the player and the ability cooldown bar
 		if is_instance_valid(ui_comp) and entity.is_in_group("player"):

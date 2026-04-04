@@ -17,9 +17,9 @@ var dead_scores_dict: Dictionary
 const PRESETS: Dictionary = {
 	"Alone": { "game_type": "FFA", "arena_size": 2500.0, "food_per_player": 1500, "bots_per_player": 0, "bot_classes": ["Bishop"], "npc_points": false, "start_lvls": 200, "player_class": "Jester"}, # Alone for testing
 	
-	"1-Bot": { "game_type": "FFA", "arena_size": 2500.0, "food_per_player": 1500, "bots_per_player": 1, "bot_classes": ["Jester"], "npc_points": false, "start_lvls": 200, "player_class": "Pawn_II"}, # 1 Bot for testing
+	"1-Bot": { "game_type": "FFA", "arena_size": 2500.0, "food_per_player": 1500, "bots_per_player": 1, "bot_classes": ["Jester"], "npc_points": false, "start_lvls": 200, "player_class": "Super_Queen"}, # 1 Bot for testing
 	
-	"1 Bot": { "game_type": "FFA", "arena_size": 2500.0, "food_per_player": 1500, "bots_per_player": 1, "bot_classes": ["Jester"], "npc_points": false, "start_lvls": 200, "player_class": "Pawn_II"}, # 1 Bot for testing
+	"1 Bot": { "game_type": "FFA", "arena_size": 2500.0, "food_per_player": 1500, "bots_per_player": 1, "bot_classes": ["Jester"], "npc_points": false, "start_lvls": 200, "player_class": "Super_Queen"}, # 1 Bot for testing
 	
 	"2-Bot": { "game_type": "FFA", "arena_size": 2500.0, "food_per_player": 1500, "bots_per_player": 2, "bot_classes": ["Pawn"], "npc_points": false, "start_lvls": 200, "player_class": "Pawn_II"}, # 2 Bots for testing
 	
@@ -50,6 +50,9 @@ var player_starts_as: String = "Pawn"
 
 var game_type: String = "2_Teams"
 
+# Maps peer IDs to unique usernames to ensure node name consistency across the network.
+var peer_id_to_name: Dictionary = {}
+
 # Connects buttons and initializes the game boundary
 func _ready() -> void:
 	$TitleScreen/HostPanel/HostButton.pressed.connect(_on_host_pressed)
@@ -65,7 +68,7 @@ func _apply_preset_or_custom() -> void:
 	if input == "":
 		input = "Alone"
 	var parts: Array = input.split(",")
-	print(str(parts))
+	print("GAME PRESETS: " + str(parts))
 	# If a single token matches a preset key, apply it directly
 	if parts.size() == 1 and PRESETS.has(parts[0].strip_edges()):
 		var preset: Dictionary = PRESETS[parts[0].strip_edges()]
@@ -190,6 +193,9 @@ func _on_host_OP_pressed() -> void:
 
 # Initiates the server and spawns the host player
 func _on_host_pressed() -> void:
+	var username: String = $TitleScreen/JoinPanel/UsernameInput.text
+	register_player_name(username)
+
 	peer.create_server(PORT) 
 	multiplayer.multiplayer_peer = peer
 	
@@ -203,7 +209,7 @@ func _on_host_pressed() -> void:
 	
 	# Spawn the host
 	multiplayer.peer_connected.connect($SpawnedPlayers.add_player)
-	$SpawnedPlayers.add_player(multiplayer.get_unique_id())
+	$SpawnedPlayers.add_player(multiplayer.get_unique_id(), 0, peer_id_to_name[1])
 
 # Attempts to automatically forward the game port on the host's router.
 func setup_upnp() -> void:
@@ -238,6 +244,7 @@ func setup_upnp() -> void:
 
 # Attempts to connect to a server IP
 func _on_join_pressed() -> void:
+	var username: String = $TitleScreen/JoinPanel/UsernameInput.text
 	var ip_to_join: String = $TitleScreen/JoinPanel/InputIP.text
 	
 	if ip_to_join == "":
@@ -245,14 +252,24 @@ func _on_join_pressed() -> void:
 		
 	peer.create_client(ip_to_join, PORT)
 	multiplayer.multiplayer_peer = peer
+
+	multiplayer.connected_to_server.connect(func() -> void:
+		register_player_name.rpc_id(1, username)
+	)
 	
 	$TitleScreen.hide()
-
+	
+# Records the player's score on the server and initiates the spectate sequence for the client.
 func player_died(player_id: String, player_score: int, killer_id: String) -> void:
-	start_spectating(killer_id)
-	dead_scores_dict[player_id] = player_score
+	# Records score on the server for the upcoming respawn request.
+	if multiplayer.is_server():
+		dead_scores_dict[player_id] = player_score
+	
+	# Commands the local client to initiate spectating.
+	start_spectating.rpc_id(player_id.to_int(), killer_id)
 
-# Sets up the local client's UI and camera for the spectate phase.
+# Commands the local client's UI and camera to enter the spectate phase.
+@rpc("authority", "call_local", "reliable")
 func start_spectating(killer_id: String) -> void:
 	$RespawnLayer.show()
 	respawn_button.hide()
@@ -263,7 +280,6 @@ func start_spectating(killer_id: String) -> void:
 	spectator_camera.enabled = true
 	spectator_camera.make_current()
 
-	
 	# Attempt to find the killer. If environmental or missing, the camera stays where the player died.
 	if killer_id != "":
 		var killer_node = $SpawnedPlayers.get_node_or_null(killer_id)
@@ -287,24 +303,53 @@ func _on_respawn_pressed() -> void:
 	$RespawnLayer.hide()
 	request_respawn.rpc_id(1)
 
-# Deletes the old dead player node with a temporary unique name and spawns a fresh one to prevent synchronization race conditions.
+# Handles the server-side logic for cleaning up the dead body and spawning a new entity with the saved score.
 @rpc("any_peer", "call_local", "reliable")
 func request_respawn() -> void:
 	if not multiplayer.is_server():
 		return
 		
 	var sender_id: int = multiplayer.get_remote_sender_id()
-	var old_player: Node = $SpawnedPlayers.get_node_or_null(str(sender_id))
+	var player_key: String = str(sender_id)
+	var old_player: Node = $SpawnedPlayers.get_node_or_null(player_key)
 	
-	if old_player:
-		old_player.name = str(sender_id) + "_dying_" + str(Time.get_ticks_msec())
+	# Renames and frees the old node immediately to start the network deletion process.
+	if is_instance_valid(old_player):
+		old_player.name = player_key + "_dying_" + str(Time.get_ticks_msec())
 		old_player.queue_free()
 	
-	var previous_score = dead_scores_dict.get(str(sender_id))
-	if previous_score != null:
-		$SpawnedPlayers.add_player(sender_id, previous_score)
-		dead_scores_dict.erase(sender_id)
-	else:
-		print(str(sender_id) + " Had no score on death")
-		$SpawnedPlayers.add_player(sender_id)
+	# Delays the new spawn by a few frames to ensure the MultiplayerSpawner clears the previous node name.
+	get_tree().create_timer(0.1).timeout.connect(func() -> void: _execute_respawn_spawn(sender_id))
+
+# Generates a unique node name based on the provided username and registers it on the server.
+@rpc("any_peer", "call_local", "reliable")
+func register_player_name(username: String) -> void:
+	if multiplayer.is_server():
+		var sender_id: int = multiplayer.get_remote_sender_id()
+		var base_name: String = username.strip_edges()
+		if base_name == "":
+			base_name = "Guest"
+		
+		# Sanitizes name for Godot node compatibility by removing restricted characters.
+		var sanitized: String = base_name.replace(".", "_").replace("/", "_").replace(":", "_")
+		var final_name: String = sanitized
+		var counter: int = 1
+		
+		# Ensures node name uniqueness within the SpawnedPlayers container.
+		while $SpawnedPlayers.has_node(final_name):
+			final_name = sanitized + "_" + str(counter)
+			counter += 1
+			
+		peer_id_to_name[sender_id] = final_name
+
+# Finalizes the respawn by instantiating the new player and restoring their authoritative score.
+func _execute_respawn_spawn(id: int) -> void:
+	var node_name: String = peer_id_to_name.get(id, "Guest_" + str(id))
+	var player_key: String = str(id)
 	
+	if dead_scores_dict.has(player_key):
+		var previous_score: int = dead_scores_dict[player_key]
+		$SpawnedPlayers.add_player(id, previous_score, node_name)
+		dead_scores_dict.erase(player_key)
+	else:
+		$SpawnedPlayers.add_player(id, 0, node_name)

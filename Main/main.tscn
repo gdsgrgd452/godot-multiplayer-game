@@ -228,12 +228,26 @@ anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
 offset_left = -100.0
-offset_top = -75.0
+offset_top = -174.0
 offset_right = 100.0
-offset_bottom = 75.0
+offset_bottom = 76.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_0jx5h")
+
+[node name="UsernameInput" type="LineEdit" parent="TitleScreen/JoinPanel" unique_id=460617945]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -64.5
+offset_top = 35.0
+offset_right = 70.5
+offset_bottom = 66.0
+grow_horizontal = 2
+placeholder_text = "Enter Username"
+alignment = 1
+expand_to_text_length = true
 
 [node name="InputIP" type="LineEdit" parent="TitleScreen/JoinPanel" unique_id=91751582]
 layout_mode = 1
@@ -241,9 +255,9 @@ anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
 offset_left = -50.0
-offset_top = 20.0
+offset_top = 100.0
 offset_right = 50.0
-offset_bottom = 60.0
+offset_bottom = 140.0
 grow_horizontal = 2
 placeholder_text = "Input IP"
 
@@ -253,9 +267,9 @@ anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
 offset_left = -50.0
-offset_top = 80.0
+offset_top = 170.0
 offset_right = 50.0
-offset_bottom = 120.0
+offset_bottom = 210.0
 grow_horizontal = 2
 text = "Join a game"
 
@@ -316,9 +330,9 @@ layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
-offset_left = -72.5
+offset_left = -72.0
 offset_top = -25.0
-offset_right = 72.5
+offset_right = 73.0
 offset_bottom = -2.0
 grow_horizontal = 2
 text = "FFA, 2T, FFA-L, 2T-L"
@@ -531,7 +545,7 @@ spawn_path = NodePath("../SpawnedProjectiles")
 script = ExtResource("6_liyct")
 
 [node name="TrapSpawner" type="MultiplayerSpawner" parent="." unique_id=1691883587]
-_spawnable_scenes = PackedStringArray("uid://b2rtodncqul3h")
+_spawnable_scenes = PackedStringArray("uid://b2rtodncqul3h", "uid://c37ctg36bht0r")
 spawn_path = NodePath("../SpawnedTraps")
 
 [node name="SpawnedNPCs" type="Node2D" parent="." unique_id=328143973]

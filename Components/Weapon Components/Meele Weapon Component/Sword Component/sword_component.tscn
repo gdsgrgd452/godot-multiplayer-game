@@ -18,7 +18,7 @@ position = Vector2(44.079407, -2.9999986)
 rotation = 1.5707964
 scale = Vector2(0.5, 0.5)
 shape = SubResource("RectangleShape2D_00yqu")
-debug_color = Color(0.30588236, 0, 0.73333335, 0.8)
+debug_color = Color(0.5512663, 0.45453995, 1, 0.34117648)
 
 [node name="Sprite" type="Sprite2D" parent="." unique_id=1587892858]
 position = Vector2(26.999996, 1)
