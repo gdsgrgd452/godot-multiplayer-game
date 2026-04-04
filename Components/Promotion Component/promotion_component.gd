@@ -154,7 +154,7 @@ var class_base_stats: Dictionary = {
 		"accuracy": 70.0,
 		"area_damage": 30.0,
 		"area_knockback": 600.0,
-		"area_radius": 250.0,
+		"area_radius": 50.0,
 		"area_cooldown": 8.0,
 		"shield_health": 50.0
 	},
@@ -173,7 +173,7 @@ var class_base_stats: Dictionary = {
 		"teleport_cooldown": 4.0,
 		"area_damage": 25.0,
 		"area_knockback": 500.0,
-		"area_radius": 150.0,
+		"area_radius": 50.0,
 		"shield_health": 50.0
 	},
 	"Rook_Knight": {
@@ -204,7 +204,7 @@ var class_base_stats: Dictionary = {
 		"accuracy": 85.0,
 		"area_damage": 45.0,
 		"area_knockback": 750.0,
-		"area_radius": 350.0,
+		"area_radius": 50.0,
 		"area_cooldown": 6.0,
 		"shield_health": 75.0
 	},
@@ -221,7 +221,7 @@ var class_base_stats: Dictionary = {
 		"melee_cooldown": 0.2, 
 		"area_damage": 75.0,
 		"area_knockback": 1000.0,
-		"area_radius": 500.0,
+		"area_radius": 50.0,
 		"teleport_range": 1000.0,
 		"teleport_cooldown": 2.0,
 	},
@@ -237,7 +237,7 @@ var class_base_stats: Dictionary = {
 		"accuracy": 100.0, 
 		"area_damage": 75.0,
 		"area_knockback": 1000.0,
-		"area_radius": 200.0,
+		"area_radius": 50.0,
 		"area_cooldown": 2.0,
 	},
 	"King_Rook": {
@@ -267,7 +267,7 @@ var class_base_stats: Dictionary = {
 		"melee_cooldown": 0.2, 
 		"area_damage": 75.0,
 		"area_knockback": 1000.0,
-		"area_radius": 500.0,
+		"area_radius": 50.0,
 		"area_cooldown": 2.0,
 		"shield_health": 200.0
 	},
@@ -283,7 +283,7 @@ var class_base_stats: Dictionary = {
 		"accuracy": 100.0, 
 		"area_damage": 75.0,
 		"area_knockback": 1000.0,
-		"area_radius": 500.0,
+		"area_radius": 50.0,
 		"area_cooldown": 2.0,
 		"teleport_range": 1000.0,
 		"teleport_cooldown": 2.0,
@@ -337,7 +337,7 @@ var class_base_stats: Dictionary = {
 		"accuracy": 100.0, 
 		"area_damage": 75.0,
 		"area_knockback": 1000.0,
-		"area_radius": 350.0,
+		"area_radius": 50.0,
 		"area_cooldown": 2.0,
 		"teleport_range": 1000.0,
 		"teleport_cooldown": 2.0,

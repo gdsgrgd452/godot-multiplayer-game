@@ -2,7 +2,7 @@ extends MeleeWeaponComponent
 class_name SwordComponent
 
 @export var swing_angle: float = 120.0
-@export var lunge_distance: float = 40.0
+@export var lunge_distance: float = 20.0
 
 var swing_direction: int = 1
 var base_aim_rotation: float

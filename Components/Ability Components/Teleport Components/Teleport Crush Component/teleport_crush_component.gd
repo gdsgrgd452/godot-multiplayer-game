@@ -10,6 +10,7 @@ class_name TeleportCrushComponent
 @onready var hitbox: Area2D = $Hitbox
 @onready var hitbox_shape: CollisionShape2D = $Hitbox/Collision
 
+
 var active_area_tween: Tween
 var current_radius: float = 0.0:
 	set(value):
@@ -73,8 +74,8 @@ func trigger_visual_crush() -> void:
 func trigger_visual_finished() -> void:
 	current_radius = 0.0
 
-# Renders the range boundary and the active shockwave with scale correction.
+# Shows the shockwave range
 func _draw() -> void:
 	super._draw()
 	if current_radius > 0.0:
-		draw_circle(Vector2.ZERO, current_radius / entity.scale.x, Color(1.0, 0.2, 0.2, 0.4))
+		draw_circle(Vector2.ZERO, max_radius, Color(0.306, 0.106, 0.012, 0.741))

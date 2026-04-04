@@ -40,6 +40,9 @@ var current_second_ability: String
 @onready var first_ability_bar: EntityBar = $"../HUD/FirstAbilityBar"
 @onready var second_ability_bar: EntityBar = $"../HUD/SecondAbilityBar"
 
+@onready var reload_bar: EntityBar = $"../UI/ReloadBar"
+@onready var melee_bar: EntityBar = $"../UI/MeleeBar"
+
 func _ready() -> void:
 	name_label.text = entity.name
 	if entity.name == str(multiplayer.get_unique_id()):
@@ -48,6 +51,8 @@ func _ready() -> void:
 		hud.show() 
 		first_ability_bar.hide()
 		second_ability_bar.hide()
+		reload_bar.hide()
+		melee_bar.hide()
 		ui_container.show()
 		upgrade_UI.hide()
 		promotion_UI.hide()
@@ -164,11 +169,38 @@ func update_leaderboard_ui(entries: Array) -> void:
 				
 			leaderboard_container.add_child(entry)
 
-# Updates the debug info display.
-func _process(_delta: float) -> void:
-	if entity.name == str(multiplayer.get_unique_id()): 
-		show_debug_info()
-	
+
+# Initiates the server-side logic to synchronize attack cooldown visuals for melee or ranged weapons.
+func handle_attack_activated(type: String, cooldown: float) -> void:
+	if not multiplayer.is_server():
+		return
+		
+	trigger_attack_ui.rpc(type, cooldown)
+
+# Animates the specific reload or melee bar on the local player's client to reflect weapon readiness.
+@rpc("authority", "call_local", "reliable")
+func trigger_attack_ui(type: String, max_cooldown: float) -> void:
+	if not entity.is_in_group("player") or entity.name != str(multiplayer.get_unique_id()):
+		return
+		
+	var bar: EntityBar = null
+	match type:
+		"Melee":
+			bar = get("melee_bar")
+		"Ranged":
+			bar = get("reload_bar")
+			
+	if is_instance_valid(bar):
+		bar.show()
+		bar.max_value = max_cooldown
+		bar.value = max_cooldown
+		bar.animate_value(0.0, max_cooldown, max_cooldown)
+		
+		if bar.bar_tween:
+			bar.bar_tween.finished.connect(func() -> void: 
+				if is_instance_valid(bar): 
+					bar.hide()
+			)
 
 # Triggers the visual message and cooldown bar animation for a specific ability slot.
 func handle_ability_activated(caller: Node2D, ability_name: String, cooldown: float) -> void:
@@ -198,6 +230,11 @@ func trigger_ability_ui(ability_name: String, max_cooldown: float, is_secondary:
 		
 		if bar.bar_tween:
 			bar.bar_tween.finished.connect(func() -> void: if is_instance_valid(bar): bar.hide())
+
+# Updates the debug info display.
+func _process(_delta: float) -> void:
+	if entity.name == str(multiplayer.get_unique_id()): 
+		show_debug_info()
 
 # Compiles and displays internal entity variables to the local HUD.
 func show_debug_info() -> void:
@@ -250,9 +287,8 @@ func show_debug_info() -> void:
 				var area_damage_text: String = "Area Damage: " + str(first_ability_component.area_damage) + "\n"
 				var area_kb_text: String = "Area Knockback: " + str(first_ability_component.knockback_force) + "\n"
 				var area_radius_text: String = "Area Radius: " + str(first_ability_component.max_radius) + "\n"
-				var area_cooldown_text: String = "Area Cooldown: " + str(first_ability_component.area_cooldown) + "\n"
-				var area_duration_text: String = "Area Attack Duration: " + str(first_ability_component.attack_duration) + "\n\n"
-				stats_label_two.text = area_damage_text + area_kb_text + area_radius_text + area_cooldown_text + area_duration_text
+				var area_cooldown_text: String = "Area Cooldown: " + str(first_ability_component.area_cooldown) + "\n\n"
+				stats_label_two.text = area_damage_text + area_kb_text + area_radius_text + area_cooldown_text
 			"Teleport":
 				var tele_cooldown_text: String = "Teleport Cooldown: " + str(first_ability_component.teleport_cooldown) + "\n"
 				var tele_duration_text: String = "Til next: " + str(snapped(first_ability_component.current_cooldown, 0.1)) + "\n"
@@ -279,11 +315,10 @@ func show_debug_info() -> void:
 				var tpc_damage_text: String = "Teleport Damage: " + str(first_ability_component.area_damage) + "\n"
 				var tpc_kb_text: String = "Teleport Knockback: " + str(first_ability_component.knockback_force) + "\n"
 				var tpc_radius_text: String = "Teleport AoE Radius: " + str(first_ability_component.max_radius) + "\n"
-				var tpc_area_duration_text: String = "Area Attack Duration: " + str(first_ability_component.attack_duration) + "\n\n"
 				var tpc_cooldown_text: String = "Teleport Cooldown: " + str(first_ability_component.tp_crush_cooldown) + "\n"
-				var tpc_duration_text: String = "Til next: " + str(snapped(first_ability_component.current_cooldown, 0.1)) + "\n"
+				var tpc_time_text: String = "Til next: " + str(snapped(first_ability_component.current_cooldown, 0.1)) + "\n"
 				var tpc_range_text: String = "Teleport Range: " + str(first_ability_component.max_range) + "\n\n"
-				stats_label_two.text = tpc_damage_text + tpc_kb_text + tpc_radius_text + tpc_area_duration_text + tpc_cooldown_text + tpc_duration_text + tpc_range_text
+				stats_label_two.text = tpc_damage_text + tpc_kb_text + tpc_radius_text + tpc_cooldown_text + tpc_time_text + tpc_range_text
 			"WOF":
 				var wof_cd_text = "WOF Cooldown: " + str(first_ability_component.wof_cooldown) + "\n"
 				var wof_time_text: String = "Til next: " + str(snapped(first_ability_component.current_cooldown, 0.1)) + "\n"

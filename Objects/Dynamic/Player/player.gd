@@ -253,6 +253,15 @@ func _on_apply_recoil(force: Vector2) -> void:
 func _on_player_died(attacker_id: String) -> void:
 	PointsUtil.give_points_on_death(get_tree().current_scene, attacker_id, leveling_component.total_score)
 	
+	if current_first_ability == "Illusion" or current_second_ability == "Illusion":
+		printerr("Died whilst illusioning")
+	
+	if current_first_ability == "Teleport" or current_second_ability == "Teleport":
+		printerr("Died whilst tping")
+	
+	if current_first_ability == "Teleport_Crush" or current_second_ability == "Teleport_Crush":
+		printerr("Died whilst tping-crush")
+	
 	# Disable collisions and processing so the dead body doesn't interact with the world
 	process_mode = Node.PROCESS_MODE_DISABLED
 	hide()

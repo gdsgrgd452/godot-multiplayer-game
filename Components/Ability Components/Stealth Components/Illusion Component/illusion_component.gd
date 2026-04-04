@@ -182,6 +182,7 @@ func stop_illusion_visuals() -> void:
 
 # Instantly removes all currently active illusions to prevent orphaned visual nodes.
 func _cleanup_illusions() -> void:
+	print(str(active_illusions))
 	for data: Dictionary in active_illusions:
 		var illusion_node: Node2D = data.get("node")
 		if is_instance_valid(illusion_node):

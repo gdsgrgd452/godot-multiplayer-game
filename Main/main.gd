@@ -15,7 +15,7 @@ var dead_scores_dict: Dictionary
 @onready var ip_label: Label = $CanvasLayer/SharingIPLabel
 
 const PRESETS: Dictionary = {
-	"Alone": { "game_type": "FFA", "arena_size": 2500.0, "food_per_player": 1500, "bots_per_player": 0, "bot_classes": ["Bishop"], "npc_points": false, "start_lvls": 200, "player_class": "Knight"}, # Alone for testing
+	"Alone": { "game_type": "FFA", "arena_size": 2500.0, "food_per_player": 1500, "bots_per_player": 0, "bot_classes": ["Bishop"], "npc_points": false, "start_lvls": 200, "player_class": "Jester"}, # Alone for testing
 	
 	"1-Bot": { "game_type": "FFA", "arena_size": 2500.0, "food_per_player": 1500, "bots_per_player": 1, "bot_classes": ["Jester"], "npc_points": false, "start_lvls": 200, "player_class": "Pawn_II"}, # 1 Bot for testing
 	

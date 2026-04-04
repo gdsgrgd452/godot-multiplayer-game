@@ -47,7 +47,7 @@ var upgrade_increments: Dictionary = {
 	#Area
 	"area_damage": 7.5,
 	"area_knockback": 120.0,
-	"area_radius": 50.0,
+	"area_radius": 15.0,
 	"area_cooldown": -0.1,
 	
 	#Teleport
@@ -195,7 +195,7 @@ func apply_upgrade(button_info: String) -> void:
 		
 		var stat_name: String = button_info.split(" ")[0]
 		
-		print("Stat b4: " + str(stat_levels[stat_name]))
+		#print("Stat b4: " + str(stat_levels[stat_name]))
 
 		if stat_levels[stat_name] >= 10:
 			printerr("Stat is maxed")
@@ -204,12 +204,12 @@ func apply_upgrade(button_info: String) -> void:
 		pending_upgrades -= 1
 		stat_levels[stat_name] += 1
 
-		print("Stat after: " + str(stat_levels[stat_name]))
+		#print("Stat after: " + str(stat_levels[stat_name]))
 
 		if stat_levels[stat_name] == 10:
 			if not maxed_stats_list.has(stat_name):
 				maxed_stats_list.append(stat_name)
-				print("Added to max stats")
+				#print("Added to max stats")
 
 		var promo: PromotionComponent = entity.get_node("Components/PromotionComponent") as PromotionComponent
 		promo.apply_promotion_stats(entity.get("current_class"))

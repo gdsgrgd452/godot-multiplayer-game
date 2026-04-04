@@ -15,7 +15,7 @@ const LAYER_WORLD_BOUNDARIES: int = 2
 	set(value):
 		shape_type = value
 		if shape_type == "Decagon":
-			scale = Vector2(2.5, 2.5)
+			scale = Vector2(1.5, 1.5)
 		else:
 			scale = Vector2(1.0, 1.0)
 		queue_redraw()

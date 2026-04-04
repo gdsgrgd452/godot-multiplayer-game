@@ -1,8 +1,8 @@
 extends MeleeWeaponComponent
 class_name SpearComponent
 
-@export var lunge_distance: float = 2500 # In reality - 
-var pullback_distance: float = 1000.0
+@export var lunge_distance: float = 50 # In reality - 
+var pullback_distance: float = 25.0
 
 func _ready() -> void:
 	super._ready()

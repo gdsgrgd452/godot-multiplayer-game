@@ -30,6 +30,9 @@
 [ext_resource type="Script" uid="uid://chr66q06b4ar" path="res://Components/component_manager.gd" id="46_ohodf"]
 [ext_resource type="Script" uid="uid://bmxi0pfoy0a71" path="res://Objects/Dynamic/Player/testing_component.gd" id="49_8ikvy"]
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_onrkg"]
+size = Vector2(138.27162, 177.77779)
+
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_sweqy"]
 properties/0/path = NodePath(".:position")
 properties/0/spawn = true
@@ -82,162 +85,159 @@ properties/15/replication_mode = 2
 properties/16/path = NodePath(".:current_first_ability")
 properties/16/spawn = true
 properties/16/replication_mode = 2
-properties/17/path = NodePath("Components/TeleportComponent:max_cooldown")
+properties/17/path = NodePath("Components/TeleportComponent:current_cooldown")
 properties/17/spawn = true
 properties/17/replication_mode = 2
-properties/18/path = NodePath("Components/TeleportComponent:current_cooldown")
+properties/18/path = NodePath("Components/TeleportComponent:max_range")
 properties/18/spawn = true
 properties/18/replication_mode = 2
-properties/19/path = NodePath("Components/TeleportComponent:max_range")
+properties/19/path = NodePath("Components/MagicAreaWeaponComponent:current_cooldown")
 properties/19/spawn = true
 properties/19/replication_mode = 2
-properties/20/path = NodePath("Components/MagicAreaWeaponComponent:current_cooldown")
+properties/20/path = NodePath("Components/MagicAreaWeaponComponent:max_radius")
 properties/20/spawn = true
 properties/20/replication_mode = 2
-properties/21/path = NodePath("Components/MagicAreaWeaponComponent:max_cooldown")
+properties/21/path = NodePath("Components/MagicAreaWeaponComponent:knockback_force")
 properties/21/spawn = true
 properties/21/replication_mode = 2
-properties/22/path = NodePath("Components/MagicAreaWeaponComponent:max_radius")
+properties/22/path = NodePath("Components/MagicAreaWeaponComponent:area_damage")
 properties/22/spawn = true
 properties/22/replication_mode = 2
-properties/23/path = NodePath("Components/MagicAreaWeaponComponent:knockback_force")
+properties/23/path = NodePath(".:current_shield")
 properties/23/spawn = true
 properties/23/replication_mode = 2
-properties/24/path = NodePath("Components/MagicAreaWeaponComponent:area_damage")
+properties/24/path = NodePath("Components/BowComponent:reload_speed")
 properties/24/spawn = true
 properties/24/replication_mode = 2
-properties/25/path = NodePath(".:current_shield")
+properties/25/path = NodePath("Components/BowComponent:shot_cooldown")
 properties/25/spawn = true
 properties/25/replication_mode = 2
-properties/26/path = NodePath("Components/BowComponent:reload_speed")
+properties/26/path = NodePath("Components/BowComponent:projectile_speed")
 properties/26/spawn = true
 properties/26/replication_mode = 2
-properties/27/path = NodePath("Components/BowComponent:shot_cooldown")
+properties/27/path = NodePath("Components/BowComponent:projectile_damage")
 properties/27/spawn = true
 properties/27/replication_mode = 2
-properties/28/path = NodePath("Components/BowComponent:projectile_speed")
+properties/28/path = NodePath("Components/BowComponent:accuracy")
 properties/28/spawn = true
 properties/28/replication_mode = 2
-properties/29/path = NodePath("Components/BowComponent:projectile_damage")
+properties/29/path = NodePath("Components/FireballShooterComponent:accuracy")
 properties/29/spawn = true
 properties/29/replication_mode = 2
-properties/30/path = NodePath("Components/BowComponent:accuracy")
+properties/30/path = NodePath("Components/FireballShooterComponent:projectile_damage")
 properties/30/spawn = true
 properties/30/replication_mode = 2
-properties/31/path = NodePath("Components/FireballShooterComponent:accuracy")
+properties/31/path = NodePath("Components/FireballShooterComponent:projectile_speed")
 properties/31/spawn = true
 properties/31/replication_mode = 2
-properties/32/path = NodePath("Components/FireballShooterComponent:projectile_damage")
+properties/32/path = NodePath("Components/FireballShooterComponent:shot_cooldown")
 properties/32/spawn = true
 properties/32/replication_mode = 2
-properties/33/path = NodePath("Components/FireballShooterComponent:projectile_speed")
+properties/33/path = NodePath("Components/FireballShooterComponent:reload_speed")
 properties/33/spawn = true
 properties/33/replication_mode = 2
-properties/34/path = NodePath("Components/FireballShooterComponent:shot_cooldown")
+properties/34/path = NodePath("Components/SwordComponent:melee_damage")
 properties/34/spawn = true
 properties/34/replication_mode = 2
-properties/35/path = NodePath("Components/FireballShooterComponent:reload_speed")
+properties/35/path = NodePath("Components/SwordComponent:knockback_force")
 properties/35/spawn = true
 properties/35/replication_mode = 2
-properties/36/path = NodePath("Components/SwordComponent:melee_damage")
+properties/36/path = NodePath("Components/SwordComponent:attack_cooldown")
 properties/36/spawn = true
 properties/36/replication_mode = 2
-properties/37/path = NodePath("Components/SwordComponent:knockback_force")
+properties/37/path = NodePath("Components/SpearComponent:melee_damage")
 properties/37/spawn = true
 properties/37/replication_mode = 2
-properties/38/path = NodePath("Components/SwordComponent:attack_cooldown")
+properties/38/path = NodePath("Components/SpearComponent:knockback_force")
 properties/38/spawn = true
 properties/38/replication_mode = 2
-properties/39/path = NodePath("Components/SpearComponent:melee_damage")
+properties/39/path = NodePath("Components/SpearComponent:attack_cooldown")
 properties/39/spawn = true
 properties/39/replication_mode = 2
-properties/40/path = NodePath("Components/SpearComponent:knockback_force")
+properties/40/path = NodePath("Components/WoodenShieldComponent:max_shield_health")
 properties/40/spawn = true
 properties/40/replication_mode = 2
-properties/41/path = NodePath("Components/SpearComponent:attack_cooldown")
+properties/41/path = NodePath("Components/WoodenShieldComponent:shield_health")
 properties/41/spawn = true
 properties/41/replication_mode = 2
-properties/42/path = NodePath("Components/WoodenShieldComponent:max_shield_health")
+properties/42/path = NodePath("Components/WoodenShieldComponent:active_duration")
 properties/42/spawn = true
 properties/42/replication_mode = 2
-properties/43/path = NodePath("Components/WoodenShieldComponent:shield_health")
+properties/43/path = NodePath("Components/MagicShieldComponent:max_shield_health")
 properties/43/spawn = true
 properties/43/replication_mode = 2
-properties/44/path = NodePath("Components/WoodenShieldComponent:active_duration")
+properties/44/path = NodePath("Components/MagicShieldComponent:shield_health")
 properties/44/spawn = true
 properties/44/replication_mode = 2
-properties/45/path = NodePath("Components/MagicShieldComponent:max_shield_health")
+properties/45/path = NodePath("Components/MagicShieldComponent:active_duration")
 properties/45/spawn = true
 properties/45/replication_mode = 2
-properties/46/path = NodePath("Components/MagicShieldComponent:shield_health")
+properties/46/path = NodePath("Components/MovementComponent:movement_blocked")
 properties/46/spawn = true
 properties/46/replication_mode = 2
-properties/47/path = NodePath("Components/MagicShieldComponent:active_duration")
+properties/47/path = NodePath("Components/PinShooterComponent:accuracy")
 properties/47/spawn = true
 properties/47/replication_mode = 2
-properties/48/path = NodePath("Components/MovementComponent:movement_blocked")
+properties/48/path = NodePath("Components/PinShooterComponent:projectile_damage")
 properties/48/spawn = true
 properties/48/replication_mode = 2
-properties/49/path = NodePath("Components/PinShooterComponent:accuracy")
+properties/49/path = NodePath("Components/PinShooterComponent:projectile_speed")
 properties/49/spawn = true
 properties/49/replication_mode = 2
-properties/50/path = NodePath("Components/PinShooterComponent:projectile_damage")
+properties/50/path = NodePath("Components/PinShooterComponent:shot_cooldown")
 properties/50/spawn = true
 properties/50/replication_mode = 2
-properties/51/path = NodePath("Components/PinShooterComponent:projectile_speed")
+properties/51/path = NodePath("Components/PinShooterComponent:reload_speed")
 properties/51/spawn = true
 properties/51/replication_mode = 2
-properties/52/path = NodePath("Components/PinShooterComponent:shot_cooldown")
+properties/52/path = NodePath(".:team_id")
 properties/52/spawn = true
 properties/52/replication_mode = 2
-properties/53/path = NodePath("Components/PinShooterComponent:reload_speed")
+properties/53/path = NodePath("Components/SpawnerComponent:current_cooldown")
 properties/53/spawn = true
 properties/53/replication_mode = 2
-properties/54/path = NodePath(".:team_id")
+properties/54/path = NodePath("Components/SpawnerComponent:max_spawns")
 properties/54/spawn = true
 properties/54/replication_mode = 2
-properties/55/path = NodePath("Components/SpawnerComponent:current_cooldown")
+properties/55/path = NodePath("Components/TeleportCrushComponent:max_range")
 properties/55/spawn = true
 properties/55/replication_mode = 2
-properties/56/path = NodePath("Components/SpawnerComponent:max_cooldown")
+properties/56/path = NodePath("Components/TeleportCrushComponent:max_radius")
 properties/56/spawn = true
 properties/56/replication_mode = 2
-properties/57/path = NodePath("Components/SpawnerComponent:max_spawns")
+properties/57/path = NodePath("Components/TeleportCrushComponent:area_damage")
 properties/57/spawn = true
 properties/57/replication_mode = 2
-properties/58/path = NodePath("Components/TeleportCrushComponent:max_range")
+properties/58/path = NodePath("Components/TeleportCrushComponent:knockback_force")
 properties/58/spawn = true
 properties/58/replication_mode = 2
-properties/59/path = NodePath("Components/TeleportCrushComponent:max_cooldown")
+properties/59/path = NodePath("Components/StealthComponent:current_cooldown")
 properties/59/spawn = true
 properties/59/replication_mode = 2
-properties/60/path = NodePath("Components/TeleportCrushComponent:max_radius")
+properties/60/path = NodePath("Components/IllusionComponent:current_cooldown")
 properties/60/spawn = true
 properties/60/replication_mode = 2
-properties/61/path = NodePath("Components/TeleportCrushComponent:area_damage")
+properties/61/path = NodePath("Components/LevelingComponent:entity_level")
 properties/61/spawn = true
 properties/61/replication_mode = 2
-properties/62/path = NodePath("Components/TeleportCrushComponent:knockback_force")
+properties/62/path = NodePath("Components/TeleportComponent:teleport_cooldown")
 properties/62/spawn = true
 properties/62/replication_mode = 2
-properties/63/path = NodePath("Components/StealthComponent:max_cooldown")
+properties/63/path = NodePath("Components/MagicAreaWeaponComponent:area_cooldown")
 properties/63/spawn = true
 properties/63/replication_mode = 2
-properties/64/path = NodePath("Components/StealthComponent:current_cooldown")
+properties/64/path = NodePath("Components/IllusionComponent:illusion_cooldown")
 properties/64/spawn = true
 properties/64/replication_mode = 2
-properties/65/path = NodePath("Components/IllusionComponent:current_cooldown")
+properties/65/path = NodePath("Components/SpawnerComponent:spawner_cooldown")
 properties/65/spawn = true
 properties/65/replication_mode = 2
-properties/66/path = NodePath("Components/IllusionComponent:max_cooldown")
+properties/66/path = NodePath("Components/TeleportCrushComponent:tp_crush_cooldown")
 properties/66/spawn = true
 properties/66/replication_mode = 2
-properties/67/path = NodePath("Components/LevelingComponent:entity_level")
+properties/67/path = NodePath("Components/StealthComponent:stealth_cooldown")
 properties/67/spawn = true
 properties/67/replication_mode = 2
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_onrkg"]
-size = Vector2(138.27162, 177.77779)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_imvv6"]
 bg_color = Color(0.5176471, 0.5176471, 0.5176471, 0.83137256)
@@ -274,6 +274,22 @@ corner_radius_top_right = 12
 corner_radius_bottom_right = 12
 corner_radius_bottom_left = 12
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hacst"]
+resource_local_to_scene = true
+bg_color = Color(0.18072194, 0.180722, 0.18072188, 0.36862746)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_mf1qr"]
+resource_local_to_scene = true
+bg_color = Color(0.69803923, 0.101960786, 0.7490196, 0.6117647)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5mjlr"]
+resource_local_to_scene = true
+bg_color = Color(0.18072194, 0.180722, 0.18072188, 0.36862746)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_8ai7u"]
+resource_local_to_scene = true
+bg_color = Color(0.99999994, 0.19798115, 0.14916462, 0.6117647)
+
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ohodf"]
 bg_color = Color(0.6, 0.6, 0.9607843, 0.6)
 corner_radius_top_left = 5
@@ -282,20 +298,20 @@ corner_radius_bottom_right = 5
 corner_radius_bottom_left = 5
 
 [node name="Player" type="CharacterBody2D" unique_id=328923263 groups=["player"]]
-scale = Vector2(0.25, 0.25)
 script = ExtResource("1_onrkg")
 current_melee_weapon = "Spear"
 
 [node name="SpriteComponent" parent="." unique_id=1204712433 instance=ExtResource("2_imvv6")]
+scale = Vector2(0.5, 0.5)
+
+[node name="Hitbox" type="CollisionShape2D" parent="." unique_id=1881785656]
+position = Vector2(0, 4)
+scale = Vector2(0.3, 0.3)
+shape = SubResource("RectangleShape2D_onrkg")
 
 [node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="." unique_id=1956268638]
 process_priority = 1
 replication_config = SubResource("SceneReplicationConfig_sweqy")
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1881785656]
-position = Vector2(0, 8.000004)
-scale = Vector2(0.81, 0.81)
-shape = SubResource("RectangleShape2D_onrkg")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=436632609]
 position = Vector2(8, -8)
@@ -304,6 +320,9 @@ position_smoothing_enabled = true
 [node name="UIComponent" type="Node2D" parent="." unique_id=308885794]
 script = ExtResource("22_d3u3q")
 lb_entry_scene = ExtResource("8_4ge2x")
+
+[node name="TestingComponent" type="Node2D" parent="." unique_id=1977352903]
+script = ExtResource("49_8ikvy")
 
 [node name="HUD" type="CanvasLayer" parent="." unique_id=298534784]
 
@@ -489,20 +508,55 @@ metadata/_custom_type_script = "uid://2lr61aueyl58"
 
 [node name="UI" type="Control" parent="." unique_id=72954873]
 layout_mode = 3
-anchors_preset = 0
-offset_right = 40.0
-offset_bottom = 40.0
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -20.0
+offset_right = 20.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="HealthBar" parent="UI" unique_id=1748738400 instance=ExtResource("3_i3pqv")]
-layout_mode = 0
-offset_left = -60.0
-offset_top = 108.0
-offset_bottom = 123.0
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -20.0
+offset_top = 20.0
+offset_right = 20.0
+offset_bottom = 26.0
+grow_horizontal = 2
+grow_vertical = 0
 
 [node name="ReloadBar" type="ProgressBar" parent="UI" unique_id=894808094]
-layout_mode = 0
-offset_right = 4.0
-offset_bottom = 27.0
+layout_mode = 1
+offset_left = -17.0
+offset_top = -36.0
+offset_right = -13.0
+offset_bottom = -9.0
+theme_override_styles/background = SubResource("StyleBoxFlat_hacst")
+theme_override_styles/fill = SubResource("StyleBoxFlat_mf1qr")
+fill_mode = 3
+show_percentage = false
+script = ExtResource("10_ktvaa")
+metadata/_custom_type_script = "uid://2lr61aueyl58"
+
+[node name="MeleeBar" type="ProgressBar" parent="UI" unique_id=401011685]
+layout_mode = 1
+offset_left = -24.0
+offset_top = -36.0
+offset_right = -20.0
+offset_bottom = -9.0
+theme_override_styles/background = SubResource("StyleBoxFlat_5mjlr")
+theme_override_styles/fill = SubResource("StyleBoxFlat_8ai7u")
+fill_mode = 3
+show_percentage = false
 script = ExtResource("10_ktvaa")
 metadata/_custom_type_script = "uid://2lr61aueyl58"
 
@@ -513,14 +567,14 @@ anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-offset_left = -92.0
-offset_top = 116.0
-offset_right = 54.0
-offset_bottom = 185.0
+offset_left = -20.0
+offset_top = 35.0
+offset_right = 24.0
+offset_bottom = 57.0
 grow_horizontal = 2
 grow_vertical = 0
 theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_font_sizes/font_size = 50
+theme_override_font_sizes/font_size = 15
 theme_override_styles/normal = SubResource("StyleBoxFlat_ohodf")
 text = "NAME"
 horizontal_alignment = 1
@@ -536,6 +590,7 @@ position = Vector2(0, 12)
 script = ExtResource("8_dw050")
 
 [node name="SwordComponent" parent="Components" unique_id=179149588 instance=ExtResource("15_cmuwl")]
+rotation = -0.74492073
 melee_damage = 30
 knockback_force = 400.0
 attack_cooldown = 2.0
@@ -556,6 +611,7 @@ script = ExtResource("35_x2bxi")
 [node name="WoodenShieldComponent" parent="Components" unique_id=975093531 instance=ExtResource("36_xyotm")]
 
 [node name="MagicShieldComponent" parent="Components" unique_id=669235489 instance=ExtResource("37_ootfv")]
+visible = false
 
 [node name="BowComponent" parent="Components" unique_id=73394275 instance=ExtResource("37_46ev8")]
 
@@ -577,6 +633,3 @@ script = ExtResource("35_x2bxi")
 script = ExtResource("46_ohodf")
 
 [node name="WOFComponent" parent="Components" unique_id=131953459 instance=ExtResource("28_4ge2x")]
-
-[node name="TestingComponent" type="Node2D" parent="." unique_id=1977352903]
-script = ExtResource("49_8ikvy")

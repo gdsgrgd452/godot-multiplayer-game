@@ -15,7 +15,8 @@ var retractable: bool = true
 var default_position: Vector2
 var active_tween: Tween
 
-@onready var player: CharacterBody2D = get_parent().get_parent()
+@onready var entity: CharacterBody2D = get_parent().get_parent()
+@onready var ui_comp: UIComponent = entity.get_node("UIComponent")
 @onready var hitbox: Area2D = $Hitbox
 @onready var hitbox_shape: CollisionShape2D = $Hitbox/Collision
 
@@ -36,6 +37,9 @@ func request_melee_attack(target_pos: Vector2) -> void:
 	is_attacking = true # Open the damage window
 	look_at(target_pos)
 	
+	if is_instance_valid(ui_comp) and entity.is_in_group("player"):
+		ui_comp.handle_attack_activated("Melee", attack_cooldown + attack_duration)
+	
 	get_tree().create_timer(attack_duration).timeout.connect(_on_attack_finished)
 	
 	trigger_visual_attack.rpc(target_pos)
@@ -48,14 +52,14 @@ func _on_attack_finished() -> void:
 # Handles collisions
 func _on_target_entered(target: Node2D) -> void:
 	# Instantly ignore overlaps if we aren't swinging, or if we hit ourselves
-	if not is_attacking or target == player or has_hit:
+	if not is_attacking or target == entity or has_hit:
 		return
 	
-	if "team_id" in target and target.get("team_id") == player.team_id: # Same team
+	if "team_id" in target and target.get("team_id") == entity.team_id: # Same team
 		return
 	
 	var dir: Vector2 = global_position.direction_to(target.global_position)
-	CandDUtils.knockback_and_damage(target, melee_damage, player.name, dir, knockback_force)
+	CandDUtils.knockback_and_damage(target, melee_damage, entity.name, dir, knockback_force)
 
 	has_hit = true
 	is_attacking = false # Prevent double-hitting

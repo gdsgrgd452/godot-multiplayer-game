@@ -1,16 +1,17 @@
 [gd_scene format=3 uid="uid://bcpvgo3r5i7b3"]
 
 [ext_resource type="Script" uid="uid://dmot630bvyp2q" path="res://Components/Weapon Components/Meele Weapon Component/Spear Component/spear_component.gd" id="1_d7kee"]
-[ext_resource type="Texture2D" uid="uid://bmlfbv2ey47x3" path="res://images/spear.png" id="2_1hsh6"]
+[ext_resource type="Texture2D" uid="uid://bmlfbv2ey47x3" path="res://images/Weapons/spear.png" id="2_1hsh6"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_1we2h"]
 size = Vector2(164.89839, 25.743624)
 
 [node name="SpearComponent" type="Node2D" unique_id=1242225676]
-scale = Vector2(0.05, 0.05)
+rotation = -0.0012244553
 script = ExtResource("1_d7kee")
 
 [node name="Hitbox" type="Area2D" parent="." unique_id=1831709968]
+scale = Vector2(0.02, 0.02)
 
 [node name="Collision" type="CollisionShape2D" parent="Hitbox" unique_id=498773624]
 position = Vector2(50.000244, 10.000031)
@@ -20,4 +21,5 @@ debug_color = Color(0.52055836, 0.14433724, 0.23344013, 0.41960785)
 
 [node name="Sprite" type="Sprite2D" parent="." unique_id=1607490870]
 rotation = 1.5707964
+scale = Vector2(0.02, 0.02)
 texture = ExtResource("2_1hsh6")

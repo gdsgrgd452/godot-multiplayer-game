@@ -6,10 +6,10 @@
 size = Vector2(46, 17)
 
 [node name="WoodenShieldComponent" type="Node2D" unique_id=975093531]
-scale = Vector2(6, 3)
 script = ExtResource("1_vpbaj")
 
 [node name="Hitbox" type="Area2D" parent="." unique_id=2082028233]
+scale = Vector2(1.8, 0.6)
 
 [node name="Collision" type="CollisionShape2D" parent="Hitbox" unique_id=964632112]
 shape = SubResource("RectangleShape2D_3itx8")

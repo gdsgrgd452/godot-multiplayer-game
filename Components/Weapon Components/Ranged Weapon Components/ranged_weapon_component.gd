@@ -5,9 +5,9 @@ class_name RangedWeaponComponent
 signal apply_recoil(recoil_force: Vector2)
 
 @onready var entity: Node = get_parent().get_parent()
+@onready var ui_comp: UIComponent = entity.get_node("UIComponent")
 
-# An identifier passed to the projectile so it knows what sprite to load
-@export var projectile_type: String = "Default"
+@export var projectile_type: String = "Default" # An identifier passed to the projectile so it knows what sprite to load
 
 # Weapon Stats
 var shooting: bool = false
@@ -60,6 +60,9 @@ func _spawn_projectile_and_recoil(dir: Vector2) -> void:
 		
 	get_tree().current_scene.get_node("SpawnedProjectiles").spawn_projectile(entity.global_position, dir, shooter_identity, projectile_speed, projectile_damage, projectile_type)
 	apply_recoil.emit(-dir * recoil_strength)
+	
+	if is_instance_valid(ui_comp) and entity.is_in_group("player"):
+		ui_comp.handle_attack_activated("Ranged", reload_speed)
 
 # Used by clients to ask the server to spawn a projectile
 @rpc("any_peer", "call_remote", "reliable")

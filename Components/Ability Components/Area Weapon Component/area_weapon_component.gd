@@ -26,7 +26,6 @@ var radius: float = 100.0:
 # Initializes the component, hides visuals, ensures unique shapes, and connects the overlap signal.
 func _ready() -> void:
 	hide()
-	
 	if hitbox_shape.shape:
 		hitbox_shape.shape = hitbox_shape.shape.duplicate()
 		
@@ -93,4 +92,4 @@ func trigger_visual_finished() -> void:
 # Draws the area shape dynamically based on the synchronized radius variable.
 func _draw() -> void:
 	if active_tween and entity.name == str(multiplayer.get_unique_id()): # NOT HIDING FOR OTHER PLAYERS
-		draw_circle(Vector2.ZERO, radius, Color(0, 0, 1, 0.4))
+		draw_circle(Vector2.ZERO, radius, Color(1, 0, 0, 0.74))

@@ -1,6 +1,15 @@
 extends Node2D
 class_name TeleportComponent
 
+
+@onready var entity: CharacterBody2D = get_parent().get_parent() as CharacterBody2D
+@onready var move_comp: Node2D = entity.get_node("Components/MovementComponent")
+@onready var ui_comp: Node2D = entity.get_node("UIComponent")
+
+var starting_scale = Vector2.ONE
+var active_illusion: Node2D = null
+var active_tween: Tween
+
 @export var max_range: float = 50.0:
 	set(value):
 		max_range = value
@@ -10,17 +19,10 @@ var teleport_cooldown: float = 5.0
 var current_cooldown: float = 0.0
 var teleport_time: float = 1.0
 
-@onready var entity: CharacterBody2D = get_parent().get_parent() as CharacterBody2D
-@onready var move_comp: Node2D = entity.get_node("Components/MovementComponent")
-@onready var ui_comp: Node2D = entity.get_node("UIComponent")
-
-var active_illusion: Node2D = null
-var active_tween_sprite: Tween
-var active_tween_components: Tween
-
 # Initializes the component and refreshes the visual range indicator.
 func _ready() -> void:
 	queue_redraw()
+
 
 # Manages the reduction of the active cooldown timer on the server.
 func _process(delta: float) -> void:
@@ -78,46 +80,59 @@ func trigger_teleport_visuals(going_out: bool, target_pos: Vector2 = Vector2.ZER
 	if not sprite or not components:
 		return
 
-	if active_tween_sprite and active_tween_sprite.is_valid():
-		active_tween_sprite.kill()
-	if active_tween_components and active_tween_components.is_valid():
-		active_tween_components.kill()
-		
-	if going_out:
-		active_tween_sprite = create_tween()
-		active_tween_components = create_tween() 
-		active_tween_sprite.tween_property(sprite, "scale", Vector2(0.1, 0.1), teleport_time).from(Vector2(1.5, 1.5))
-		active_tween_components.tween_property(components, "scale", Vector2(0.1, 0.1), teleport_time).from(Vector2(1.0, 1.0))
+	if active_tween and active_tween.is_valid():
+		active_tween.kill()
+	
+	starting_scale = entity.scale
+
+	if going_out: # Shrinking
+		print("Going out: " + str(starting_scale))
+		active_tween = create_tween()
+		active_tween.tween_property(entity, "scale", entity.scale/10, teleport_time).from(starting_scale)
 		_spawn_teleport_illusion(target_pos)
-	else:
-		sprite.scale = Vector2(1.5, 1.5)
-		components.scale = Vector2(1.0, 1.0)
+	else: # Growing
+		print("Going in: " + str(starting_scale))
+		entity.scale = starting_scale * 10
 		if is_instance_valid(active_illusion):
 			active_illusion.queue_free()
 
 # Creates a temporary visual copy of the entity and its equipment at the teleport target.
 func _spawn_teleport_illusion(spawn_pos: Vector2) -> void:
-	var main_scene: Node = get_tree().current_scene
-	if not main_scene or is_instance_valid(active_illusion):
-		if is_instance_valid(active_illusion): active_illusion.queue_free()
 
+	var main_scene: Node = get_tree().current_scene
+
+	if is_instance_valid(active_illusion): # If there is already a visual copy stop
+		active_illusion.queue_free()
+		printerr("Already a visual copy")
+		return
+
+	# Adds the copy as a child
 	active_illusion = Node2D.new()
 	active_illusion.global_position = spawn_pos
 	main_scene.add_child(active_illusion)
 	
+	# Makes a visual copy of the sprite and 
 	var entity_sprite: Sprite2D = entity.get_node_or_null("SpriteComponent") as Sprite2D
 	if entity_sprite:
 		var sprite_dup: Sprite2D = entity_sprite.duplicate(0) as Sprite2D
-		sprite_dup.scale = Vector2(0.1, 0.1)
+		sprite_dup.scale = entity_sprite.scale/10 # Uses the scale of the sprite because the sprite may have a diff scale to the entity
 		AbilityUtils.strip_physics_and_scripts(sprite_dup)
 		active_illusion.add_child(sprite_dup)
-		create_tween().bind_node(active_illusion).tween_property(sprite_dup, "scale", Vector2(0.3, 0.3), teleport_time)
+		create_tween().bind_node(active_illusion).tween_property(sprite_dup, "scale", entity_sprite.scale, teleport_time)
 		
+	var comp_container: Node2D = attach_components_to_visual_duplicate()
+			
+	create_tween().bind_node(active_illusion).tween_property(comp_container, "scale", starting_scale, teleport_time)
+
+# Creates a components container and attaches purely visual duplicates of the originals components to it
+func attach_components_to_visual_duplicate() -> Node2D:
+
 	var comp_container: Node2D = Node2D.new()
 	comp_container.name = "Components"
-	comp_container.scale = Vector2(0.1, 0.1)
+	comp_container.scale = starting_scale/10
 	active_illusion.add_child(comp_container)
 	
+	# Tries to get all possible components
 	var active_comps: Array[Node] = [
 		entity.get("melee_w_component"),
 		entity.get("ranged_w_component"),
@@ -126,16 +141,16 @@ func _spawn_teleport_illusion(spawn_pos: Vector2) -> void:
 		entity.get("shield_component")
 	]
 	
+	# Adds visual versions of the valid ones to the container
 	for comp: Node in active_comps:
 		if is_instance_valid(comp) and comp.get("visible"):
 			var comp_dup: Node = comp.duplicate(0)
 			AbilityUtils.strip_physics_and_scripts(comp_dup)
 			comp_container.add_child(comp_dup)
-			
-	create_tween().bind_node(active_illusion).tween_property(comp_container, "scale", Vector2(0.3, 0.3), teleport_time)
 
-# Renders the maximum range boundary scaled to the entity's current size.
+	return comp_container
+
+# Renders the maximum range boundary
 func _draw() -> void:
 	if entity.name == str(multiplayer.get_unique_id()):
-		var draw_radius: float = max_range / entity.scale.x
-		draw_arc(Vector2.ZERO, draw_radius, 0.0, TAU, 100, Color(1.0, 0.0, 1.0, 0.5), 2.0 / entity.scale.x)
+		draw_arc(Vector2.ZERO, max_range, 0.0, TAU, 100, Color(1.0, 0.0, 1.0, 0.5), 2.0)

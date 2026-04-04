@@ -51,6 +51,7 @@ func spawn_floating_number(amount: int, category: String) -> void:
 	active_labels[category] = new_label
 	active_tweens[category] = FloatingTextUtils.animate_label(self, new_label, local_offset, duration, entity.scale)
 
+# TODO hide these for other players
 # Displays animated status messages above the entity with scale-aware positioning.
 @rpc("any_peer", "call_local", "reliable")
 func display_message(message: String, pos_offset: Vector2 = Vector2(-100.0, -50.0), font_size: int = 20, override_color: Color = Color(0, 0, 0, 0)) -> void:
