@@ -36,7 +36,7 @@ var class_base_stats: Dictionary = {
 	"Pawn": {
 		"move_speed": 150.0,
 		"max_health": 50.0,
-		"regen_speed": 1.0,
+		"regen_speed": 50.0,
 		"regen_amount": 1.0,
 		"body_damage": 5.0,
 		"melee_damage": 10.0,
@@ -49,7 +49,7 @@ var class_base_stats: Dictionary = {
 	"Pawn_I": {
 		"move_speed": 160.0,
 		"max_health": 65.0,
-		"regen_speed": 1.2,
+		"regen_speed": 45.0,
 		"regen_amount": 2.0,
 		"body_damage": 8.0,
 		"melee_damage": 15.0,
@@ -62,7 +62,7 @@ var class_base_stats: Dictionary = {
 	"Pawn_II": {
 		"move_speed": 170.0,
 		"max_health": 80.0,
-		"regen_speed": 1.5,
+		"regen_speed": 40.0,
 		"regen_amount": 2.0,
 		"body_damage": 10.0,
 		"melee_damage": 20.0,
@@ -75,7 +75,7 @@ var class_base_stats: Dictionary = {
 	"Knight": {
 		"move_speed": 150.0,
 		"max_health": 60.0,
-		"regen_speed": 1.5,
+		"regen_speed": 35.0,
 		"regen_amount": 2.0,
 		"body_damage": 8.0,
 		"melee_damage": 25.0,
@@ -88,7 +88,7 @@ var class_base_stats: Dictionary = {
 	"Mini_Rook": {
 		"move_speed": 150.0,
 		"max_health": 150.0,
-		"regen_speed": 1.0,
+		"regen_speed": 30.0,
 		"regen_amount": 2.0,
 		"body_damage": 15.0,
 		"projectile_damage": 8.0,
@@ -105,7 +105,7 @@ var class_base_stats: Dictionary = {
 	"Shadow_Knight": { 
 		"move_speed": 200.0,
 		"max_health": 45.0,
-		"regen_speed": 1.0,
+		"regen_speed": 35.0,
 		"regen_amount": 1.0,
 		"body_damage": 12.0,
 		"melee_damage": 40.0,
@@ -118,7 +118,7 @@ var class_base_stats: Dictionary = {
 	"Flowers_Knight": {
 		"move_speed": 175.0,
 		"max_health": 80.0,
-		"regen_speed": 2.5,
+		"regen_speed": 30.0,
 		"regen_amount": 5.0,
 		"body_damage": 10.0,
 		"melee_damage": 22.0,
@@ -131,7 +131,7 @@ var class_base_stats: Dictionary = {
 	"Rook": {
 		"move_speed": 150.0,
 		"max_health": 220.0,
-		"regen_speed": 1.5,
+		"regen_speed": 28.0,
 		"regen_amount": 4.0,
 		"body_damage": 25.0,
 		"projectile_damage": 10.0,
@@ -145,7 +145,7 @@ var class_base_stats: Dictionary = {
 	"Bishop": {
 		"move_speed": 225.0,
 		"max_health": 45.0,
-		"regen_speed": 1.0,
+		"regen_speed": 30.0,
 		"regen_amount": 3.0,
 		"body_damage": 4.0,
 		"projectile_damage": 15.0,
@@ -163,7 +163,7 @@ var class_base_stats: Dictionary = {
 	"Sultans_Knight": {
 		"move_speed": 250.0,
 		"max_health": 70.0,
-		"regen_speed": 1.5,
+		"regen_speed": 28.0,
 		"regen_amount": 3.0,
 		"body_damage": 15.0,
 		"melee_damage": 35.0,
@@ -179,7 +179,7 @@ var class_base_stats: Dictionary = {
 	"Rook_Knight": {
 		"move_speed": 150.0,
 		"max_health": 170.0,
-		"regen_speed": 1.5,
+		"regen_speed": 25.0,
 		"regen_amount": 3.0,
 		"body_damage": 18.0,
 		"projectile_damage": 20.0,
@@ -195,7 +195,7 @@ var class_base_stats: Dictionary = {
 	"Bishop_Knight": {
 		"move_speed": 210.0,
 		"max_health": 60.0,
-		"regen_speed": 1.5,
+		"regen_speed": 30.0,
 		"regen_amount": 4.0,
 		"body_damage": 6.0,
 		"projectile_damage": 25.0,
@@ -213,7 +213,7 @@ var class_base_stats: Dictionary = {
 	"King_Knight": {
 		"move_speed": 250.0,
 		"max_health": 200.0,
-		"regen_speed": 3.0,
+		"regen_speed": 25.0,
 		"regen_amount": 10.0,
 		"body_damage": 20.0,
 		"melee_damage": 60.0,
@@ -228,7 +228,7 @@ var class_base_stats: Dictionary = {
 	"King_Bishop": {
 		"move_speed": 250.0,
 		"max_health": 200.0,
-		"regen_speed": 3.0,
+		"regen_speed": 25.0,
 		"regen_amount": 10.0,
 		"body_damage": 20.0,
 		"projectile_damage": 40.0,
@@ -243,7 +243,7 @@ var class_base_stats: Dictionary = {
 	"King_Rook": {
 		"move_speed": 250.0,
 		"max_health": 200.0,
-		"regen_speed": 3.0,
+		"regen_speed": 20.0,
 		"regen_amount": 10.0,
 		"body_damage": 20.0,
 		"projectile_damage": 40.0,
@@ -259,7 +259,7 @@ var class_base_stats: Dictionary = {
 	"King": {
 		"move_speed": 250.0,
 		"max_health": 200.0,
-		"regen_speed": 3.0,
+		"regen_speed": 15.0,
 		"regen_amount": 10.0,
 		"body_damage": 20.0,
 		"melee_damage": 60.0,
@@ -274,7 +274,7 @@ var class_base_stats: Dictionary = {
 	"Queen": {
 		"move_speed": 250.0,
 		"max_health": 200.0,
-		"regen_speed": 3.0,
+		"regen_speed": 20.0,
 		"regen_amount": 10.0,
 		"body_damage": 20.0,
 		"projectile_damage": 40.0,
@@ -292,7 +292,7 @@ var class_base_stats: Dictionary = {
 	"Sultan": {
 		"move_speed": 250.0,
 		"max_health": 200.0,
-		"regen_speed": 3.0,
+		"regen_speed": 15.0,
 		"regen_amount": 10.0,
 		"body_damage": 20.0,
 		"melee_damage": 60.0,
@@ -301,14 +301,14 @@ var class_base_stats: Dictionary = {
 		"spawner_cooldown": 12.0,
 		"max_spawns": 7.0,
 		"mass_heal_amount": 50,
-		"mass_heal_cooldown": 10.0,
+		"mass_heal_cooldown": 30.0,
 		"shield_health": 200.0
 	},
 
 	"Jester": {
 		"move_speed": 260.0,
 		"max_health": 110.0,
-		"regen_speed": 2.0,
+		"regen_speed": 20.0,
 		"regen_amount": 5.0,
 		"body_damage": 12.0,
 		"projectile_damage": 60.0,
@@ -325,7 +325,7 @@ var class_base_stats: Dictionary = {
 	"Super_Queen": {
 		"move_speed": 250.0,
 		"max_health": 200.0,
-		"regen_speed": 3.0,
+		"regen_speed": 10.0,
 		"regen_amount": 10.0,
 		"body_damage": 20.0,
 		"melee_damage": 60.0,
@@ -346,7 +346,7 @@ var class_base_stats: Dictionary = {
 	"Holy_Queen": {
 		"move_speed": 250.0,
 		"max_health": 200.0,
-		"regen_speed": 3.0,
+		"regen_speed": 10.0,
 		"regen_amount": 10.0,
 		"body_damage": 20.0,
 		"melee_damage": 60.0,
@@ -360,7 +360,7 @@ var class_base_stats: Dictionary = {
 		"wof_length": 500,
 		"wof_damage": 10,
 		"mass_heal_amount": 100,
-		"mass_heal_cooldown": 80.0,
+		"mass_heal_cooldown": 20.0,
 		"shield_health": 200.0
 	},
 }
@@ -559,30 +559,30 @@ func _apply_ability_stats(slot_key: String, a_node: Node, b_dict: Dictionary, lv
 			if b_dict.has("area_damage"): a_node.area_damage = int(calc.call("area_damage"))
 			if b_dict.has("area_knockback"): a_node.knockback_force = int(calc.call("area_knockback"))
 			if b_dict.has("area_radius"): a_node.max_radius = calc.call("area_radius")
-			if b_dict.has("area_cooldown"): a_node.max_cooldown = calc.call("area_cooldown")
+			if b_dict.has("area_cooldown"): a_node.area_cooldown = calc.call("area_cooldown")
 		"Teleport":
 			if b_dict.has("teleport_range"): a_node.max_range = calc.call("teleport_range")
-			if b_dict.has("teleport_cooldown"): a_node.max_cooldown = calc.call("teleport_cooldown")
+			if b_dict.has("teleport_cooldown"): a_node.teleport_cooldown = calc.call("teleport_cooldown")
 		"Teleport_Crush":
 			if b_dict.has("area_damage"): a_node.area_damage = int(calc.call("area_damage"))
 			if b_dict.has("area_knockback"): a_node.knockback_force = int(calc.call("area_knockback"))
 			if b_dict.has("area_radius"): a_node.max_radius = calc.call("area_radius")
 			if b_dict.has("teleport_range"): a_node.max_range = calc.call("teleport_range")
-			if b_dict.has("teleport_cooldown"): a_node.max_cooldown = calc.call("teleport_cooldown")
+			if b_dict.has("teleport_cooldown"): a_node.tp_crush_cooldown = calc.call("teleport_cooldown")
 		"Illusion":
-			if b_dict.has("illusion_cooldown"): a_node.max_cooldown = calc.call("illusion_cooldown")
+			if b_dict.has("illusion_cooldown"): a_node.illusion_cooldown = calc.call("illusion_cooldown")
 			if b_dict.has("illusions_count"): a_node.illusions_count = int(calc.call("illusions_count"))
 			if b_dict.has("illusion_duration"): a_node.illusion_duration = calc.call("illusion_duration")
 		"Stealth":
-			if b_dict.has("stealth_cooldown"): a_node.max_cooldown = calc.call("stealth_cooldown")
+			if b_dict.has("stealth_cooldown"): a_node.stealth_cooldown = calc.call("stealth_cooldown")
 			if b_dict.has("stealth_duration"): a_node.stealth_duration = calc.call("stealth_duration")
 		"Spawner":
-			if b_dict.has("spawner_cooldown"): a_node.max_cooldown = calc.call("spawner_cooldown")
+			if b_dict.has("spawner_cooldown"): a_node.spawner_cooldown = calc.call("spawner_cooldown")
 			if b_dict.has("max_spawns"): a_node.max_spawns = int(calc.call("max_spawns"))
 		"WOF":
-			if b_dict.has("wof_cooldown"): a_node.max_cooldown = calc.call("wof_cooldown")
+			if b_dict.has("wof_cooldown"): a_node.wof_cooldown = calc.call("wof_cooldown")
 			if b_dict.has("wof_length"): a_node.max_length = calc.call("wof_length")
 			if b_dict.has("wof_damage"): a_node.max_damage = calc.call("wof_damage")
 		"Mass_Heal":
 			if b_dict.has("mass_heal_amount"): a_node.mass_heal_amount = int(calc.call("mass_heal_amount"))
-			if b_dict.has("mass_heal_cooldown"): a_node.max_cooldown = int(calc.call("mass_heal_cooldown"))
+			if b_dict.has("mass_heal_cooldown"): a_node.mass_heal_cooldown = int(calc.call("mass_heal_cooldown"))

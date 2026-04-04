@@ -1,6 +1,6 @@
 extends Node2D
 
-var max_cooldown: float = 5.0
+var teleport_cooldown: float = 5.0
 var current_cooldown: float = 0.0
 var teleport_time: float = 1.0
 
@@ -11,6 +11,7 @@ var teleport_time: float = 1.0
 
 @onready var entity: CharacterBody2D = get_parent().get_parent() as CharacterBody2D
 @onready var move_comp: Node2D = entity.get_node("Components/MovementComponent")
+@onready var ui_comp: Node2D = entity.get_node("UIComponent")
 var active_illusion: Node2D = null
 
 # Tracks the active tweens so they can be explicitly killed before setting manual scale values.
@@ -29,8 +30,15 @@ func _process(delta: float) -> void:
 # Receives the requested teleport destination from the client and executes it if the cooldown is ready.
 @rpc("any_peer", "call_local", "reliable")
 func request_teleport(target_pos: Vector2) -> void:
-	if multiplayer.is_server() and AbilityUtils.is_position_within_map(get_tree().current_scene, target_pos):
+	if multiplayer.is_server():
 		if current_cooldown <= 0.0:
+			if not AbilityUtils.is_position_within_map(get_tree().current_scene, target_pos):
+				if ui_comp and entity.is_in_group("player"):
+					ui_comp.display_message.rpc_id(entity.name.to_int(), "Naughty Naughty, Cant teleport outside the arena")
+					return
+			# Triggers a message above the player and the ability cooldown bar
+			if is_instance_valid(ui_comp) and entity.is_in_group("player"):
+				ui_comp.handle_ability_activated(self, "Teleport", teleport_cooldown + teleport_time)
 			_perform_teleport(target_pos)
 
 # Calculates the clamped destination, updates the physical location, and broadcasts the visual trigger.
@@ -44,7 +52,7 @@ func _perform_teleport(target_pos: Vector2) -> void:
 
 	# Block movement, trigger the shrink animation and wait for it to complete.
 	move_comp.movement_blocked = true
-	current_cooldown = max_cooldown
+	current_cooldown = teleport_cooldown + teleport_time
 	trigger_teleport_visuals.rpc(true, final_position) 
 	await get_tree().create_timer(teleport_time + 0.1).timeout # + 0.1 so it doesnt teleport before the visuals are done
 	
@@ -60,10 +68,7 @@ func trigger_teleport_visuals(going_out: bool, target_pos: Vector2 = Vector2.ZER
 	var components: Node2D = entity.get_node("Components") as Node2D
 	if not sprite or not components:
 		return
-	
-	var ui_comp: Node = entity.get_node_or_null("UIComponent")
-	if ui_comp and entity.is_in_group("player"):
-		ui_comp.display_message.rpc_id(entity.name.to_int(), "Teleported!")
+
 
 	# Kill any ongoing scaling tweens to prevent them from overriding the new manual scale.
 	if active_tween_sprite and active_tween_sprite.is_valid():

@@ -4,7 +4,7 @@ class_name AreaWeaponComponent
 @export var area_damage: int = 10
 @export var max_radius: float = 200.0
 @export var knockback_force: float = 500.0
-@export var max_cooldown: float = 5.0
+@export var area_cooldown: float = 5.0
 @export var attack_duration: float = 0.5
 
 var current_cooldown: float = 0.0
@@ -12,7 +12,6 @@ var current_duration: float = 0.0
 var active_tween: Tween
 
 @onready var entity: CharacterBody2D = get_parent().get_parent() as CharacterBody2D
-@onready var ui_comp: Node2D = entity.get_node("UIComponent")
 @onready var hitbox: Area2D = $Hitbox
 @onready var hitbox_shape: CollisionShape2D = $Hitbox/Collision
 
@@ -53,10 +52,12 @@ func request_area_attack() -> void:
 	if not multiplayer.is_server() or current_cooldown > 0.0:
 		return
 	
-	if entity.is_in_group("player"):
-		ui_comp.display_message.rpc_id(entity.name.to_int(), "Ability Used: Area Attack")
+	# Triggers a message above the player and the ability cooldown bar
+	var ui_comp: Node2D = entity.get_node("UIComponent")
+	if is_instance_valid(ui_comp) and entity.is_in_group("player"):
+			ui_comp.handle_ability_activated(self, "Magic Area AttacK", area_cooldown)
 		
-	current_cooldown = max_cooldown
+	current_cooldown = area_cooldown
 	current_duration = attack_duration
 	
 	hitbox.monitoring = true

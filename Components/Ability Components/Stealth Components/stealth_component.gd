@@ -1,11 +1,12 @@
 extends Node2D
 class_name StealthComponent
 
-@export var max_cooldown: float = 12.0
+@export var stealth_cooldown: float = 12.0
 @export var stealth_duration: float = 3.0
 var current_cooldown: float = 0.0
 
 @onready var entity: CharacterBody2D = get_parent().get_parent() as CharacterBody2D
+@onready var ui_comp: Node = entity.get_node_or_null("UIComponent")
 
 # Reduces the active ability cooldown timer exclusively on the server.
 func _process(delta: float) -> void:
@@ -16,13 +17,11 @@ func _process(delta: float) -> void:
 @rpc("any_peer", "call_local", "reliable")
 func request_stealth() -> void:
 	if multiplayer.is_server() and current_cooldown <= 0.0:
-		current_cooldown = max_cooldown
+		current_cooldown = stealth_cooldown + stealth_duration
 		
-		print("Stealth activating")
-		
-		var ui_comp: Node = entity.get_node_or_null("UIComponent")
-		if ui_comp and entity.is_in_group("player"):
-			ui_comp.display_message.rpc_id(entity.name.to_int(), "Used Stealth!")
+		# Triggers a message above the player and the ability cooldown bar
+		if is_instance_valid(ui_comp) and entity.is_in_group("player"):
+			ui_comp.handle_ability_activated(self, "Stealth", stealth_cooldown + stealth_duration)
 		
 		var original_layer: int = entity.collision_layer
 		var original_mask: int = entity.collision_mask
@@ -46,7 +45,6 @@ func request_stealth() -> void:
 # Commands all clients to toggle identifying UI elements for remote observers.
 @rpc("authority", "call_local", "reliable")
 func trigger_ui_visibility(is_hidden: bool) -> void:
-	var ui_comp: Node = entity.get_node_or_null("UIComponent")
 	if ui_comp and ui_comp.has_method("toggle_external_ui"):
 		ui_comp.toggle_external_ui(is_hidden)
 

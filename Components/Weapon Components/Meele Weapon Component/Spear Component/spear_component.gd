@@ -1,7 +1,7 @@
 extends MeleeWeaponComponent
 class_name SpearComponent
 
-@export var lunge_distance: float = 2500
+@export var lunge_distance: float = 2500 # In reality - 
 var pullback_distance: float = 1000.0
 
 func _ready() -> void:
@@ -18,11 +18,11 @@ func trigger_visual_attack(target_pos: Vector2) -> void:
 	look_at(target_pos)
 	
 	var back_pos: Vector2 = position - (transform.x * pullback_distance)
-	var forward_pos: Vector2 = position + (transform.x * lunge_distance)
+	var forward_pos: Vector2 = position + (transform.x * lunge_distance) # 0.05 transform
 
 	active_tween = create_tween()
 	active_tween.set_process_mode(Tween.TWEEN_PROCESS_PHYSICS) # Stops tunelling
-	active_tween.tween_property(self, "position", back_pos, attack_duration * 0.3).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	active_tween.tween_property(self, "position", back_pos, attack_duration * 0.15).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 	active_tween.tween_property(self, "position", forward_pos, attack_duration * 0.3).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 	active_tween.tween_property(self, "position", default_position, attack_duration * 0.4).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
 	

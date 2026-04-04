@@ -262,9 +262,17 @@ corner_radius_bottom_left = 12
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_4ge2x"]
 bg_color = Color(0.12156863, 0.12156863, 0.12156863, 0.5529412)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ktvaa"]
 bg_color = Color(0.41116697, 0.28101015, 0.80888003, 0.5529412)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ohodf"]
 bg_color = Color(0.6, 0.6, 0.9607843, 0.6)
@@ -468,8 +476,9 @@ anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
 offset_left = -100.0
-offset_top = -30.0
+offset_top = -34.0
 offset_right = 100.0
+offset_bottom = -4.0
 grow_horizontal = 2
 grow_vertical = 0
 theme_override_styles/background = SubResource("StyleBoxFlat_4ge2x")

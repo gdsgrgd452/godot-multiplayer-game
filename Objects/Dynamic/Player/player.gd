@@ -178,13 +178,29 @@ func check_first_ability_input() -> void:
 func check_second_input_wof() -> void:
 	if first_ability_component and current_first_ability == "WOF" and Input.is_action_just_pressed("first_ability"):
 		first_ability_component.request_second_pos.rpc_id(1, get_global_mouse_position())
+	elif second_ability_component and current_second_ability == "WOF" and Input.is_action_just_pressed("second_ability"):
+		second_ability_component.request_second_pos.rpc_id(1, get_global_mouse_position())
 
 # Triggers the second ability 
 func check_second_ability_input() -> void:
 	if second_ability_component and Input.is_action_just_pressed("second_ability"):
 		match current_second_ability:
+			"Magic":
+				second_ability_component.request_area_attack.rpc_id(1)
+			"Teleport":
+				second_ability_component.request_teleport.rpc_id(1, get_global_mouse_position())
+			"Illusion":
+				second_ability_component.request_scattered_illusions.rpc_id(1)
+			"Stealth":
+				second_ability_component.request_stealth.rpc_id(1)
 			"Spawner":
 				second_ability_component.request_spawn.rpc_id(1, get_global_mouse_position())
+			"Teleport_Crush":
+				second_ability_component.request_teleport_area.rpc_id(1, get_global_mouse_position())
+			"WOF":
+				second_ability_component.request_wof.rpc_id(1, get_global_mouse_position())
+			"Mass_Heal":
+				health_component.request_mass_heal.rpc_id(1)
 
 # Evaluates continuous input to request shield activation and deactivation from the server.
 func check_shield_input() -> void:

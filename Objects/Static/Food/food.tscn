@@ -36,6 +36,7 @@ replication_config = SubResource("SceneReplicationConfig_8txok")
 [node name="HealthComponent" parent="Components" unique_id=421527654 instance=ExtResource("3_ksbt4")]
 
 [node name="UIComponent" parent="." unique_id=1301694338 instance=ExtResource("4_g2ilh")]
+visible = true
 
 [node name="UI" type="Control" parent="." unique_id=843464970]
 layout_mode = 3

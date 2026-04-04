@@ -16,6 +16,7 @@ var decay_speed: float = 10.0
 var decay_cooldown: float = decay_speed
 
 @onready var entity: Node = get_parent().get_parent()
+@onready var ui_comp: Node = entity.get_node_or_null("UIComponent")
 @onready var health_bar: ProgressBar = entity.get_node("UI/HealthBar")
 
 var active_dmg_label: Label = null
@@ -26,7 +27,7 @@ var dmg_tween: Tween = null
 var heal_tween: Tween = null
 
 var mass_heal_amount: int = 50
-var max_cooldown: float = 5.0
+var mass_heal_cooldown: float = 5.0
 var current_cooldown: float = 0.0
 var mass_heal_duration: float = 5.0
 var mass_heal_time: float = 0.0
@@ -67,7 +68,6 @@ func heal(amount: float) -> void:
 			
 		if actual_heal > 0:
 			health += actual_heal
-			var ui_comp: Node2D = entity.get_node_or_null("UIComponent")
 			if is_instance_valid(ui_comp):
 				ui_comp.spawn_floating_number.rpc(int(actual_heal), "heal")
 
@@ -83,7 +83,6 @@ func take_damage(amount: int, attacker_id: String = "", non_entity_attacker: boo
 		var my_team = entity.get("team_id")
 		
 		# If both have valid teams and they match, ignore the damage
-		# We check != -1 to ensure unassigned/neutral entities can still be damaged
 		if attacker_team != null and my_team != null:
 			if attacker_team == my_team and my_team != -1:
 				#print("Friendly fire blocked between " + attacker_id + " and " + entity.name)
@@ -91,7 +90,6 @@ func take_damage(amount: int, attacker_id: String = "", non_entity_attacker: boo
 	
 	health -= amount
 	regen_cooldown = maxf(0.1, regen_speed)
-	var ui_comp: Node2D = entity.get_node_or_null("UIComponent")
 	if is_instance_valid(ui_comp):
 		ui_comp.spawn_floating_number.rpc(amount, "damage")
 
@@ -115,11 +113,12 @@ func _find_attacker_node(id: String) -> Node:
 		
 	return null
 
+# Request a mass heal up ability
 @rpc("authority", "call_local", "unreliable")
 func request_mass_heal() -> void:
-	if current_cooldown <= 0.0:
-		var ui_comp: Node = entity.get_node_or_null("UIComponent")
-		if ui_comp and entity.is_in_group("player"):
-			ui_comp.display_message.rpc_id(entity.name.to_int(), "Healing Up!")
-		current_cooldown = max_cooldown
+	if current_cooldown <= 0.0 and health < max_health:
+		# Triggers a message above the player and the ability cooldown bar
+		if is_instance_valid(ui_comp) and entity.is_in_group("player"):
+			ui_comp.handle_ability_activated(self, "Mass Heal", mass_heal_cooldown)
+		current_cooldown = mass_heal_cooldown
 		heal(mass_heal_amount)

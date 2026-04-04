@@ -39,8 +39,6 @@ var current_second_ability: String
 
 @onready var first_ability_bar: EntityBar = $"../HUD/FirstAbilityBar"
 @onready var second_ability_bar: EntityBar = $"../HUD/SecondAbilityBar"
-var abil_1_last_cd: float = 0.0
-var abil_2_last_cd: float = 0.0
 
 func _ready() -> void:
 	name_label.text = entity.name
@@ -48,6 +46,8 @@ func _ready() -> void:
 		leveling_component.show_upgrade_menu.connect(_show_upgrade_menu)
 		promotion_component.show_promotion_menu.connect(_show_promotion_menu)
 		hud.show() 
+		first_ability_bar.hide()
+		second_ability_bar.hide()
 		ui_container.show()
 		upgrade_UI.hide()
 		promotion_UI.hide()
@@ -168,33 +168,36 @@ func update_leaderboard_ui(entries: Array) -> void:
 func _process(_delta: float) -> void:
 	if entity.name == str(multiplayer.get_unique_id()): 
 		show_debug_info()
-		ability_cooldown_bars()
-
-# Handles the ability cooldown bars
-func ability_cooldown_bars():
-	if first_ability_component != null and current_first_ability != "None":
-		handle_ability_bar(first_ability_component, first_ability_bar, abil_1_last_cd)
-	else:
-		first_ability_bar.hide()
-		
-	if second_ability_component != null and current_second_ability != "None":
-		handle_ability_bar(second_ability_component, second_ability_bar, abil_2_last_cd)
-	else:
-		second_ability_bar.hide()
-
-
-func handle_ability_bar(ability_comp: Node2D, ability_bar: EntityBar, last_cd: float):
-	var current_cd: float = float(ability_comp.current_cooldown)
-	var max_cd: float = float(ability_comp.max_cooldown)
 	
-	if current_cd > 0.0 and current_cd > last_cd:
-		ability_bar.show()
-		ability_bar.value = current_cd
-		ability_bar.animate_value(0.0, max_cd, current_cd)
-	elif current_cd <= 0.0:
-		ability_bar.hide()
+
+# Triggers the visual message and cooldown bar animation for a specific ability slot.
+func handle_ability_activated(caller: Node2D, ability_name: String, cooldown: float) -> void:
+	if not multiplayer.is_server():
+		return
 		
-	last_cd = current_cd
+	var is_secondary: bool = false
+	if caller == get("second_ability_component"):
+		is_secondary = true
+		
+	trigger_ability_ui.rpc(ability_name, cooldown, is_secondary)
+
+# Displays the ability usage message and animates the corresponding cooldown bar on all clients.
+@rpc("authority", "call_local", "reliable")
+func trigger_ability_ui(ability_name: String, max_cooldown: float, is_secondary: bool) -> void:
+	display_message("Used: " + ability_name.replace("_", " "))
+	
+	if not entity.is_in_group("player") or entity.name != str(multiplayer.get_unique_id()):
+		return
+		
+	var bar: EntityBar = get("second_ability_bar") if is_secondary else get("first_ability_bar")
+	if is_instance_valid(bar):
+		bar.show()
+		bar.max_value = max_cooldown
+		bar.value = max_cooldown
+		bar.animate_value(0.0, max_cooldown, max_cooldown)
+		
+		if bar.bar_tween:
+			bar.bar_tween.finished.connect(func() -> void: if is_instance_valid(bar): bar.hide())
 
 # Compiles and displays internal entity variables to the local HUD.
 func show_debug_info() -> void:
@@ -247,27 +250,27 @@ func show_debug_info() -> void:
 				var area_damage_text: String = "Area Damage: " + str(first_ability_component.area_damage) + "\n"
 				var area_kb_text: String = "Area Knockback: " + str(first_ability_component.knockback_force) + "\n"
 				var area_radius_text: String = "Area Radius: " + str(first_ability_component.max_radius) + "\n"
-				var area_cooldown_text: String = "Area Cooldown: " + str(first_ability_component.max_cooldown) + "\n"
+				var area_cooldown_text: String = "Area Cooldown: " + str(first_ability_component.area_cooldown) + "\n"
 				var area_duration_text: String = "Area Attack Duration: " + str(first_ability_component.attack_duration) + "\n\n"
 				stats_label_two.text = area_damage_text + area_kb_text + area_radius_text + area_cooldown_text + area_duration_text
 			"Teleport":
-				var tele_cooldown_text: String = "Teleport Cooldown: " + str(first_ability_component.max_cooldown) + "\n"
+				var tele_cooldown_text: String = "Teleport Cooldown: " + str(first_ability_component.teleport_cooldown) + "\n"
 				var tele_duration_text: String = "Til next: " + str(snapped(first_ability_component.current_cooldown, 0.1)) + "\n"
 				var tele_range_text: String = "Teleport Range: " + str(first_ability_component.max_range) + "\n\n"
 				stats_label_two.text = tele_cooldown_text + tele_duration_text + tele_range_text
 			"Illusion":
-				var illu_cooldown_text: String = "Illusion Cooldown: " + str(first_ability_component.max_cooldown) + "\n"
+				var illu_cooldown_text: String = "Illusion Cooldown: " + str(first_ability_component.illusion_cooldown) + "\n"
 				var illu_duration_text: String = "Illusion Duration: " + str(first_ability_component.illusion_duration) + "\n"
 				var illu_time_text: String = "Til next: " + str(snapped(first_ability_component.current_cooldown, 0.1)) + "\n"
 				var illu_amount_text: String = "Illusion Amount: " + str(first_ability_component.illusions_count) + "\n\n"
 				stats_label_two.text = illu_cooldown_text + illu_time_text + illu_duration_text + illu_amount_text
 			"Stealth":
-				var stealth_cd_text: String = "Stealth Cooldown: " + str(first_ability_component.max_cooldown) + "\n"
+				var stealth_cd_text: String = "Stealth Cooldown: " + str(first_ability_component.stealth_cooldown) + "\n"
 				var stealth_dur_text: String = "Stealth Duration: " + str(first_ability_component.stealth_duration) + "\n"
 				var stealth_time_text: String = "Til next: " + str(snapped(first_ability_component.current_cooldown, 0.1)) + "\n\n"
 				stats_label_two.text = stealth_cd_text + stealth_dur_text + stealth_time_text
 			"Spawner":
-				var spawner_cd_text: String = "Spawner Cooldown: " + str(first_ability_component.max_cooldown) + "\n"
+				var spawner_cd_text: String = "Spawner Cooldown: " + str(first_ability_component.spawner_cooldown) + "\n"
 				var spawner_time_text: String = "Til next: " + str(snapped(first_ability_component.current_cooldown, 0.1)) + "\n"
 				var spawner_spawns_text: String = "Current spawns: " + str(first_ability_component.current_spawns) + "\n"
 				var spawner_max_spawns_text: String = "Max spawns: " + str(first_ability_component.max_spawns) + "\n\n"
@@ -277,18 +280,18 @@ func show_debug_info() -> void:
 				var tpc_kb_text: String = "Teleport Knockback: " + str(first_ability_component.knockback_force) + "\n"
 				var tpc_radius_text: String = "Teleport AoE Radius: " + str(first_ability_component.max_radius) + "\n"
 				var tpc_area_duration_text: String = "Area Attack Duration: " + str(first_ability_component.attack_duration) + "\n\n"
-				var tpc_cooldown_text: String = "Teleport Cooldown: " + str(first_ability_component.max_cooldown) + "\n"
+				var tpc_cooldown_text: String = "Teleport Cooldown: " + str(first_ability_component.tp_crush_cooldown) + "\n"
 				var tpc_duration_text: String = "Til next: " + str(snapped(first_ability_component.current_cooldown, 0.1)) + "\n"
 				var tpc_range_text: String = "Teleport Range: " + str(first_ability_component.max_range) + "\n\n"
 				stats_label_two.text = tpc_damage_text + tpc_kb_text + tpc_radius_text + tpc_area_duration_text + tpc_cooldown_text + tpc_duration_text + tpc_range_text
 			"WOF":
-				var wof_cd_text = "WOF Cooldown: " + str(first_ability_component.max_cooldown) + "\n"
+				var wof_cd_text = "WOF Cooldown: " + str(first_ability_component.wof_cooldown) + "\n"
 				var wof_time_text: String = "Til next: " + str(snapped(first_ability_component.current_cooldown, 0.1)) + "\n"
 				var wof_length_text: String = "Max Length: " + str(snapped(first_ability_component.max_length, 0.1)) + "\n"
 				var wof_damage_text = "WOF Max Damage: " + str(first_ability_component.max_damage) + "\n\n"
 				stats_label_two.text = wof_cd_text + wof_time_text + wof_length_text + wof_damage_text
 			"Mass_Heal":
-				var heal_cd_text = "Heal Cooldown: " + str(first_ability_component.max_cooldown) + "\n"
+				var heal_cd_text = "Heal Cooldown: " + str(first_ability_component.mass_heal_cooldown) + "\n"
 				var heal_time_text: String = "Til next: " + str(snapped(first_ability_component.current_cooldown, 0.1)) + "\n"
 				var heal_amount_text = "Heal Amount: " + str(first_ability_component.mass_heal_amount) + "\n\n"
 				stats_label_two.text = heal_cd_text + heal_time_text + heal_amount_text
@@ -299,18 +302,18 @@ func show_debug_info() -> void:
 	if second_ability_component:
 		match current_second_ability:
 			"Spawner":
-				var spawner_cd_text: String = "Spawner Cooldown: " + str(second_ability_component.max_cooldown) + "\n"
+				var spawner_cd_text: String = "Spawner Cooldown: " + str(second_ability_component.spawner_cooldown) + "\n"
 				var spawner_time_text: String = "Til next: " + str(snapped(second_ability_component.current_cooldown, 0.1)) + "\n"
 				var spawner_spawns_text: String = "Current spawns: " + str(second_ability_component.current_spawns) + "\n"
 				var spawner_max_spawns_text: String = "Max spawns: " + str(second_ability_component.max_spawns) + "\n\n"
 				stats_label_two.text += spawner_cd_text + spawner_time_text + spawner_spawns_text + spawner_max_spawns_text
 			"Mass_Heal":
-				var heal_cd_text = "Heal Cooldown: " + str(second_ability_component.max_cooldown) + "\n"
+				var heal_cd_text = "Heal Cooldown: " + str(second_ability_component.mass_heal_cooldown) + "\n"
 				var heal_time_text: String = "Til next: " + str(snapped(second_ability_component.current_cooldown, 0.1)) + "\n"
 				var heal_amount_text = "Heal Amount: " + str(second_ability_component.mass_heal_amount) + "\n\n"
 				stats_label_two.text += heal_cd_text + heal_time_text + heal_amount_text
 			"WOF":
-				var wof_cd_text = "WOF Cooldown: " + str(second_ability_component.max_cooldown) + "\n"
+				var wof_cd_text = "WOF Cooldown: " + str(second_ability_component.wof_cooldown) + "\n"
 				var wof_time_text: String = "Til next: " + str(snapped(second_ability_component.current_cooldown, 0.1)) + "\n"
 				var wof_length_text: String = "Max Length: " + str(snapped(second_ability_component.max_length, 0.1)) + "\n"
 				var wof_damage_text = "WOF Max Damage: " + str(second_ability_component.max_damage) + "\n\n"

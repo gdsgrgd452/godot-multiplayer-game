@@ -5,9 +5,11 @@ class_name IllusionComponent
 @export var illusions_count: int = 4
 var illusion_min_range: float = 150.0
 var illusion_max_range: float = 400.0
+var illusion_cooldown: float = 20.0
 
 var active_illusions: Array[Dictionary] = []
 var last_player_position: Vector2 = Vector2.ZERO
+
 
 # Tracks player movement and updates all active illusion positions based on their assigned directions.
 func _physics_process(_delta: float) -> void:
@@ -40,7 +42,7 @@ func _physics_process(_delta: float) -> void:
 @rpc("any_peer", "call_local", "reliable")
 func request_illusion(spawn_pos: Vector2) -> void:
 	if multiplayer.is_server() and current_cooldown <= 0.0:
-		current_cooldown = max_cooldown
+		current_cooldown = illusion_cooldown
 		
 		# Grants the player temporary invulnerability and invisibility before the decoy emerges.
 		var original_layer: int = entity.collision_layer
@@ -72,11 +74,11 @@ func request_illusion(spawn_pos: Vector2) -> void:
 @rpc("any_peer", "call_local", "reliable")
 func request_scattered_illusions() -> void:
 	if multiplayer.is_server() and current_cooldown <= 0.0:
-		current_cooldown = max_cooldown
+		current_cooldown = illusion_cooldown + illusion_duration
 		
-		var ui_comp: Node = entity.get_node_or_null("UIComponent")
-		if ui_comp and entity.is_in_group("player"):
-			ui_comp.display_message.rpc_id(entity.name.to_int(), "Used your illusion!")
+		# Triggers a message above the player and the ability cooldown bar
+		if is_instance_valid(ui_comp) and entity.is_in_group("player"):
+			ui_comp.handle_ability_activated(self, "Illusion", illusion_cooldown + illusion_duration)
 		
 		# Removes the player's physical presence and health bar during the confusion phase.
 		var original_layer: int = entity.collision_layer

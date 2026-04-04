@@ -444,6 +444,7 @@ grow_vertical = 2
 texture = ExtResource("3_o60nc")
 
 [node name="RespawnLayer" type="CanvasLayer" parent="." unique_id=2044515707]
+visible = false
 
 [node name="RespawnPanel" type="Panel" parent="RespawnLayer" unique_id=1288831695]
 anchors_preset = 15

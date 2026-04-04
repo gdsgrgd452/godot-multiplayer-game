@@ -3,7 +3,7 @@ extends Node2D
 @onready var entity: CharacterBody2D = get_parent().get_parent() as CharacterBody2D
 @onready var ui_comp: Node = entity.get_node_or_null("UIComponent")
 
-@export var max_cooldown: float = 5.0
+@export var wof_cooldown: float = 5.0
 var current_cooldown: float = 0.0
 
 var start_pos: Vector2
@@ -30,7 +30,7 @@ func request_wof(input_pos: Vector2) -> void:
 		entity.input_needed = true
 		
 		if ui_comp and entity.is_in_group("player"):
-			ui_comp.display_message.rpc_id(entity.name.to_int(), "Used Wall of Fire!")
+			ui_comp.display_message.rpc_id(entity.name.to_int(), "Pick the second point!")
 
 @rpc("any_peer", "call_local", "reliable")
 func request_second_pos(input_pos: Vector2) -> void:
@@ -42,18 +42,17 @@ func request_second_pos(input_pos: Vector2) -> void:
 			return
 		
 		end_pos = input_pos
-		current_cooldown = max_cooldown
 		waiting_for_end = false
 		queue_redraw()
 		entity.input_needed = false
 		
-		if ui_comp and entity.is_in_group("player"):
-			ui_comp.display_message.rpc_id(entity.name.to_int(), "Starting the wall of fire!")
+		if is_instance_valid(ui_comp):
+			ui_comp.handle_ability_activated(self, "Wall Of Fire", wof_cooldown)
 			
 		var trap_manager: Node = get_tree().current_scene.get_node_or_null("SpawnedTraps")
 		
 		if trap_manager and trap_manager.has_method("spawn_wof"):
-			current_cooldown = max_cooldown
+			current_cooldown = wof_cooldown
 			
 			var new_wall: Node2D = trap_manager.spawn_wof(start_pos, end_pos, entity.name, entity.team_id)
 			if new_wall:
