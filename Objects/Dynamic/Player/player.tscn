@@ -67,6 +67,9 @@ properties/9/replication_mode = 2
 properties/10/path = NodePath(".:current_second_ability")
 properties/10/spawn = true
 properties/10/replication_mode = 2
+properties/11/path = NodePath(".:player_username")
+properties/11/spawn = true
+properties/11/replication_mode = 2
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_imvv6"]
 bg_color = Color(0.5176471, 0.5176471, 0.5176471, 0.83137256)

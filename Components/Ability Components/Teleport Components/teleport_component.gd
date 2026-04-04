@@ -37,7 +37,7 @@ func request_teleport(target_pos: Vector2) -> void:
 		
 	if not AbilityUtils.is_position_within_map(get_tree().current_scene, target_pos):
 		if is_instance_valid(ui_comp) and entity.is_in_group("player"):
-			ui_comp.display_message.rpc_id(entity.peer_id, "Naughty Naughty, Cant teleport outside the arena")
+			ui_comp.display_message.rpc_id(entity.name.to_int(), "Naughty Naughty, Cant teleport outside the arena")
 		return
 		
 	if is_instance_valid(ui_comp) and entity.is_in_group("player"):

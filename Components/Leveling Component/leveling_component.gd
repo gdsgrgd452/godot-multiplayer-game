@@ -133,7 +133,7 @@ func request_level_up_math() -> void:
 		return
 		
 	var is_player: bool = entity.is_in_group("player")
-	var peer_id: int = entity.peer_id if is_player else -1
+	var peer_id: int = entity.name.to_int() if is_player else -1
 	
 	while points >= next_level_points:
 		entity_level += 1
@@ -221,7 +221,7 @@ func apply_upgrade(button_info: String) -> void:
 				trigger_upgrade_ui.rpc_id(multiplayer.get_remote_sender_id(), pending_upgrades)
 
 			if ui_comp:
-				ui_comp.display_message.rpc_id(entity.peer_id, "Upgraded: " + stat_name)
+				ui_comp.display_message.rpc_id(entity.name.to_int(), "Upgraded: " + stat_name)
 
 # If a stat is maxed out
 func is_stat_maxed(stat_name: String) -> bool:

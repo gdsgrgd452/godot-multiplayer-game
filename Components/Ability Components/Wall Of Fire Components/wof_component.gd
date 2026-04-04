@@ -28,7 +28,7 @@ func request_wof(input_pos: Vector2) -> void:
 		return
 		
 	if current_cooldown <= 0.0 and AbilityUtils.is_position_within_map(get_tree().current_scene, input_pos):
-		var peer_id: int = entity.peer_id
+		var peer_id: int = entity.name.to_int()
 		start_pos = input_pos
 		# Notifies the specific client to begin drawing the placement radius and lock movement.
 		trigger_placement_visuals.rpc_id(peer_id, true, input_pos)
@@ -46,10 +46,10 @@ func request_second_pos(input_pos: Vector2) -> void:
 	if current_cooldown <= 0.0 and AbilityUtils.is_position_within_map(get_tree().current_scene, start_pos):
 		if start_pos.distance_to(input_pos) > max_length:
 			if ui_comp and entity.is_in_group("player"):
-				ui_comp.display_message.rpc_id(entity.peer_id, "The wall is too long!")
+				ui_comp.display_message.rpc_id(entity.name.to_int(), "The wall is too long!")
 			return
 		
-		var peer_id: int = entity.peer_id
+		var peer_id: int = entity.name.to_int()
 		end_pos = input_pos
 		current_cooldown = wof_cooldown
 		# Notifies the client to stop drawing and release the movement lock.

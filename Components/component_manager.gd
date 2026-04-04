@@ -63,7 +63,7 @@ func change_melee_weapon(weapon_type: String) -> void:
 	if is_player_and_UI_valid and msg != "":
 		get_tree().create_timer(0.5).timeout.connect(func():
 			if is_instance_valid(ui_comp):
-				ui_comp.display_message.rpc_id(entity.peer_id, msg)
+				ui_comp.display_message.rpc_id(entity.name.to_int(), msg)
 		)
 			
 	var active_melee: Node2D = entity.get("melee_w_component")
@@ -105,7 +105,7 @@ func change_ranged_weapon(weapon_type: String) -> void:
 	if is_player_and_UI_valid and msg != "":
 		get_tree().create_timer(1.0).timeout.connect(func():
 			if is_instance_valid(ui_comp): # Verification check in case player died in 0.3s
-				ui_comp.display_message.rpc_id(entity.peer_id, msg)
+				ui_comp.display_message.rpc_id(entity.name.to_int(), msg)
 		)
 			
 	var active_ranged: Node2D = entity.get("ranged_w_component")
@@ -167,7 +167,7 @@ func change_first_ability(ability_type: String) -> void:
 	if is_player_and_UI_valid and msg != "":
 		get_tree().create_timer(1.5).timeout.connect(func() -> void:
 			if is_instance_valid(ui_comp):
-				ui_comp.display_message.rpc_id(entity.peer_id, msg)
+				ui_comp.display_message.rpc_id(entity.name.to_int(), msg)
 		)
 		
 	if is_player_and_UI_valid:
@@ -194,7 +194,7 @@ func change_second_ability(ability_type: String) -> void:
 	if is_player_and_UI_valid and msg != "":
 		get_tree().create_timer(2.0).timeout.connect(func() -> void:
 			if is_instance_valid(ui_comp):
-				ui_comp.display_message.rpc_id(entity.peer_id, msg)
+				ui_comp.display_message.rpc_id(entity.name.to_int(), msg)
 		)
 		
 	if is_player_and_UI_valid:

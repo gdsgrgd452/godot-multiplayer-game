@@ -22,7 +22,7 @@ func request_spawn(spawn_pos: Vector2) -> void:
 
 	if not AbilityUtils.is_position_within_map(get_tree().current_scene, spawn_pos):
 		if ui_comp and entity.is_in_group("player"):
-			ui_comp.display_message.rpc_id(entity.peer_id, "Naughty Naughty, Cant Spawn Towers outside the arena")
+			ui_comp.display_message.rpc_id(entity.name.to_int(), "Naughty Naughty, Cant Spawn Towers outside the arena")
 		
 	_cleanup_dead_towers()
 	

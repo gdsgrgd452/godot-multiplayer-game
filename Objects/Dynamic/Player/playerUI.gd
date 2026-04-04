@@ -44,7 +44,6 @@ var current_second_ability: String
 @onready var melee_bar: EntityBar = $"../UI/MeleeBar"
 
 func _ready() -> void:
-	name_label.text = entity.name
 	ui_container.show()
 	reload_bar.hide()
 	melee_bar.hide()
@@ -238,7 +237,7 @@ func _server_compile_debug_info() -> void:
 	if not is_instance_valid(entity) or not entity.is_in_group("player"):
 		return
 		
-	var target_peer: int = entity.peer_id
+	var target_peer: int = entity.name.to_int()
 	
 	var stats_1: String = "Position: " + str(Vector2(int(entity.position.x), int(entity.position.y))) + "\n"
 	stats_1 += "Speed: " + str(movement_component.get("move_speed")) + "\n\n"

@@ -1,6 +1,12 @@
 extends CharacterBody2D
 
-var peer_id: int = 0
+# Synchronizes the cosmetic username and updates the overhead label on all clients.
+@export var player_username: String = "Guest":
+	set(value):
+		player_username = value
+		if is_node_ready() and has_node("UI/Name"):
+			var name_label: Label = get_node("UI/Name") as Label
+			name_label.text = value
 
 @onready var movement_component: Node = $Components/MovementComponent
 @onready var health_component: Node = $Components/HealthComponent
@@ -25,15 +31,6 @@ var input_needed: bool = false # An input is needed, block everything until then
 #Physics layers TODO use these
 const LAYER_NPC_PLAYER_AND_FOOD: int = 1
 const LAYER_WORLD_BOUNDARIES: int = 2
-
-# Stores the authoritative username synchronized across all network peers.
-@export var player_username: String = "Guest":
-	set(value):
-		player_username = value
-		# Ensures the UI label is updated immediately when the synchronized name arrives.
-		var ui: Node = get_node_or_null("UIComponent")
-		if is_instance_valid(ui) and ui.has_node("UI/Name"):
-			ui.get_node("UI/Name").text = value
 
 @export var current_class: String = "Pawn":
 	set(value):
@@ -78,7 +75,7 @@ func _ready() -> void:
 	
 	if is_node_ready():
 		sprite_component._on_promotion_applied(current_class)
-		
+		$UI/Name.text = player_username
 	collision_layer = LAYER_NPC_PLAYER_AND_FOOD # Resides on
 	collision_mask = LAYER_NPC_PLAYER_AND_FOOD | LAYER_WORLD_BOUNDARIES # Collides with
 	
@@ -94,7 +91,6 @@ func _ready() -> void:
 		for button: Node in $HUD/UpgradeUI.get_children():
 			if button is Button:
 				button.stat_chosen.connect(_on_stat_chosen)
-		$HUD/PromotionUI.hide()
 		for button: Node in $HUD/PromotionUI.get_children():
 			if button is Button:
 				button.type_chosen.connect(_on_type_chosen)

@@ -50,8 +50,8 @@ var player_starts_as: String = "Pawn"
 
 var game_type: String = "2_Teams"
 
-# Maps peer IDs to unique usernames to ensure node name consistency across the network.
-var peer_id_to_name: Dictionary = {}
+# Stores authoritative usernames mapped to integer peer IDs.
+var player_names_dict: Dictionary = {}
 
 # Connects buttons and initializes the game boundary
 func _ready() -> void:
@@ -127,7 +127,7 @@ func broadcast_leaderboard() -> void:
 			continue
 		var leveling_comp: Node = player.get_node_or_null("Components/LevelingComponent")
 		if leveling_comp:
-			scores.append({"id": player.name, "score": leveling_comp.total_score, "team_id": player.team_id})
+			scores.append({"id": player.player_username, "score": leveling_comp.total_score, "team_id": player.team_id})
 	
 	for npc: Node in $SpawnedNPCs.get_children():
 		if not is_instance_valid(npc) or npc.is_queued_for_deletion():
@@ -193,11 +193,11 @@ func _on_host_OP_pressed() -> void:
 
 # Initiates the server and spawns the host player
 func _on_host_pressed() -> void:
-	var username: String = $TitleScreen/JoinPanel/UsernameInput.text
-	register_player_name(username)
-
 	peer.create_server(PORT) 
 	multiplayer.multiplayer_peer = peer
+		
+	var username: String = $TitleScreen/JoinPanel/UsernameInput.text
+	register_player_name(username)
 	
 	# Set up the game
 	_apply_preset_or_custom()
@@ -205,11 +205,12 @@ func _on_host_pressed() -> void:
 	_create_boundaries()
 	$Tiles.size = Vector2(arena_size, arena_size)
 	$Tiles.position = Vector2(-arena_size/2, -arena_size/2)
-	is_hosting = true
+	is_hosting = true	
 	
 	# Spawn the host
-	multiplayer.peer_connected.connect($SpawnedPlayers.add_player)
-	$SpawnedPlayers.add_player(multiplayer.get_unique_id(), 0, peer_id_to_name[1])
+	#multiplayer.peer_connected.connect($SpawnedPlayers.add_player)
+	# Host spawning is manually handled to ensure peer ID 1 is used.
+	$SpawnedPlayers.add_player(1)
 
 # Attempts to automatically forward the game port on the host's router.
 func setup_upnp() -> void:
@@ -246,7 +247,6 @@ func setup_upnp() -> void:
 func _on_join_pressed() -> void:
 	var username: String = $TitleScreen/JoinPanel/UsernameInput.text
 	var ip_to_join: String = $TitleScreen/JoinPanel/InputIP.text
-	
 	if ip_to_join == "":
 		ip_to_join = "127.0.0.1"
 		
@@ -321,35 +321,33 @@ func request_respawn() -> void:
 	# Delays the new spawn by a few frames to ensure the MultiplayerSpawner clears the previous node name.
 	get_tree().create_timer(0.1).timeout.connect(func() -> void: _execute_respawn_spawn(sender_id))
 
-# Generates a unique node name based on the provided username and registers it on the server.
+# Registers a player's cosmetic name and triggers the spawning process on the server.
 @rpc("any_peer", "call_local", "reliable")
 func register_player_name(username: String) -> void:
-	if multiplayer.is_server():
-		var sender_id: int = multiplayer.get_remote_sender_id()
-		var base_name: String = username.strip_edges()
-		if base_name == "":
-			base_name = "Guest"
+	if not multiplayer.is_server():
+		return
 		
-		# Sanitizes name for Godot node compatibility by removing restricted characters.
-		var sanitized: String = base_name.replace(".", "_").replace("/", "_").replace(":", "_")
-		var final_name: String = sanitized
-		var counter: int = 1
+	var sender_id: int = multiplayer.get_remote_sender_id()
+	# The technical ID is 1 for the host; handle local calls that might return 0.
+	if sender_id == 0:
+		sender_id = 1
 		
-		# Ensures node name uniqueness within the SpawnedPlayers container.
-		while $SpawnedPlayers.has_node(final_name):
-			final_name = sanitized + "_" + str(counter)
-			counter += 1
-			
-		peer_id_to_name[sender_id] = final_name
+	var final_name: String = username.strip_edges()
+	if final_name == "":
+		final_name = "Guest_" + str(sender_id)
+	
+	player_names_dict[sender_id] = final_name
+	
+	# Clients are spawned only after their name is authoritatively registered.
+	if sender_id != 1:
+		$SpawnedPlayers.add_player(sender_id)
 
 # Finalizes the respawn by instantiating the new player and restoring their authoritative score.
 func _execute_respawn_spawn(id: int) -> void:
-	var node_name: String = peer_id_to_name.get(id, "Guest_" + str(id))
 	var player_key: String = str(id)
-	
 	if dead_scores_dict.has(player_key):
 		var previous_score: int = dead_scores_dict[player_key]
-		$SpawnedPlayers.add_player(id, previous_score, node_name)
+		$SpawnedPlayers.add_player(id, previous_score)
 		dead_scores_dict.erase(player_key)
 	else:
-		$SpawnedPlayers.add_player(id, 0, node_name)
+		$SpawnedPlayers.add_player(id)
