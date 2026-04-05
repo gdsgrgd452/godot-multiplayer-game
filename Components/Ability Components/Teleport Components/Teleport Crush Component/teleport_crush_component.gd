@@ -5,7 +5,7 @@ class_name TeleportCrushComponent
 @export var knockback_force: float = 1200.0
 @export var max_radius: float = 300.0
 @export var tp_crush_cooldown: float = 8.0
-@export var attack_duration: float = 0.5
+@export var attack_duration: float = 2.0
 
 @onready var hitbox: Area2D = $Hitbox
 @onready var hitbox_shape: CollisionShape2D = $Hitbox/Collision
@@ -46,7 +46,9 @@ func _execute_crush_attack() -> void:
 	hitbox.monitoring = true
 	hitbox_shape.disabled = false
 	trigger_visual_crush.rpc()
+
 	await get_tree().create_timer(attack_duration).timeout
+
 	hitbox.monitoring = false
 	hitbox_shape.disabled = true
 	trigger_visual_finished.rpc()
@@ -77,5 +79,7 @@ func trigger_visual_finished() -> void:
 # Shows the shockwave range
 func _draw() -> void:
 	super._draw()
-	if current_radius > 0.0:
-		draw_circle(Vector2.ZERO, max_radius, Color(0.306, 0.106, 0.012, 0.741))
+	if entity.name == str(multiplayer.get_unique_id()):
+		if current_radius > 0.0:
+			draw_circle(Vector2.ZERO, current_radius, Color(1, 0, 0, 0.74), false, 2.0)
+			draw_circle(Vector2.ZERO, max_radius, Color(1, 1, 0, 0.74), false, 2.0)

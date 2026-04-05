@@ -151,5 +151,5 @@ func take_damage(amount: int, attacker_id: String = "") -> void:
 
 # Triggered when health hits 0 to clean up the entity.
 func _on_food_died(attacker_id: String) -> void:
-	PointsUtil.give_points_on_death(get_tree().current_scene, attacker_id, points_value*10)
+	KillingUtils.route_kill_credits_and_points(get_tree().current_scene, attacker_id, points_value)
 	queue_free()

@@ -86,12 +86,10 @@ func trigger_teleport_visuals(going_out: bool, target_pos: Vector2 = Vector2.ZER
 	starting_scale = entity.scale
 
 	if going_out: # Shrinking
-		print("Going out: " + str(starting_scale))
 		active_tween = create_tween()
 		active_tween.tween_property(entity, "scale", entity.scale/10, teleport_time).from(starting_scale)
 		_spawn_teleport_illusion(target_pos)
 	else: # Growing
-		print("Going in: " + str(starting_scale))
 		entity.scale = starting_scale * 10
 		if is_instance_valid(active_illusion):
 			active_illusion.queue_free()

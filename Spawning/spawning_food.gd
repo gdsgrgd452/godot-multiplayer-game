@@ -9,7 +9,7 @@ var arena_size: float
 func _process(delta: float) -> void:
 	if owner == null:
 		return
-	
+		
 	if multiplayer.is_server():
 		spawn_timer -= delta
 		

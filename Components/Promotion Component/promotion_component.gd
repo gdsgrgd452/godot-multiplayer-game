@@ -154,7 +154,7 @@ var class_base_stats: Dictionary = {
 		"accuracy": 70.0,
 		"area_damage": 30.0,
 		"area_knockback": 600.0,
-		"area_radius": 50.0,
+		"area_radius": 150.0,
 		"area_cooldown": 8.0,
 		"shield_health": 50.0
 	},
@@ -173,7 +173,7 @@ var class_base_stats: Dictionary = {
 		"teleport_cooldown": 4.0,
 		"area_damage": 25.0,
 		"area_knockback": 500.0,
-		"area_radius": 50.0,
+		"area_radius": 100.0,
 		"shield_health": 50.0
 	},
 	"Rook_Knight": {
@@ -204,7 +204,7 @@ var class_base_stats: Dictionary = {
 		"accuracy": 85.0,
 		"area_damage": 45.0,
 		"area_knockback": 750.0,
-		"area_radius": 50.0,
+		"area_radius": 150.0,
 		"area_cooldown": 6.0,
 		"shield_health": 75.0
 	},
@@ -221,7 +221,7 @@ var class_base_stats: Dictionary = {
 		"melee_cooldown": 0.2, 
 		"area_damage": 75.0,
 		"area_knockback": 1000.0,
-		"area_radius": 50.0,
+		"area_radius": 100.0,
 		"teleport_range": 1000.0,
 		"teleport_cooldown": 2.0,
 	},
@@ -237,7 +237,7 @@ var class_base_stats: Dictionary = {
 		"accuracy": 100.0, 
 		"area_damage": 75.0,
 		"area_knockback": 1000.0,
-		"area_radius": 50.0,
+		"area_radius": 150.0,
 		"area_cooldown": 2.0,
 	},
 	"King_Rook": {
@@ -267,7 +267,7 @@ var class_base_stats: Dictionary = {
 		"melee_cooldown": 0.2, 
 		"area_damage": 75.0,
 		"area_knockback": 1000.0,
-		"area_radius": 50.0,
+		"area_radius": 150.0,
 		"area_cooldown": 2.0,
 		"shield_health": 200.0
 	},
@@ -283,7 +283,7 @@ var class_base_stats: Dictionary = {
 		"accuracy": 100.0, 
 		"area_damage": 75.0,
 		"area_knockback": 1000.0,
-		"area_radius": 50.0,
+		"area_radius": 100.0,
 		"area_cooldown": 2.0,
 		"teleport_range": 1000.0,
 		"teleport_cooldown": 2.0,
@@ -337,7 +337,7 @@ var class_base_stats: Dictionary = {
 		"accuracy": 100.0, 
 		"area_damage": 75.0,
 		"area_knockback": 1000.0,
-		"area_radius": 50.0,
+		"area_radius": 100.0,
 		"area_cooldown": 2.0,
 		"teleport_range": 1000.0,
 		"teleport_cooldown": 2.0,
@@ -367,20 +367,31 @@ var class_base_stats: Dictionary = {
 
 @onready var entity: CharacterBody2D = get_parent().get_parent() as CharacterBody2D
 
-# Increments the promotion counter and triggers appropriate selection logic for players or NPCs.
+# Increments the promotion counter and initiates the class selection flow for the entity.
 func add_pending_promotion(peer_id: int) -> void:
 	if multiplayer.is_server():
 		pending_promotions += 1
 		if entity.is_in_group("player"):
-			trigger_promotion_ui.rpc_id(peer_id)
+			_send_promotion_options_to_client(peer_id)
 		else:
 			_npc_auto_promote()
+
+# Identifies valid branching paths in the promotion tree and transmits them to a specific client.
+func _send_promotion_options_to_client(peer_id: int) -> void:
+	var current: String = entity.get("current_class")
+	var options: Array[String] = []
+
+	if promotion_tree.has(current):
+		for opt: Variant in promotion_tree[current]:
+			options.append(opt as String)
+
+	trigger_promotion_ui.rpc_id(peer_id, options)
 
 # Selects a random available class from the promotion tree for NPC entities.
 func _npc_auto_promote() -> void:
 	var options: Array[String] = []
 	var current: String = entity.get("current_class")
-	#print("NPC promting from: " + current)
+	print("NPC promting from: " + current)
 	if current == "Super_Queen" or current == "Holy_Queen":
 		#print("NPC maxed")
 		return
@@ -394,15 +405,8 @@ func _npc_auto_promote() -> void:
 
 # Commands the local player client to display the class promotion interface.
 @rpc("authority", "call_local", "reliable")
-func trigger_promotion_ui() -> void:
-	var current: String = entity.get("current_class")
-	var options: Array[String] = []
-	
-	if promotion_tree.has(current):
-		for opt: Variant in promotion_tree[current]:
-			options.append(opt as String)
-			
-	show_promotion_menu.emit(options)
+func trigger_promotion_ui(available_classes: Array[String]) -> void:
+	show_promotion_menu.emit(available_classes)
 
 # Handles the transition to a new class and updates components on the server.
 @rpc("any_peer", "call_local", "reliable")
@@ -420,8 +424,9 @@ func request_promotion(choice: String) -> void:
 			player_promotion_UI_and_reroll(choice)
 		
 		if pending_promotions > 0:
-			if entity.is_in_group("player"):
-				trigger_promotion_ui.rpc_id(multiplayer.get_remote_sender_id())
+			if entity.is_in_group("player"): # Re sends the options if there is another promotion pending
+				var sender_id: int = multiplayer.get_remote_sender_id()
+				_send_promotion_options_to_client(sender_id)
 			else:
 				_npc_auto_promote()
 
@@ -435,7 +440,7 @@ func player_promotion_UI_and_reroll(choice: String) -> void:
 	# Re rolls as player may now have new components > new things to upgrade
 	var level_comp: LevelingComponent = entity.get_node_or_null("Components/LevelingComponent") as LevelingComponent
 	if level_comp and level_comp.is_inside_tree() and level_comp.pending_upgrades > 0:
-		level_comp.trigger_upgrade_ui.rpc_id(entity.name.to_int(), level_comp.pending_upgrades)
+		level_comp.trigger_upgrade_ui.rpc_id(entity.name.to_int(), level_comp.pending_upgrades, level_comp.stat_levels)
 
 # Updates weapon and ability strings based on the selected class template.
 func change_weapon(class_choice: String) -> void:

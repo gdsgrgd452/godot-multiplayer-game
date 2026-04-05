@@ -68,7 +68,7 @@ func toggle_external_ui(is_hidden: bool) -> void:
 	print("This needs checking: " + str(health_bar.visible))
 
 # Populates the upgrade UI with valid random stat choices based on equipped capabilities.
-func _show_upgrade_menu(upgrade_count: int) -> void:
+func _show_upgrade_menu(upgrade_count: int, levels: Dictionary) -> void:
 	if upgrade_count < 1:
 		printerr("Called to show upgrade menu without an upgrade")
 		return
@@ -80,7 +80,9 @@ func _show_upgrade_menu(upgrade_count: int) -> void:
 	var curr_class: String = entity.current_class
 	var valid_stats_dict: Dictionary = promotion_component.class_base_stats[curr_class]
 	var valid_stats: Array = valid_stats_dict.keys()
-	valid_stats = valid_stats.filter(func(stat: String) -> bool: return not leveling_component.is_stat_maxed(stat))
+	valid_stats = valid_stats.filter(func(stat: String) -> bool:
+		return levels.get(stat, 0) < 10
+	)
 
 	if valid_stats.size() <= 0:
 		upgrade_UI.hide()
@@ -93,7 +95,7 @@ func _show_upgrade_menu(upgrade_count: int) -> void:
 
 	for i: int in button_w_valid_count:
 		var stat: String = valid_stats[i]
-		var current_lvl: int = leveling_component.stat_levels.get(stat, 1)
+		var current_lvl: int = levels.get(stat, 0)
 		
 		buttons[i].stat_id = stat + " Lvl " + str(current_lvl)
 		buttons[i].refresh_text()
@@ -103,7 +105,7 @@ func _show_upgrade_menu(upgrade_count: int) -> void:
 		buttons[i].update_progress_bar(progress_percent)
 		buttons[i].show()
 	
-	ui_children[0].show()
+	ui_children[0].show() # Shows the label
 	upgrade_UI.show()
 
 # Populates the promotion UI with the available class types
@@ -135,9 +137,7 @@ func update_leaderboard_ui(entries: Array) -> void:
 		
 	for child in leaderboard_container.get_children():
 		child.queue_free()
-		
-	var my_id: String = str(multiplayer.get_unique_id())
-	
+			
 	for i: int in range(entries.size()):
 		var p_data: Dictionary = entries[i]
 		var entry_text = str(i + 1) + ". " + p_data["id"] + " - Score: " + str(p_data["score"]) + " - T: " + str(p_data["team_id"])
@@ -160,7 +160,7 @@ func update_leaderboard_ui(entries: Array) -> void:
 				label_to_color = lbl
 				
 			if label_to_color:
-				if p_data["id"] == my_id:
+				if p_data["id"] == entity.player_username:
 					label_to_color.modulate = Color.GREEN
 				else:
 					label_to_color.modulate = Color.RED

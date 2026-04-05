@@ -259,7 +259,7 @@ func _on_apply_recoil(force: Vector2) -> void:
 # Awards points to the attacker, disables the player, and triggers the death UI.
 func _on_player_died(attacker_id: String) -> void:
 	var total_score: int = leveling_component.get("total_score")
-	PointsUtil.give_points_on_death(get_tree().current_scene, attacker_id, total_score)
+	KillingUtils.route_kill_credits_and_points(get_tree().current_scene, attacker_id, total_score, player_username)
 
 	# Triggers the component manager to remove lingering ability visuals
 	manager_component.cleanup_all_abilities()

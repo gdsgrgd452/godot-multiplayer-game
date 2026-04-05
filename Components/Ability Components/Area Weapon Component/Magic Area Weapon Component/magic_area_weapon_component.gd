@@ -10,6 +10,6 @@ func trigger_visual_attack() -> void:
 		active_tween.kill()
 		
 	active_tween = create_tween()
-	radius = 0.0
+	current_radius = 0.0
 
-	active_tween.tween_property(self, "radius", max_radius, attack_duration).set_trans(Tween.TRANS_LINEAR).set_ease(Tween.EASE_OUT)
+	active_tween.tween_property(self, "current_radius", max_radius, attack_duration).set_trans(Tween.TRANS_LINEAR).set_ease(Tween.EASE_OUT)

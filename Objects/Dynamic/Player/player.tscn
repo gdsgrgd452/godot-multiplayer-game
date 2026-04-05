@@ -70,6 +70,21 @@ properties/10/replication_mode = 2
 properties/11/path = NodePath(".:player_username")
 properties/11/spawn = true
 properties/11/replication_mode = 2
+properties/12/path = NodePath("Components/TeleportComponent:max_range")
+properties/12/spawn = true
+properties/12/replication_mode = 2
+properties/13/path = NodePath("Components/TeleportCrushComponent:max_range")
+properties/13/spawn = true
+properties/13/replication_mode = 2
+properties/14/path = NodePath("Components/TeleportCrushComponent:max_radius")
+properties/14/spawn = true
+properties/14/replication_mode = 2
+properties/15/path = NodePath("Components/MagicAreaWeaponComponent:max_radius")
+properties/15/spawn = true
+properties/15/replication_mode = 2
+properties/16/path = NodePath("Components/TeleportCrushComponent:current_radius")
+properties/16/spawn = true
+properties/16/replication_mode = 2
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_imvv6"]
 bg_color = Color(0.5176471, 0.5176471, 0.5176471, 0.83137256)
@@ -131,7 +146,13 @@ corner_radius_bottom_left = 5
 
 [node name="Player" type="CharacterBody2D" unique_id=328923263 groups=["player"]]
 script = ExtResource("1_onrkg")
+player_username = null
+current_class = null
 current_melee_weapon = "Spear"
+current_ranged_weapon = null
+current_first_ability = null
+current_second_ability = null
+current_shield = null
 
 [node name="SpriteComponent" parent="." unique_id=1204712433 instance=ExtResource("2_imvv6")]
 scale = Vector2(0.5, 0.5)
@@ -339,6 +360,19 @@ show_percentage = false
 script = ExtResource("10_ktvaa")
 metadata/_custom_type_script = "uid://2lr61aueyl58"
 
+[node name="FirstAbilityBarLabel" type="Label" parent="HUD/FirstAbilityBar" unique_id=84628443]
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = -70.0
+offset_top = -8.5
+offset_right = -4.0
+offset_bottom = 8.5
+grow_vertical = 2
+theme_override_font_sizes/font_size = 12
+text = "First Ability"
+
 [node name="SecondAbilityBar" type="ProgressBar" parent="HUD" unique_id=875392124]
 anchors_preset = 7
 anchor_left = 0.5
@@ -356,6 +390,19 @@ theme_override_styles/fill = SubResource("StyleBoxFlat_ktvaa")
 show_percentage = false
 script = ExtResource("10_ktvaa")
 metadata/_custom_type_script = "uid://2lr61aueyl58"
+
+[node name="SecondAbilityBarLabel" type="Label" parent="HUD/SecondAbilityBar" unique_id=478670590]
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = -85.0
+offset_top = -8.5
+offset_right = -3.0
+offset_bottom = 8.5
+grow_vertical = 2
+theme_override_font_sizes/font_size = 12
+text = "Second Ability"
 
 [node name="UI" type="Control" parent="." unique_id=72954873]
 layout_mode = 3
@@ -462,7 +509,7 @@ script = ExtResource("35_x2bxi")
 [node name="WoodenShieldComponent" parent="Components" unique_id=975093531 instance=ExtResource("36_xyotm")]
 
 [node name="MagicShieldComponent" parent="Components" unique_id=669235489 instance=ExtResource("37_ootfv")]
-visible = false
+scale = Vector2(8, 8)
 
 [node name="BowComponent" parent="Components" unique_id=73394275 instance=ExtResource("37_46ev8")]
 

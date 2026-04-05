@@ -2,7 +2,7 @@ extends Node2D
 class_name LevelingComponent
 
 signal update_ui_points(val: int)
-signal show_upgrade_menu()
+signal show_upgrade_menu(count: int, levels: Dictionary)
 
 @onready var entity: CharacterBody2D = get_parent().get_parent()
 
@@ -150,10 +150,12 @@ func request_level_up_math() -> void:
 		pending_upgrades += 1
 		points = leftover
 		
+		# For entities
 		if not is_player and entity_level % 3 == 0:
 			var promo: Node = entity.get_node("Components/PromotionComponent")
 			promo.add_pending_promotion(peer_id)
-
+	
+		# For players
 		if is_player and entity_level % 2 == 0:
 			var promo: Node = entity.get_node("Components/PromotionComponent")
 			promo.add_pending_promotion(peer_id)
@@ -163,7 +165,7 @@ func request_level_up_math() -> void:
 		
 	if pending_upgrades > 0:
 		if is_player:
-			trigger_upgrade_ui.rpc_id(peer_id, pending_upgrades)
+			trigger_upgrade_ui.rpc_id(peer_id, pending_upgrades, stat_levels)
 		else:
 			_npc_auto_upgrade()
 
@@ -218,7 +220,7 @@ func apply_upgrade(button_info: String) -> void:
 
 		if entity.is_in_group("player"):
 			if pending_upgrades > 0: 
-				trigger_upgrade_ui.rpc_id(multiplayer.get_remote_sender_id(), pending_upgrades)
+				trigger_upgrade_ui.rpc_id(multiplayer.get_remote_sender_id(), pending_upgrades, stat_levels)
 
 			if ui_comp:
 				ui_comp.display_message.rpc_id(entity.name.to_int(), "Upgraded: " + stat_name)
@@ -229,8 +231,8 @@ func is_stat_maxed(stat_name: String) -> bool:
 
 # Commands the local client to open the upgrade selection interface via signal.
 @rpc("authority", "call_local", "reliable")
-func trigger_upgrade_ui(upgrade_count: int) -> void:
-	show_upgrade_menu.emit(upgrade_count)
+func trigger_upgrade_ui(upgrade_count: int, current_levels: Dictionary) -> void:
+	show_upgrade_menu.emit(upgrade_count, current_levels)
 
 # Commands the client to update the level bar
 @rpc("authority", "call_local", "reliable")

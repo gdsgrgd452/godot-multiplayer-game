@@ -49,31 +49,17 @@ func spawn_wof(start_pos: Vector2, end_pos: Vector2, owner_id: String, team: int
 	return wall
 
 # Spawns a black boundry wall with a hitbox
-func spawn_wall(rect: Rect2):
+func spawn_wall(rect: Rect2) -> void:
+	if not multiplayer.is_server():
+		return
 	
 	var wall: StaticBody2D = wall_scence.instantiate() as StaticBody2D
 	wall.name = "ARENA_WALL_" + str(Time.get_ticks_msec()) + str(randi_range(0,999))
 	
-	wall.collision_layer = 2
-	wall.collision_mask = 0
 	
+	wall.global_position = rect.position + (rect.size / 2.0)
 	
-	var collision: CollisionShape2D = wall.get_node_or_null("Hitbox")
-	var shape: RectangleShape2D = collision.shape
-	shape.size = rect.size
-	collision.shape = shape
-	collision.position = rect.position + (rect.size / 2.0)
-	wall.add_child(collision)
+	wall.set("wall_size", rect.size)
 	
-	var visual: Polygon2D = wall.get_node_or_null("Colour")
-	var half = rect.size / 2.0
-	visual.polygon = PackedVector2Array([
-		Vector2(-half.x, -half.y),
-		Vector2(half.x, -half.y),
-		Vector2(half.x, half.y),
-		Vector2(-half.x, half.y)
-	])
-	visual.position = rect.position + half
-	
-	add_child(wall)
+	add_child(wall, true)
 	

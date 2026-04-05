@@ -15,7 +15,7 @@ var dead_scores_dict: Dictionary
 @onready var ip_label: Label = $CanvasLayer/SharingIPLabel
 
 const PRESETS: Dictionary = {
-	"Alone": { "game_type": "FFA", "arena_size": 2500.0, "food_per_player": 1500, "bots_per_player": 0, "bot_classes": ["Bishop"], "npc_points": false, "start_lvls": 5, "player_class": "Pawn_II"}, # Alone for testing
+	"Alone": { "game_type": "FFA", "arena_size": 2500.0, "food_per_player": 1500, "bots_per_player": 0, "bot_classes": ["Bishop"], "npc_points": false, "start_lvls": 0, "player_class": "Pawn_II"}, # Alone for testing
 	
 	"1-Bot": { "game_type": "FFA", "arena_size": 2500.0, "food_per_player": 1500, "bots_per_player": 1, "bot_classes": ["Jester"], "npc_points": false, "start_lvls": 200, "player_class": "Super_Queen"}, # 1 Bot for testing
 	
@@ -40,7 +40,7 @@ var bottom_left_x: float = arena_size/2
 var food_per_player: int = 1500
 var max_food: int = 0
 
-var bots_per_player: int = 2
+var bots_per_player: int = 0
 var max_bots: int = 0
 var npc_gains_points: bool = true
 var bot_spawn_classes: Array = ["Pawn"]
@@ -157,12 +157,6 @@ func update_leaderboard_rpc(leaderboard_data: Array) -> void:
 
 # Creates the boundry walls of the arena
 func _create_boundaries() -> void:
-	var boundary_body: StaticBody2D = StaticBody2D.new()
-	boundary_body.add_to_group("boundary")
-		
-	# Set the boundary to Layer 2 (Bit 1, Value 2)
-	boundary_body.collision_layer = 2
-	boundary_body.collision_mask = 0
 	
 	top_left_x = -arena_size/2
 	top_left_y = -arena_size/2
@@ -176,26 +170,8 @@ func _create_boundaries() -> void:
 	]
 	
 	for rect in rects:
-		var collision: CollisionShape2D = CollisionShape2D.new()
-		var shape: RectangleShape2D = RectangleShape2D.new()
-		shape.size = rect.size
-		collision.shape = shape
-		collision.position = rect.position + (rect.size / 2.0)
-		boundary_body.add_child(collision)
+		$SpawnedTraps.spawn_wall(rect)
 		
-		var visual: Polygon2D = Polygon2D.new()
-		visual.color = Color.BLACK
-		var half = rect.size / 2.0
-		visual.polygon = PackedVector2Array([
-			Vector2(-half.x, -half.y),
-			Vector2(half.x, -half.y),
-			Vector2(half.x, half.y),
-			Vector2(-half.x, half.y)
-		])
-		visual.position = rect.position + half
-		boundary_body.add_child(visual)
-		
-	add_child(boundary_body)
 
 func _on_host_OP_pressed() -> void:
 	# Run the UPNP port forwarding before starting the server
@@ -210,6 +186,7 @@ func _on_host_pressed() -> void:
 	var username: String = $TitleScreen/JoinPanel/UsernameInput.text
 	register_player_name(username)
 	
+	
 	# Set up the game
 	_apply_preset_or_custom()
 	$TitleScreen.hide()
@@ -217,6 +194,7 @@ func _on_host_pressed() -> void:
 	$Tiles.size = Vector2(arena_size, arena_size)
 	$Tiles.position = Vector2(-arena_size/2, -arena_size/2)
 	is_hosting = true	
+	new_player_joined()
 	
 	# Spawn the host
 	#multiplayer.peer_connected.connect($SpawnedPlayers.add_player)
@@ -266,10 +244,16 @@ func _on_join_pressed() -> void:
 
 	multiplayer.connected_to_server.connect(func() -> void:
 		register_player_name.rpc_id(1, username)
+		new_player_joined()
 	)
 	
 	$TitleScreen.hide()
-	
+
+# Increases the food and bots supply when a new player joins
+func new_player_joined():
+	max_food += food_per_player
+	max_bots += bots_per_player
+
 # Records the player's score on the server and initiates the spectate sequence for the client.
 func player_died(player_id: String, player_score: int, killer_id: String) -> void:
 	# Records score on the server for the upcoming respawn request.

@@ -15,9 +15,9 @@ var active_tween: Tween
 @onready var hitbox: Area2D = $Hitbox
 @onready var hitbox_shape: CollisionShape2D = $Hitbox/Collision
 
-var radius: float = 100.0:
+var current_radius: float = 100.0:
 	set(value):
-		radius = value
+		current_radius = value
 		queue_redraw()
 		if is_node_ready() and hitbox_shape.shape is CircleShape2D:
 			var circle_shape: CircleShape2D = hitbox_shape.shape as CircleShape2D
@@ -25,7 +25,6 @@ var radius: float = 100.0:
 
 # Initializes the component, hides visuals, ensures unique shapes, and connects the overlap signal.
 func _ready() -> void:
-	hide()
 	if hitbox_shape.shape:
 		hitbox_shape.shape = hitbox_shape.shape.duplicate()
 		
@@ -35,7 +34,7 @@ func _ready() -> void:
 
 # Tracks cooldown and attack duration natively on the server.
 func _process(delta: float) -> void:
-		
+	queue_redraw()
 	if multiplayer.is_server():
 		if current_cooldown > 0.0:
 			current_cooldown -= delta
@@ -87,9 +86,12 @@ func trigger_visual_attack() -> void:
 # Hides the component across all clients when the attack window ends.
 @rpc("authority", "call_local", "reliable")
 func trigger_visual_finished() -> void:
-	hide()
+	current_radius = 0.0
+
 
 # Draws the area shape dynamically based on the synchronized radius variable.
 func _draw() -> void:
 	if active_tween and entity.name == str(multiplayer.get_unique_id()): # NOT HIDING FOR OTHER PLAYERS
-		draw_circle(Vector2.ZERO, radius, Color(1, 0, 0, 0.74))
+		if current_radius != 0.0:
+			draw_circle(Vector2.ZERO, current_radius, Color(1, 0, 0, 0.74), false, 2.0)
+			draw_circle(Vector2.ZERO, max_radius, Color(1, 1, 0, 0.74), false, 2.0)

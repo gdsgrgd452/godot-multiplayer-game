@@ -1,5 +1,7 @@
 [gd_scene format=3 uid="uid://i5i6vhoj770d"]
 
+[ext_resource type="Script" uid="uid://vj0ffmdk1yem" path="res://Objects/Static/Wall/wall.gd" id="1_q3qp1"]
+
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_cq3hn"]
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_cq3hn"]
@@ -9,8 +11,12 @@ properties/0/replication_mode = 2
 properties/1/path = NodePath(".:rotation")
 properties/1/spawn = true
 properties/1/replication_mode = 2
+properties/2/path = NodePath(".:wall_size")
+properties/2/spawn = true
+properties/2/replication_mode = 2
 
 [node name="Wall" type="StaticBody2D" unique_id=187468591]
+script = ExtResource("1_q3qp1")
 
 [node name="Hitbox" type="CollisionShape2D" parent="." unique_id=1700582894]
 shape = SubResource("RectangleShape2D_cq3hn")

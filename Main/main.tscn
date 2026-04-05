@@ -25,6 +25,14 @@ shader_parameter/square_size = 100.0
 shader_parameter/color1 = Color(0.7581918, 0.7581918, 0.7581917, 1)
 shader_parameter/color2 = Color(0.23248088, 0.23248091, 0.23248085, 1)
 
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_0gq1e"]
+properties/0/path = NodePath("Tiles:size")
+properties/0/spawn = true
+properties/0/replication_mode = 2
+properties/1/path = NodePath("Tiles:position")
+properties/1/spawn = true
+properties/1/replication_mode = 2
+
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_qac2q"]
 shader = ExtResource("2_lquwl")
 shader_parameter/square_size = 100.0
@@ -90,6 +98,9 @@ offset_top = -2500.0
 offset_right = 2500.0
 offset_bottom = 2500.0
 rotation = -0.00014920316
+
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="." unique_id=1058365266]
+replication_config = SubResource("SceneReplicationConfig_0gq1e")
 
 [node name="TitleScreen" type="CanvasLayer" parent="." unique_id=806964297]
 
@@ -549,9 +560,8 @@ _spawnable_scenes = PackedStringArray("uid://b2rtodncqul3h", "uid://c37ctg36bht0
 spawn_path = NodePath("../SpawnedTraps")
 
 [node name="SpawnedNPCs" type="Node2D" parent="." unique_id=328143973]
+position = Vector2(0, -9)
 script = ExtResource("10_qac2q")
-
-[node name="SpawnedWalls" type="Node2D" parent="." unique_id=213525086]
 
 [node name="SpectatorCamera" type="Camera2D" parent="." unique_id=1223713430]
 enabled = false

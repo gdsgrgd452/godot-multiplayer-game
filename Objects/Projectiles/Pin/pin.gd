@@ -7,7 +7,8 @@ class_name Pin
 
 # Connects the collision signal on the server
 func _ready() -> void:
-	add_to_group("shield_blockable")
+	
+	super._ready()
 	
 	#Sets it to red blue or green
 	var sprite_comp = get_node_or_null("Sprite2D")
@@ -15,8 +16,7 @@ func _ready() -> void:
 		sprite_comp.texture = [red_texture, green_texture, blue_texture].pick_random()
 	else:
 		printerr("No sprite node for pin")
-	if multiplayer.is_server():
-		body_entered.connect(_on_body_entered)
+
 
 # Pins pierce through targets but lose 90% of their remaining lifespan/momentum
 func _on_hit(_body: Node2D) -> void:
