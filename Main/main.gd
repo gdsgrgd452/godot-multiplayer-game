@@ -15,7 +15,7 @@ var dead_scores_dict: Dictionary
 @onready var ip_label: Label = $CanvasLayer/SharingIPLabel
 
 const PRESETS: Dictionary = {
-	"Alone": { "game_type": "FFA", "arena_size": 2500.0, "food_per_player": 1500, "bots_per_player": 0, "bot_classes": ["Bishop"], "npc_points": false, "start_lvls": 200, "player_class": "Jester"}, # Alone for testing
+	"Alone": { "game_type": "FFA", "arena_size": 2500.0, "food_per_player": 1500, "bots_per_player": 0, "bot_classes": ["Bishop"], "npc_points": false, "start_lvls": 5, "player_class": "Pawn_II"}, # Alone for testing
 	
 	"1-Bot": { "game_type": "FFA", "arena_size": 2500.0, "food_per_player": 1500, "bots_per_player": 1, "bot_classes": ["Jester"], "npc_points": false, "start_lvls": 200, "player_class": "Super_Queen"}, # 1 Bot for testing
 	
@@ -155,8 +155,7 @@ func update_leaderboard_rpc(leaderboard_data: Array) -> void:
 		if ui_comp and ui_comp.has_method("update_leaderboard_ui"):
 			ui_comp.update_leaderboard_ui(leaderboard_data)
 
-
-
+# Creates the boundry walls of the arena
 func _create_boundaries() -> void:
 	var boundary_body: StaticBody2D = StaticBody2D.new()
 	boundary_body.add_to_group("boundary")
@@ -183,6 +182,18 @@ func _create_boundaries() -> void:
 		collision.shape = shape
 		collision.position = rect.position + (rect.size / 2.0)
 		boundary_body.add_child(collision)
+		
+		var visual: Polygon2D = Polygon2D.new()
+		visual.color = Color.BLACK
+		var half = rect.size / 2.0
+		visual.polygon = PackedVector2Array([
+			Vector2(-half.x, -half.y),
+			Vector2(half.x, -half.y),
+			Vector2(half.x, half.y),
+			Vector2(-half.x, half.y)
+		])
+		visual.position = rect.position + half
+		boundary_body.add_child(visual)
 		
 	add_child(boundary_body)
 

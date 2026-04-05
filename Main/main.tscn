@@ -545,15 +545,13 @@ spawn_path = NodePath("../SpawnedProjectiles")
 script = ExtResource("6_liyct")
 
 [node name="TrapSpawner" type="MultiplayerSpawner" parent="." unique_id=1691883587]
-_spawnable_scenes = PackedStringArray("uid://b2rtodncqul3h", "uid://c37ctg36bht0r")
+_spawnable_scenes = PackedStringArray("uid://b2rtodncqul3h", "uid://c37ctg36bht0r", "uid://i5i6vhoj770d")
 spawn_path = NodePath("../SpawnedTraps")
 
 [node name="SpawnedNPCs" type="Node2D" parent="." unique_id=328143973]
 script = ExtResource("10_qac2q")
 
-[node name="NPCSpawner" type="MultiplayerSpawner" parent="." unique_id=1025014070]
-_spawnable_scenes = PackedStringArray("uid://c7cu6gk13wi33")
-spawn_path = NodePath("../SpawnedNPCs")
+[node name="SpawnedWalls" type="Node2D" parent="." unique_id=213525086]
 
 [node name="SpectatorCamera" type="Camera2D" parent="." unique_id=1223713430]
 enabled = false

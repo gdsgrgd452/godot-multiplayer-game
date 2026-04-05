@@ -204,14 +204,37 @@ offset_top = 30.0
 offset_right = -29.0
 offset_bottom = 53.0
 
+[node name="PromotionInfoLabel" type="VBoxContainer" parent="HUD" unique_id=1869259831]
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = 313.0
+offset_top = 111.0
+offset_right = 353.0
+offset_bottom = 188.0
+grow_vertical = 2
+alignment = 1
+
+[node name="MeleeWeapon" type="Label" parent="HUD/PromotionInfoLabel" unique_id=346219052]
+layout_mode = 2
+
+[node name="RangedWeapon" type="Label" parent="HUD/PromotionInfoLabel" unique_id=575487258]
+layout_mode = 2
+
+[node name="Ability" type="Label" parent="HUD/PromotionInfoLabel" unique_id=1753966926]
+layout_mode = 2
+
+[node name="Ability2" type="Label" parent="HUD/PromotionInfoLabel" unique_id=527429442]
+layout_mode = 2
+
 [node name="UpgradeUI" type="VBoxContainer" parent="HUD" unique_id=1962816338]
 anchors_preset = 3
 anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -82.0
-offset_top = -248.0
+offset_left = -108.0
+offset_top = -301.0
 offset_right = -15.0
 offset_bottom = -33.0
 grow_horizontal = 0
@@ -244,52 +267,48 @@ layout_mode = 2
 [node name="StatButton5" parent="HUD/UpgradeUI" unique_id=1873888271 instance=ExtResource("4_sweqy")]
 layout_mode = 2
 
-[node name="PromotionInfoLabel" type="VBoxContainer" parent="HUD" unique_id=1869259831]
-anchors_preset = 4
+[node name="PromotionUILabel" type="Label" parent="HUD" unique_id=1082424071]
+anchors_preset = 8
+anchor_left = 0.5
 anchor_top = 0.5
+anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = 313.0
-offset_top = 111.0
-offset_right = 353.0
-offset_bottom = 188.0
+offset_left = -101.5
+offset_top = -221.33
+offset_right = 101.5
+offset_bottom = -198.32994
+grow_horizontal = 2
 grow_vertical = 2
+text = "Pick a class to promote to:"
+
+[node name="PromotionUI" type="HBoxContainer" parent="HUD/PromotionUILabel" unique_id=982234864]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -195.5
+offset_top = 8.429924
+offset_right = 195.5
+offset_bottom = 99.429924
+grow_horizontal = 2
+grow_vertical = 0
 alignment = 1
 
-[node name="MeleeWeapon" type="Label" parent="HUD/PromotionInfoLabel" unique_id=346219052]
+[node name="PromotionButton" parent="HUD/PromotionUILabel/PromotionUI" unique_id=788578532 instance=ExtResource("5_n7ghd")]
 layout_mode = 2
 
-[node name="RangedWeapon" type="Label" parent="HUD/PromotionInfoLabel" unique_id=575487258]
+[node name="PromotionButton2" parent="HUD/PromotionUILabel/PromotionUI" unique_id=1276295051 instance=ExtResource("5_n7ghd")]
 layout_mode = 2
 
-[node name="Ability" type="Label" parent="HUD/PromotionInfoLabel" unique_id=1753966926]
+[node name="PromotionButton3" parent="HUD/PromotionUILabel/PromotionUI" unique_id=291146501 instance=ExtResource("5_n7ghd")]
 layout_mode = 2
 
-[node name="Ability2" type="Label" parent="HUD/PromotionInfoLabel" unique_id=527429442]
+[node name="PromotionButton4" parent="HUD/PromotionUILabel/PromotionUI" unique_id=430141449 instance=ExtResource("5_n7ghd")]
 layout_mode = 2
 
-[node name="PromotionUI" type="HBoxContainer" parent="HUD" unique_id=982234864]
-anchors_preset = 2
-anchor_top = 1.0
-anchor_bottom = 1.0
-offset_left = 4.0
-offset_top = -94.0
-offset_right = 79.0
-offset_bottom = -3.0
-grow_vertical = 0
-
-[node name="PromotionButton" parent="HUD/PromotionUI" unique_id=788578532 instance=ExtResource("5_n7ghd")]
-layout_mode = 2
-
-[node name="PromotionButton2" parent="HUD/PromotionUI" unique_id=1276295051 instance=ExtResource("5_n7ghd")]
-layout_mode = 2
-
-[node name="PromotionButton3" parent="HUD/PromotionUI" unique_id=291146501 instance=ExtResource("5_n7ghd")]
-layout_mode = 2
-
-[node name="PromotionButton4" parent="HUD/PromotionUI" unique_id=430141449 instance=ExtResource("5_n7ghd")]
-layout_mode = 2
-
-[node name="PromotionButton5" parent="HUD/PromotionUI" unique_id=1328671514 instance=ExtResource("5_n7ghd")]
+[node name="PromotionButton5" parent="HUD/PromotionUILabel/PromotionUI" unique_id=1328671514 instance=ExtResource("5_n7ghd")]
 layout_mode = 2
 
 [node name="LBContainer" type="MarginContainer" parent="HUD" unique_id=1837929343]

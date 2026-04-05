@@ -32,7 +32,8 @@ var current_second_ability: String
 @onready var level_label: Label = $"../HUD/LevelBar/LevelLabel"
 
 @onready var upgrade_UI: VBoxContainer = $"../HUD/UpgradeUI"
-@onready var promotion_UI: HBoxContainer = $"../HUD/PromotionUI"
+@onready var promotion_UI_label: Label = $"../HUD/PromotionUILabel"
+@onready var promotion_UI: HBoxContainer = $"../HUD/PromotionUILabel/PromotionUI"
 
 @onready var leaderboard_container: VBoxContainer = $"../HUD/LBContainer/Leaderboard"
 @export var lb_entry_scene: PackedScene
@@ -49,17 +50,16 @@ func _ready() -> void:
 	melee_bar.hide()
 	first_ability_bar.hide()
 	second_ability_bar.hide()
-	
+	promotion_UI_label.hide()
+	upgrade_UI.hide()
+
 	if entity.name == str(multiplayer.get_unique_id()):
 		leveling_component.show_upgrade_menu.connect(_show_upgrade_menu)
 		promotion_component.show_promotion_menu.connect(_show_promotion_menu)
 		hud.show() 
-		upgrade_UI.hide()
-		promotion_UI.hide()
 	else: # Hides these for other players
 		hud.hide()
-		upgrade_UI.hide()
-		promotion_UI.hide()
+		
 
 # Toggles the visibility of identifying UI elements specifically for other players
 func toggle_external_ui(is_hidden: bool) -> void:
@@ -109,6 +109,7 @@ func _show_upgrade_menu(upgrade_count: int) -> void:
 # Populates the promotion UI with the available class types
 func _show_promotion_menu(available_classes: Array[String]) -> void:
 	var buttons: Array[Node] = promotion_UI.get_children()
+
 	for i: int in buttons.size():
 		var button: Node = buttons[i]
 		
@@ -121,8 +122,10 @@ func _show_promotion_menu(available_classes: Array[String]) -> void:
 			button.show()
 		else:
 			button.hide()
-			
+	
+	promotion_UI_label.show()
 	promotion_UI.show()
+
 
 # Updates the local leaderboard UI with data broadcasted from the server.
 func update_leaderboard_ui(entries: Array) -> void:

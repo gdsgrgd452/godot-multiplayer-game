@@ -91,7 +91,7 @@ func _ready() -> void:
 		for button: Node in $HUD/UpgradeUI.get_children():
 			if button is Button:
 				button.stat_chosen.connect(_on_stat_chosen)
-		for button: Node in $HUD/PromotionUI.get_children():
+		for button: Node in $HUD/PromotionUILabel/PromotionUI.get_children():
 			if button is Button:
 				button.type_chosen.connect(_on_type_chosen)
 	else:
@@ -287,7 +287,7 @@ func _on_stat_chosen(chosen_stat: String) -> void:
 
 # Transmits the selected class promotion to the server via the promotion component.
 func _on_type_chosen(chosen_type: String) -> void:
-	$HUD/PromotionUI.hide()
+	$HUD/PromotionUILabel.hide()
 	promotion_component.request_promotion.rpc_id(1, chosen_type)
 
 # Defines an RPC for the server to command the local client to update its sprite.
