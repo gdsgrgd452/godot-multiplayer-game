@@ -7,12 +7,14 @@ class_name FleeingBrain
 var current_threat: Node2D
 var last_threat_pos: Vector2 = Vector2.ZERO
 var flee_timer: float = 0.0
+var max_flee_time: float = 5.0
 var flee_distance: float = 100.0
 var super_scared_threshold: float = 0.2
 
 func _ready() -> void:
 	super_scared_threshold = randf_range(0.05, 0.4)
-
+	max_flee_time = randf_range(3.0, 6.0)
+	
 # Finds the most imminent threat among nearby enemies, weighted by distance and score.
 func _get_dangerous_threat() -> Node2D:
 	var highest_threat: Node2D = null
@@ -45,7 +47,7 @@ func _get_dangerous_threat() -> Node2D:
 func _process_fleeing(threat: Node2D) -> bool:
 	if is_instance_valid(threat):
 		last_threat_pos = threat.global_position
-		flee_timer = 3.0
+		flee_timer = max_flee_time
 		if main_brain.curr_class == "Shadow_Knight": ability_brain._action_stealth()
 		elif main_brain.curr_class == "Jester": ability_brain._action_illusion()
 		_action_flee(last_threat_pos)

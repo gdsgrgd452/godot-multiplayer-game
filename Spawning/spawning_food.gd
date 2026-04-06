@@ -29,7 +29,7 @@ func try_spawn_food() -> void:
 		var attempted_position: Vector2 = Vector2(randf_range(-arena_size/2, arena_size/2), randf_range(-arena_size/2, arena_size/2))
 		
 		if randf() < get_spawn_probability(attempted_position):
-			_spawn_food(attempted_position)
+			spawn_food(attempted_position)
 			success = true
 		attempts += 1
 		
@@ -44,10 +44,13 @@ func get_spawn_probability(food_pos: Vector2) -> float:
 	return probability
 	
 # Instantiates and places a new food entity, calculating its distance modifier.
-func _spawn_food(food_pos: Vector2) -> void:
+func spawn_food(food_pos: Vector2, force_shape: String = "") -> void:
 	var food_instance: Node2D = food_scene.instantiate() as Node2D
 	food_instance.position = food_pos
 	
+	if force_shape != "":
+		food_instance.shape_type = force_shape
+
 	food_instance.distance_factor = clampf(food_pos.length() / arena_size, 0.0, 1.0)
-	
+
 	add_child(food_instance, true)

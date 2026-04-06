@@ -7,7 +7,15 @@ extends CharacterBody2D
 @onready var leveling_component: Node = $Components/LevelingComponent
 @onready var promotion_component: Node = $Components/PromotionComponent
 
-var team_id: int = 500
+@export var team_id: int = -1:
+	set(value):
+		team_id = value
+		print(str(team_id))
+		if is_node_ready():
+			apply_team_color()
+		else:
+			get_tree().create_timer(0.5).timeout.connect(apply_team_color)
+
 var knockback: Vector2 = Vector2.ZERO
 var body_damage: int = 10
 var kill_value: int = 200
@@ -45,6 +53,12 @@ const LAYER_WORLD_BOUNDARIES: int = 2
 		if is_node_ready():
 			manager_component.change_first_ability(value)
 
+@export var current_second_ability: String = "None":
+	set(value):
+		current_second_ability = value
+		if is_node_ready():
+			manager_component.change_second_ability(value)
+
 @export var current_shield: String = "None":
 	set(value):
 		current_shield = value
@@ -60,7 +74,8 @@ func _ready() -> void:
 		
 	if is_node_ready():
 		sprite_component._on_promotion_applied(current_class)
-	
+		apply_team_color()
+		
 	health_component.died.connect(_on_npc_died)
 	
 	collision_layer = LAYER_AI_PLAYER_AND_FOOD # Resides on
@@ -70,22 +85,34 @@ func _ready() -> void:
 	if is_instance_valid(promotion_component):
 		promotion_component.change_weapon(current_class)
 		promotion_component.apply_promotion_stats(current_class)
-		
-	apply_team_color()
 
+# Evaluates the team_id against the local player to apply a green or red modulate
 func apply_team_color() -> void:
 	var sprite: Sprite2D = get_node_or_null("SpriteComponent") as Sprite2D
 	if not sprite:
+		printerr("No sprite")
 		return
 		
 	var local_id: String = str(multiplayer.get_unique_id())
-	var local_player: Node2D = get_tree().current_scene.find_child(local_id, true, false) as Node2D
+	var players_container: Node = get_tree().current_scene.get_node_or_null("SpawnedPlayers")
 	
-	if local_player and "team_id" in local_player:
+	if not is_instance_valid(players_container):
+		printerr("No players")
+		return
+		
+	var local_player: Node2D = players_container.get_node_or_null(local_id) as Node2D
+	
+	# If the local player hasn't spawned yet, wait and try again shortly
+	if not is_instance_valid(local_player):
+		get_tree().create_timer(0.5).timeout.connect(apply_team_color)
+		printerr("No local player")
+		return
+	
+	if "team_id" in local_player:
 		if self.team_id == local_player.get("team_id"):
-			sprite.modulate = Color(0.0, 1.0, 0.0)
+			sprite.modulate = Color(0.0, 1.0, 0.0) # Green for teammate
 		else:
-			sprite.modulate = Color(1.0, 0.0, 0.0)
+			sprite.modulate = Color(1.0, 0.0, 0.0) # Red for enemy
 
 # Manages server-side physics and movement for the NPC entity.
 func _physics_process(delta: float) -> void:

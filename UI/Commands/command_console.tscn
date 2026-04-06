@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://mn3do3kj2f54"]
 
-[ext_resource type="Script" uid="uid://bn45ld65fs45b" path="res://UI/command_console.gd" id="1_6r5r1"]
+[ext_resource type="Script" uid="uid://bn45ld65fs45b" path="res://UI/Commands/command_console.gd" id="1_6r5r1"]
 
 [node name="CommandConsole" type="CanvasLayer" unique_id=1812150508]
 layer = 100

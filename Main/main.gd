@@ -23,11 +23,11 @@ const PRESETS: Dictionary = {
 	
 	"2-Bot": { "game_type": "FFA", "arena_size": 2500.0, "food_per_player": 1500, "bots_per_player": 2, "bot_classes": ["Pawn"], "npc_points": false, "start_lvls": 200, "player_class": "Pawn_II", "player_levels_for_upgrade": 1, "player_levels_for_promotion": 2}, # 2 Bots for testing
 	
-	"FFA": { "game_type": "FFA", "arena_size": 6000.0, "food_per_player": 7500, "bots_per_player": 20, "bot_classes": ["Pawn"], "npc_points": true, "start_lvls": 0, "player_class": "Pawn", "player_levels_for_upgrade": 2, "player_levels_for_promotion": 4}, # Large game FFA
-	"2T": { "game_type": "2_Teams", "arena_size": 6000.0, "food_per_player": 2500, "bots_per_player": 20, "bot_classes": ["Pawn"], "npc_points": true, "start_lvls": 0, "player_class": "Pawn", "player_levels_for_upgrade": 2, "player_levels_for_promotion": 4}, # Large game 2 teams
+	"FFA": { "game_type": "FFA", "arena_size": 6000.0, "food_per_player": 7500, "bots_per_player": 20, "bot_classes": ["Pawn, Pawn_I"], "npc_points": true, "start_lvls": 0, "player_class": "Pawn", "player_levels_for_upgrade": 1, "player_levels_for_promotion": 3}, # Large game FFA
+	"2T": { "game_type": "2_Teams", "arena_size": 6000.0, "food_per_player": 7500, "bots_per_player": 20, "bot_classes": ["Pawn, Pawn_I"], "npc_points": true, "start_lvls": 0, "player_class": "Pawn", "player_levels_for_upgrade": 1, "player_levels_for_promotion": 3}, # Large game 2 teams
 	
-	"FFA-L": { "game_type": "FFA", "arena_size": 12000.0, "food_per_player": 12000, "bots_per_player": 40, "bot_classes": ["Pawn"], "npc_points": true, "start_lvls": 0, "player_class": "Pawn", "player_levels_for_upgrade": 2, "player_levels_for_promotion": 4}, # Large game FFA
-	"2T-L": { "game_type": "2_Teams", "arena_size": 12000.0, "food_per_player": 12000, "bots_per_player": 40, "bot_classes": ["Pawn"], "npc_points": true, "start_lvls": 0, "player_class": "Pawn", "player_levels_for_upgrade": 2, "player_levels_for_promotion": 4} # Large game 2 teams
+	"FFA-L": { "game_type": "FFA", "arena_size": 12000.0, "food_per_player": 12000, "bots_per_player": 40, "bot_classes": ["Pawn, Pawn_I"], "npc_points": true, "start_lvls": 0, "player_class": "Pawn", "player_levels_for_upgrade": 1, "player_levels_for_promotion": 3}, # Large game FFA
+	"2T-L": { "game_type": "2_Teams", "arena_size": 12000.0, "food_per_player": 12000, "bots_per_player": 40, "bot_classes": ["Pawn, Pawn_I"], "npc_points": true, "start_lvls": 0, "player_class": "Pawn", "player_levels_for_upgrade": 1, "player_levels_for_promotion": 3} # Large game 2 teams
 }
 
 var leaderboard_timer: float = 0.0
@@ -73,7 +73,7 @@ func _ready() -> void:
 func _apply_preset_or_custom() -> void:
 	var input: String = $TitleScreen/HostPanel/Preset.text.strip_edges()
 	if input == "":
-		input = "Alone"
+		input = "FFA"
 	var parts: Array = input.split(",")
 	print("GAME PRESETS: " + str(parts))
 	# If a single token matches a preset key, apply it directly

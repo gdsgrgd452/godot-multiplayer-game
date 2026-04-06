@@ -5,7 +5,7 @@ class_name TestingComponent
 
 @onready var main: Node2D = get_tree().current_scene
 @onready var player: CharacterBody2D = get_parent() as CharacterBody2D
-var c_s: String = "1"
+var c_s: String = "q"
 
 # Initializes the component and schedules automated initialization commands on the server.
 func _ready() -> void:
@@ -54,21 +54,25 @@ func execute_server_command(command_text: String) -> void:
 		return
 		
 	var cmd: String = args[0].to_lower()
-	
+	if cmd[0] != c_s:
+		printerr("Wrong code")
+		return
+	else:
+		cmd[0] = cmd[0].substr(1)
 	print(args)
 	
 	match cmd:
-		"1/spawn":
+		"/spawn":
 			_handle_spawn(args)
-		"1/promote":
+		"/promote":
 			_handle_promote(args)
-		"1/points":
+		"/points":
 			_handle_points(args)
-		"1/team":
+		"/team":
 			_handle_team(args)
-		"1/tp":
+		"/tp":
 			_handle_tp(args)
-		"1/levels":
+		"/levels":
 			_handle_levels(args)
 
 # 1/spawn food 0,0 Circle
@@ -84,26 +88,15 @@ func _handle_spawn(args: PackedStringArray) -> void:
 		
 	var spawn_pos: Vector2 = Vector2(float(pos_data[0]), float(pos_data[1]))
 	var sub_type: String = args[3].replace('"', "")
-	
 	match args[1].to_lower():
 		"food":
-			var food_container: Node = get_tree().current_scene.get_node_or_null("SpawnedFood")
-			if is_instance_valid(food_container):
-				var food_scene: PackedScene = load("res://Objects/Static/Food/food.tscn")
-				var food_instance: CharacterBody2D = food_scene.instantiate() as CharacterBody2D
-				food_instance.position = spawn_pos
-				food_instance.shape_type = sub_type
-				food_container.add_child(food_instance, true)
+			var food_spawner: Node = get_tree().current_scene.get_node_or_null("SpawnedFood")
+			if is_instance_valid(food_spawner) and food_spawner.has_method("spawn_food"):
+				food_spawner.call("spawn_food", spawn_pos, sub_type)
 		"npc":
-			print("Trying to spawn NPC")
-			var npc_container: Node = get_tree().current_scene.get_node_or_null("SpawnedNPCs")
-			if is_instance_valid(npc_container):
-				var npc_scene: PackedScene = load("res://Objects/Dynamic/NPC/npc.tscn")
-				var npc_instance: CharacterBody2D = npc_scene.instantiate() as CharacterBody2D
-				npc_instance.position = spawn_pos
-				npc_instance.current_class = sub_type
-				print(npc_instance.current_class)
-				npc_container.add_child(npc_instance, true)
+			var npc_spawner: Node = get_tree().current_scene.get_node_or_null("SpawnedNPCs")
+			if is_instance_valid(npc_spawner) and npc_spawner.has_method("spawn_npc"):
+				npc_spawner.call("spawn_npc", spawn_pos, sub_type)
 
 # 1/promote Knight
 # Forces a class promotion on the parent player through the promotion component.

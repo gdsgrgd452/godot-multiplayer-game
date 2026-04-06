@@ -10,14 +10,19 @@ extends UIComponent
 @onready var ability_brain: AbilityBrain = $"../BrainComponents/AbilityBrain"
 @onready var move_comp: Node2D = $"../Components/MovementComponent"
 
+var update_timer: float = 0.0
+
 # Sets the initial name label text based on a truncated version of the entity name.
 func _ready() -> void:
 	name_label.text = entity.name.substr(0, 8)
 
 # Processes the server-side debug string generation every frame.
-func _process(_delta: float) -> void:
+func _process(delta: float) -> void:
 	if multiplayer.is_server():
-		show_debug_info()
+		update_timer += delta
+		if update_timer >= 0.2: # Only update 5 times a second, not 60+
+			show_debug_info()
+			update_timer = 0.0
 
 # Compiles internal brain variables into a formatted string on the server and broadcasts it to all clients.
 func show_debug_info() -> void:

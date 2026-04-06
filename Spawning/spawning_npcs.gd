@@ -15,21 +15,32 @@ func _handle_npc_spawning(_delta: float) -> void:
 	if is_instance_valid(self) and get_child_count() < owner.max_bots:
 		var npc_spawn_range = owner.arena_size/2 - 50
 		var spawn_pos: Vector2 = Vector2(randf_range(-npc_spawn_range, npc_spawn_range), randf_range(-npc_spawn_range, npc_spawn_range))
-		_spawn_npc(spawn_pos)
+		spawn_npc(spawn_pos)
 
 # Instantiates the NPC Pawn scene at the provided coordinates.
-func _spawn_npc(spawn_pos: Vector2) -> void:
+func spawn_npc(spawn_pos: Vector2, force_class: String = "") -> void:
 	var npc_scene: PackedScene = load("res://Objects/Dynamic/NPC/npc.tscn")
 	var npc_instance: CharacterBody2D = npc_scene.instantiate() as CharacterBody2D
 	npc_instance.name = NPC_NAMES.pick_random() + "-" + str(randi_range(1, 999))
-	print(str(npc_instance.name))
 	npc_instance.global_position = spawn_pos
-	
-	match owner.game_type:
-		"FFA":
-			npc_instance.team_id = randi_range(10,1000)
-		"2_Teams":
-			npc_instance.team_id = randi_range(1,2)
 
-	npc_instance.current_class = owner.bot_spawn_classes.pick_random()
+	var main_scene: Node = get_tree().current_scene
+	var current_game_mode: String = main_scene.get("game_type")
+
+	# Add to tree first so setters and synchronizers behave correctly
 	add_child(npc_instance, true)
+
+	match current_game_mode:
+		"FFA":
+			npc_instance.team_id = randi_range(10, 1000)
+		"2_Teams":
+			npc_instance.team_id = randi_range(1, 2)
+		_:
+			npc_instance.team_id = randi_range(1001, 2000)
+
+	if force_class != "":
+		npc_instance.current_class = force_class
+	elif main_scene.get("bot_spawn_classes"):
+		npc_instance.current_class = main_scene.bot_spawn_classes.pick_random()
+
+	
