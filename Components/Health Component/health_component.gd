@@ -77,10 +77,10 @@ func take_damage(amount: int, attacker_id: String = "", non_entity_attacker: boo
 		return
 
 	# Friendly Fire Check
-	var attacker_node = _find_attacker_node(attacker_id)
+	var attacker_node: Node2D = _find_attacker_node(attacker_id)
 	if not non_entity_attacker and attacker_node: # The attacker is an entity and it exists
-		var attacker_team = attacker_node.get("team_id")
-		var my_team = entity.get("team_id")
+		var attacker_team: int = attacker_node.get("team_id")
+		var my_team: int = entity.get("team_id")
 		
 		# If both have valid teams and they match, ignore the damage
 		if attacker_team != null and my_team != null:
@@ -97,7 +97,7 @@ func take_damage(amount: int, attacker_id: String = "", non_entity_attacker: boo
 		died.emit(attacker_id)
 
 # Helper function to find the attacker node in the world
-func _find_attacker_node(id: String) -> Node:
+func _find_attacker_node(id: String) -> Node2D:
 	var scene = get_tree().current_scene
 	# Check players first
 	var p_container = scene.get_node_or_null("SpawnedPlayers")

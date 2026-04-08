@@ -18,6 +18,7 @@ offset_bottom = 70.0
 grow_horizontal = 2
 grow_vertical = 2
 size_flags_vertical = 3
+tooltip_text = "CLICK TO PROMOTE :)"
 theme_override_font_sizes/font_size = 12
 icon_alignment = 1
 vertical_icon_alignment = 0

@@ -73,7 +73,6 @@ func _ready() -> void:
 		printerr("NPC ", multiplayer.get_unique_id(), " missing Synchronizer on ", name)
 		
 	if is_node_ready():
-		sprite_component._on_promotion_applied(current_class)
 		apply_team_color()
 		
 	health_component.died.connect(_on_npc_died)
@@ -81,10 +80,14 @@ func _ready() -> void:
 	collision_layer = LAYER_AI_PLAYER_AND_FOOD # Resides on
 	collision_mask = LAYER_AI_PLAYER_AND_FOOD | LAYER_WORLD_BOUNDARIES # Collides with
 	
-	# Force initialization of weapons and abilities based on the default class.
+	
+# Force initialization of weapons, sprite and abilities based on the default class.
+func force_promotion_refresh() -> void:
 	if is_instance_valid(promotion_component):
 		promotion_component.change_weapon(current_class)
 		promotion_component.apply_promotion_stats(current_class)
+	if is_instance_valid(sprite_component):
+		sprite_component._on_promotion_applied(current_class)
 
 # Evaluates the team_id against the local player to apply a green or red modulate
 func apply_team_color() -> void:

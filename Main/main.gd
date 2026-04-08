@@ -17,7 +17,7 @@ var dead_scores_dict: Dictionary
 const PRESETS: Dictionary = {
 	"Alone": { "game_type": "FFA", "arena_size": 2500.0, "food_per_player": 1500, "bots_per_player": 0, "bot_classes": ["Pawn"], "npc_points": false, "start_lvls": 200, "player_class": "Holy_Queen", "player_levels_for_upgrade": 1, "player_levels_for_promotion": 2}, # Alone for testing
 	
-	"1-Bot": { "game_type": "FFA", "arena_size": 1500.0, "food_per_player": 50, "bots_per_player": 1, "bot_classes": ["Sultan"], "npc_points": false, "start_lvls": 200, "player_class": "Holy_Queen", "player_levels_for_upgrade": 1, "player_levels_for_promotion": 2}, # 1 Bot for testing
+	"1-Bot": { "game_type": "FFA", "arena_size": 1500.0, "food_per_player": 50, "bots_per_player": 1, "bot_classes": ["Jester"], "npc_points": true, "start_lvls": 200, "player_class": "Holy_Queen", "player_levels_for_upgrade": 1, "player_levels_for_promotion": 2}, # 1 Bot for testing
 	
 	"1-Bot-L": { "game_type": "FFA", "arena_size": 2500.0, "food_per_player": 1500, "bots_per_player": 1, "bot_classes": ["Pawn"], "npc_points": false, "start_lvls": 200, "player_class": "Super_Queen", "player_levels_for_upgrade": 1, "player_levels_for_promotion": 2}, # 1 Bot for testing
 	
@@ -46,8 +46,8 @@ var npc_gains_points: bool = true
 var bot_spawn_classes: Array = ["Pawn"]
 
 #TODO add to presets
-var npc_levels_for_promotion = 3
-var npc_levels_for_upgrade = 1
+var npc_levels_for_promotion: int = 3
+var npc_levels_for_upgrade: int = 1
 
 
 var player_levels_at_start: int = 0
@@ -73,7 +73,7 @@ func _ready() -> void:
 func _apply_preset_or_custom() -> void:
 	var input: String = $TitleScreen/HostPanel/Preset.text.strip_edges()
 	if input == "":
-		input = "FFA"
+		input = "1-Bot"
 	var parts: Array = input.split(",")
 	print("GAME PRESETS: " + str(parts))
 	# If a single token matches a preset key, apply it directly
@@ -285,7 +285,7 @@ func start_spectating(killer_id: String) -> void:
 
 	# Attempt to find the killer. If environmental or missing, the camera stays where the player died.
 	if killer_id != "":
-		var killer_node = $SpawnedPlayers.get_node_or_null(killer_id)
+		var killer_node: CharacterBody2D = $SpawnedPlayers.get_node_or_null(killer_id)
 		if not killer_node:
 			killer_node = $SpawnedNPCs.get_node_or_null(killer_id)
 		if not killer_node:

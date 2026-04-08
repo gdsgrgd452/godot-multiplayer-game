@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://jcmvsr5qgb4m"
-path="res://.godot/imported/a-key.png-754775930e06d33d07e99d2b8be779e6.ctex"
+uid="uid://dvs6qfvuvrwcv"
+path="res://.godot/imported/a-key.png-d877d0323efc38737d745d52d2a7ad26.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://images/HowToPlay/a-key.png"
-dest_files=["res://.godot/imported/a-key.png-754775930e06d33d07e99d2b8be779e6.ctex"]
+source_file="res://Images/HowToPlay/a-key.png"
+dest_files=["res://.godot/imported/a-key.png-d877d0323efc38737d745d52d2a7ad26.ctex"]
 
 [params]
 

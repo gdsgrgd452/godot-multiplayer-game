@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://5eubu4uhawbi"
-path="res://.godot/imported/white-jester.png-86fdc5a3cd5a92b90e224d8ff7d6a449.ctex"
+uid="uid://4vxdpd5yb2v3"
+path="res://.godot/imported/white-jester.png-d8625082fd2ad9436ffceaf32bed0c1c.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://images/chess-pieces/white-jester.png"
-dest_files=["res://.godot/imported/white-jester.png-86fdc5a3cd5a92b90e224d8ff7d6a449.ctex"]
+source_file="res://Images/chess-pieces/white-jester.png"
+dest_files=["res://.godot/imported/white-jester.png-d8625082fd2ad9436ffceaf32bed0c1c.ctex"]
 
 [params]
 

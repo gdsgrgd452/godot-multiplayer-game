@@ -180,17 +180,15 @@ func request_level_up_math() -> void:
 			_npc_auto_upgrade()
 
 # Identifies non-maxed stats relevant to current equipment and applies a random upgrade for NPCs.
-func _npc_auto_upgrade() -> void:
-	var promo_comp: PromotionComponent = entity.get_node("Components/PromotionComponent") as PromotionComponent
-	
+func _npc_auto_upgrade() -> void:	
 	var curr_class: String = entity.current_class
-	var valid_stats_dict: Dictionary = promo_comp.class_base_stats[curr_class] # The base stats
+	var valid_stats_dict: Dictionary = PromoUtils.get_base_stats_for_class(curr_class)
 	var available_choices: Array = valid_stats_dict.keys() # The stats the class has
 	available_choices = available_choices.filter(func(stat): return not is_stat_maxed(stat)) # Remove any stats that are already maxed
 			
 	if not available_choices.is_empty():
 		var chosen: String = available_choices.pick_random()
-		#print("NPC upgraded: " + chosen)
+		print("NPC upgraded: " + chosen)
 		apply_upgrade(chosen)
 	else:
 		printerr("No valid")

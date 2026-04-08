@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bkti6qkbmljk0"
-path="res://.godot/imported/white-king_knight.png-d8538b72e40fedbfe00a91476ce37509.ctex"
+uid="uid://dpefvtg2gtevf"
+path="res://.godot/imported/white-king_knight.png-801d10fdf6c01cf176193a02fefe934f.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://images/chess-pieces/white-king_knight.png"
-dest_files=["res://.godot/imported/white-king_knight.png-d8538b72e40fedbfe00a91476ce37509.ctex"]
+source_file="res://Images/chess-pieces/white-king_knight.png"
+dest_files=["res://.godot/imported/white-king_knight.png-801d10fdf6c01cf176193a02fefe934f.ctex"]
 
 [params]
 

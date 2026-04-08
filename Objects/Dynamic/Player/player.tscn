@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://b0tv68ilswjsh" path="res://UI/Bars/Health Bar/health_bar.tscn" id="3_i3pqv"]
 [ext_resource type="PackedScene" uid="uid://bxfwklemd5f4o" path="res://UI/Upgrade Button/stat_button.tscn" id="4_sweqy"]
 [ext_resource type="PackedScene" uid="uid://ca4thm5hu2im0" path="res://UI/Promotion Button/promotion_button.tscn" id="5_n7ghd"]
+[ext_resource type="AudioStream" uid="uid://bmvag6stx4pll" path="res://Sound Effects/54427377-sword-slash-476148.wav" id="6_ktvaa"]
 [ext_resource type="PackedScene" uid="uid://j1hh6shqik0f" path="res://UI/lb.tscn" id="8_4ge2x"]
 [ext_resource type="Script" uid="uid://bcp4tn61yaump" path="res://Components/Leveling Component/leveling_component.gd" id="8_dw050"]
 [ext_resource type="Script" uid="uid://3f5s7a527aj5" path="res://Components/Movement Component/player_movement.gd" id="10_imvv6"]
@@ -177,6 +178,10 @@ lb_entry_scene = ExtResource("8_4ge2x")
 [node name="TestingComponent" type="Node2D" parent="." unique_id=1977352903]
 script = ExtResource("49_8ikvy")
 
+[node name="AudioComponent" type="AudioStreamPlayer2D" parent="." unique_id=1857009924]
+stream = ExtResource("6_ktvaa")
+max_distance = 848.0
+
 [node name="HUD" type="CanvasLayer" parent="." unique_id=298534784]
 
 [node name="StatsLabel" type="Label" parent="HUD" unique_id=1120118620]
@@ -300,7 +305,25 @@ offset_right = 101.5
 offset_bottom = -198.32994
 grow_horizontal = 2
 grow_vertical = 2
-text = "Pick a class to promote to:"
+text = "Pick a class to promote to:
+"
+
+[node name="PromotionHoverLabel" type="Label" parent="HUD/PromotionUILabel" unique_id=833464188]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -85.5
+offset_top = 0.1949997
+offset_right = 85.5
+offset_bottom = 23.194984
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 13
+text = "Hover over to see info"
+horizontal_alignment = 1
 
 [node name="PromotionUI" type="HBoxContainer" parent="HUD/PromotionUILabel" unique_id=982234864]
 layout_mode = 1

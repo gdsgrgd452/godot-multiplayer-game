@@ -179,6 +179,13 @@ func stop_illusion_visuals() -> void:
 			tween.tween_property(illusion_node, "modulate:a", 0.0, 0.2).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 			tween.tween_callback(illusion_node.queue_free)
 	active_illusions.clear()
+	#
+#E 0:10:18:877   IllusionComponent._cleanup_illusions: Trying to assign invalid previously freed instance.
+  #<GDScript Source>illusion_component.gd:191 @ IllusionComponent._cleanup_illusions()
+  #<Stack Trace> illusion_component.gd:191 @ _cleanup_illusions()
+				#illusion_component.gd:155 @ trigger_scattered_illusions()
+				#illusion_component.gd:110 @ request_scattered_illusions()
+
 
 # Instantly removes all active illusions associated with this component upon entity death.
 func cleanup() -> void:

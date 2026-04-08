@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bxbrjc37sox1c"
-path="res://.godot/imported/white-super_queen.png-d8f8ec64832d40854f8e8fa56131c361.ctex"
+uid="uid://bou4nu7xwnm7f"
+path="res://.godot/imported/white-super_queen.png-e674afdf6072fed2970a04921f3a0e07.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://images/chess-pieces/white-super_queen.png"
-dest_files=["res://.godot/imported/white-super_queen.png-d8f8ec64832d40854f8e8fa56131c361.ctex"]
+source_file="res://Images/chess-pieces/white-super_queen.png"
+dest_files=["res://.godot/imported/white-super_queen.png-e674afdf6072fed2970a04921f3a0e07.ctex"]
 
 [params]
 

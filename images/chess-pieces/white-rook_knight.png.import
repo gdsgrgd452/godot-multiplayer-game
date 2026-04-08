@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://trkcu4ptukdx"
-path="res://.godot/imported/white-rook_knight.png-cc47a58bd21e870f6a99ef46d12bc928.ctex"
+uid="uid://di4lgjpbqx7o"
+path="res://.godot/imported/white-rook_knight.png-79fae1c6cee53372bf10b85977b78e5a.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://images/chess-pieces/white-rook_knight.png"
-dest_files=["res://.godot/imported/white-rook_knight.png-cc47a58bd21e870f6a99ef46d12bc928.ctex"]
+source_file="res://Images/chess-pieces/white-rook_knight.png"
+dest_files=["res://.godot/imported/white-rook_knight.png-79fae1c6cee53372bf10b85977b78e5a.ctex"]
 
 [params]
 

@@ -15,6 +15,10 @@ run/main_scene="uid://d0hn1wbn7lp3l"
 config/features=PackedStringArray("4.6", "GL Compatibility")
 config/icon="uid://bt2kynq1b814t"
 
+[debug]
+
+gdscript/warnings/untyped_declaration=1
+
 [input]
 
 move_up={

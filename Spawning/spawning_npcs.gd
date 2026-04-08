@@ -13,7 +13,7 @@ func _handle_npc_spawning(_delta: float) -> void:
 	if not multiplayer.is_server():
 		return
 	if is_instance_valid(self) and get_child_count() < owner.max_bots:
-		var npc_spawn_range = owner.arena_size/2 - 50
+		var npc_spawn_range: float = owner.arena_size/2 - 50
 		var spawn_pos: Vector2 = Vector2(randf_range(-npc_spawn_range, npc_spawn_range), randf_range(-npc_spawn_range, npc_spawn_range))
 		spawn_npc(spawn_pos)
 
@@ -41,6 +41,9 @@ func spawn_npc(spawn_pos: Vector2, force_class: String = "") -> void:
 	if force_class != "":
 		npc_instance.current_class = force_class
 	elif main_scene.get("bot_spawn_classes"):
+		print("Changing npc class")
 		npc_instance.current_class = main_scene.bot_spawn_classes.pick_random()
+	
+	npc_instance.force_promotion_refresh()
 
 	

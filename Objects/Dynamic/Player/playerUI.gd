@@ -78,7 +78,7 @@ func _show_upgrade_menu(upgrade_count: int, levels: Dictionary) -> void:
 		child.hide()
 	
 	var curr_class: String = entity.current_class
-	var valid_stats_dict: Dictionary = promotion_component.class_base_stats[curr_class]
+	var valid_stats_dict: Dictionary = PromoUtils.get_base_stats_for_class(curr_class)
 	var valid_stats: Array = valid_stats_dict.keys()
 	valid_stats = valid_stats.filter(func(stat: String) -> bool:
 		return levels.get(stat, 0) < 10
@@ -121,6 +121,7 @@ func _show_promotion_menu(available_classes: Array[String]) -> void:
 		if i < available_classes.size():
 			var type: String = available_classes[i]
 			button.type_id = type
+			button.tooltip_text = PromoUtils.get_tooltip_for_class(type)
 			button.show()
 		else:
 			button.hide()
@@ -140,10 +141,10 @@ func update_leaderboard_ui(entries: Array) -> void:
 			
 	for i: int in range(entries.size()):
 		var p_data: Dictionary = entries[i]
-		var entry_text = str(i + 1) + ". " + p_data["id"] + " - Score: " + str(p_data["score"]) + " - T: " + str(p_data["team_id"])
+		var entry_text: String = str(i + 1) + ". " + p_data["id"] + " - Score: " + str(p_data["score"]) + " - T: " + str(p_data["team_id"])
 		
 		if lb_entry_scene:
-			var entry = lb_entry_scene.instantiate()
+			var entry: Label = lb_entry_scene.instantiate()
 			var label_to_color: Label = null
 			
 			if entry is Label:
