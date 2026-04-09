@@ -1,10 +1,48 @@
 [gd_scene format=3 uid="uid://c0n8o6qg5guih"]
 
 [ext_resource type="Script" uid="uid://2ojmplfb3hbc" path="res://Components/Weapon Components/Meele Weapon Component/Sword Component/sword_component.gd" id="1_00yqu"]
-[ext_resource type="Texture2D" uid="uid://0tlfye568x8d" path="res://images/Weapons/sword.png" id="1_dq22f"]
+[ext_resource type="Texture2D" uid="uid://bo3he3f6xvib" path="res://images/Weapons/sword_new.png" id="2_yitf5"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_00yqu"]
-size = Vector2(37, 275.68237)
+size = Vector2(37, 249.648)
+
+[sub_resource type="Gradient" id="Gradient_d3qbm"]
+colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_8vll7"]
+gradient = SubResource("Gradient_d3qbm")
+width = 5
+height = 1
+fill_from = Vector2(0, 0.4918864)
+fill_to = Vector2(1, 0.43103448)
+
+[sub_resource type="Gradient" id="Gradient_yitf5"]
+colors = PackedColorArray(1, 1, 1, 0.49411765, 1, 1, 1, 0)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_d3qbm"]
+gradient = SubResource("Gradient_yitf5")
+
+[sub_resource type="Curve" id="Curve_8vll7"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_hg5o5"]
+curve = SubResource("Curve_8vll7")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_yitf5"]
+particle_flag_align_y = true
+particle_flag_disable_z = true
+emission_shape = 3
+emission_box_extents = Vector3(22, 1, 1)
+spread = 0.0
+initial_velocity_min = 2.0
+initial_velocity_max = 2.0
+gravity = Vector3(0, 0, 0)
+scale_min = 0.0
+scale_max = 20.0
+scale_curve = SubResource("CurveTexture_hg5o5")
+color = Color(1, 1, 1, 0.48235294)
+color_ramp = SubResource("GradientTexture1D_d3qbm")
 
 [node name="SwordComponent" type="Node2D" unique_id=179149588]
 script = ExtResource("1_00yqu")
@@ -14,14 +52,22 @@ position = Vector2(11, 2)
 scale = Vector2(0.43, 0.705)
 
 [node name="Collision" type="CollisionShape2D" parent="Hitbox" unique_id=165719975]
-position = Vector2(44.079407, -2.9999986)
+position = Vector2(51.370594, -4.2553186)
 rotation = 1.5707964
-scale = Vector2(0.5, 0.5)
+scale = Vector2(0.52, 0.52)
 shape = SubResource("RectangleShape2D_00yqu")
 debug_color = Color(0.5512663, 0.45453995, 1, 0.34117648)
 
 [node name="Sprite" type="Sprite2D" parent="." unique_id=1587892858]
-position = Vector2(26.999996, 1)
-rotation = 2.0943952
-scale = Vector2(0.015, 0.015)
-texture = ExtResource("1_dq22f")
+position = Vector2(24, 1)
+rotation = 0.7853982
+scale = Vector2(0.15, 0.15)
+texture = ExtResource("2_yitf5")
+
+[node name="AirLines" type="GPUParticles2D" parent="." unique_id=560943069]
+position = Vector2(35, -1)
+emitting = false
+amount = 3
+texture = SubResource("GradientTexture2D_8vll7")
+lifetime = 0.3
+process_material = SubResource("ParticleProcessMaterial_yitf5")

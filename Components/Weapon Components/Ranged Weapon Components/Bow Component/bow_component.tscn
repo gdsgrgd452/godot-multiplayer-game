@@ -1,6 +1,11 @@
 [gd_scene format=3 uid="uid://drldjkjxrdrg"]
 
 [ext_resource type="Script" uid="uid://b2edp6yfxmj6q" path="res://Components/Weapon Components/Ranged Weapon Components/Bow Component/bow_component.gd" id="1_8qkve"]
+[ext_resource type="Texture2D" uid="uid://d12fg6y0vl4by" path="res://images/Weapons/bow-slack.png" id="2_8luvt"]
 
 [node name="BowComponent" type="Node2D" unique_id=73394275]
 script = ExtResource("1_8qkve")
+
+[node name="SpriteComponent" type="Sprite2D" parent="." unique_id=249114642]
+scale = Vector2(0.015, 0.015)
+texture = ExtResource("2_8luvt")

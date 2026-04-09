@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://2owofpdyy6p8"]
 
 [ext_resource type="Script" uid="uid://dnx0qmm1qa2qt" path="res://Objects/Projectiles/Fireball/fireball.gd" id="1_883jx"]
-[ext_resource type="Texture2D" uid="uid://c46qdfnomybuj" path="res://images/Projectiles/fireball.png" id="2_85771"]
+[ext_resource type="Texture2D" path="res://images/Projectiles/fireball.png" id="2_85771"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_1xpyd"]
 

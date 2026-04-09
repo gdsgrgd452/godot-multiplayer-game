@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://b1sqi1qujxvik"
-path="res://.godot/imported/white-flowers_knight.png-c1b0529ea13960f66a6e51182f48b23e.ctex"
+uid="uid://bweyksuy4ys15"
+path="res://.godot/imported/white-flowers_knight.png-4e7d2c280a3445a730355b83c582e4ea.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Images/chess-pieces/white-flowers_knight.png"
-dest_files=["res://.godot/imported/white-flowers_knight.png-c1b0529ea13960f66a6e51182f48b23e.ctex"]
+source_file="res://images/chess-pieces/white-flowers_knight.png"
+dest_files=["res://.godot/imported/white-flowers_knight.png-4e7d2c280a3445a730355b83c582e4ea.ctex"]
 
 [params]
 

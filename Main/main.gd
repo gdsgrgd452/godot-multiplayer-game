@@ -176,7 +176,7 @@ func _create_boundaries() -> void:
 		Rect2(top_left_x + arena_size, top_left_y, 50, arena_size)      # Right wall
 	]
 	
-	for rect in rects:
+	for rect: Rect2 in rects:
 		$SpawnedTraps.spawn_wall(rect)
 		
 

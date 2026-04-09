@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://431h0vtmf1eb"
-path="res://.godot/imported/white-holy_queen.png-6f0909724123483b6853567051028fe1.ctex"
+uid="uid://bwtxs75vr3234"
+path="res://.godot/imported/white-holy_queen.png-e5c9978c18a8cb728dd46442854c4847.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Images/chess-pieces/white-holy_queen.png"
-dest_files=["res://.godot/imported/white-holy_queen.png-6f0909724123483b6853567051028fe1.ctex"]
+source_file="res://images/chess-pieces/white-holy_queen.png"
+dest_files=["res://.godot/imported/white-holy_queen.png-e5c9978c18a8cb728dd46442854c4847.ctex"]
 
 [params]
 

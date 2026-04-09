@@ -10,16 +10,16 @@ extends CharacterBody2D
 
 @onready var movement_component: Node = $Components/MovementComponent
 @onready var health_component: Node = $Components/HealthComponent
-@onready var leveling_component: Node = $Components/LevelingComponent
-@onready var promotion_component: Node = $Components/PromotionComponent
+@onready var leveling_component: LevelingComponent = $Components/LevelingComponent
+@onready var promotion_component: PromotionComponent = $Components/PromotionComponent
 @onready var manager_component: ComponentManager = $Components/ComponentManager
 @onready var sprite_component: Sprite2D = $SpriteComponent
 
-var ranged_w_component: Node
-var melee_w_component: Node
-var area_w_component: Node
-var first_ability_component: Node
-var shield_component: Node
+var ranged_w_component: RangedWeaponComponent
+var melee_w_component: MeleeWeaponComponent
+var area_w_component: AreaWeaponComponent
+var first_ability_component: Node2D
+var shield_component: Node2D
 
 var team_id: int = 0
 var shielding: bool = false

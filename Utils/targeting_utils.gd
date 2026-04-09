@@ -11,7 +11,7 @@ static func get_all_potential_targets(origin: Vector2, detection_area: Area2D, m
 		if body == exclude_blacklisted or not is_instance_valid(body):
 			continue
 			
-		var body_team = body.get("team_id") if "team_id" in body else -1
+		var body_team: int = body.get("team_id") if "team_id" in body else -1
 		
 		if body_team != -1 and body_team != my_team:
 			if (not all_passive and body.is_in_group("player")):

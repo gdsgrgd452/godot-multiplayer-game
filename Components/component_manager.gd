@@ -3,7 +3,7 @@ class_name ComponentManager
 
 @onready var entity: CharacterBody2D = get_parent().get_parent() as CharacterBody2D
 @onready var components_container: Node2D = get_parent() as Node2D
-@onready var ui_comp: Node2D = entity.get_node("UIComponent")
+@onready var ui_comp: UIComponent = entity.get_node("UIComponent")
 
 var is_player_and_UI_valid: bool = false
 
@@ -48,16 +48,17 @@ func change_melee_weapon(weapon_type: String) -> void:
 	match weapon_type:
 		"Spear":
 			entity.set("melee_w_component", spear)
-			if is_player_and_UI_valid: ui_comp.melee_info_label.text = "Melee: Spear"
 			msg = "Melee Weapon Now: Spear"
 		"Sword":
 			entity.set("melee_w_component", sword)
-			if is_player_and_UI_valid: ui_comp.melee_info_label.text = "Melee: Sword"
 			msg = "Melee Weapon Now: Sword"
 		"None":
 			entity.set("melee_w_component", null)
-			if is_player_and_UI_valid: ui_comp.melee_info_label.text = "No Melee Weapon"
 			msg = "No Melee Weapon"
+	
+	# Updates the inventory view
+	if is_player_and_UI_valid: 
+		ui_comp.update_weapon_ui("melee", weapon_type)
 			
 	# Sequence the UI Message
 	if is_player_and_UI_valid and msg != "":
@@ -87,21 +88,21 @@ func change_ranged_weapon(weapon_type: String) -> void:
 	match weapon_type:
 		"Fireball_Shooter":
 			entity.set("ranged_w_component", fireball)
-			if is_player_and_UI_valid: ui_comp.ranged_info_label.text = "Ranged: Fireball Shooter"
 			msg = "Ranged Weapon Now: Magic Fireball Shooter"
 		"Bow":
 			entity.set("ranged_w_component", bow)
-			if is_player_and_UI_valid: ui_comp.ranged_info_label.text = "Ranged: Bow"
 			msg = "Ranged Weapon Now: Bow"
 		"Pin_Shooter":
 			entity.set("ranged_w_component", pin)
-			if is_player_and_UI_valid: ui_comp.ranged_info_label.text = "Ranged: Pin Shooter"
 			msg = "Ranged Weapon Now: Juggling Pin Gun"
 		"None":
 			entity.set("ranged_w_component", null)
-			if is_player_and_UI_valid: ui_comp.ranged_info_label.text = "No Ranged Weapon"
 			msg = "No Ranged Weapon"
-
+	
+	# Updates the inventory view
+	if is_player_and_UI_valid: 
+		ui_comp.update_weapon_ui("ranged", weapon_type)
+		
 	if is_player_and_UI_valid and msg != "":
 		get_tree().create_timer(1.0).timeout.connect(func():
 			if is_instance_valid(ui_comp): # Verification check in case player died in 0.3s
@@ -155,7 +156,7 @@ func change_first_ability(ability_type: String) -> void:
 	if abilities.has(ability_type) and is_instance_valid(abilities[ability_type]):
 		entity.set("first_ability_component", abilities[ability_type])
 		if is_player_and_UI_valid: 
-			ui_comp.ability_info_label.text = "Ability 1: " + ability_type.replace("_", " ")
+			ui_comp.ability_info_label.text = ability_type.replace("_", " ")
 		msg = "First Ability Now: " + ability_type.replace("_", " ")
 	else:
 		entity.set("first_ability_component", null)
@@ -182,7 +183,7 @@ func change_second_ability(ability_type: String) -> void:
 	if abilities.has(ability_type) and is_instance_valid(abilities[ability_type]):
 		entity.set("second_ability_component", abilities[ability_type])
 		if is_player_and_UI_valid: 
-			ui_comp.second_ability_info_label.text = "Ability 2: " + ability_type.replace("_", " ")
+			ui_comp.second_ability_info_label.text = ability_type.replace("_", " ")
 		msg = "Second Ability Now: " + ability_type.replace("_", " ")
 	else:
 		entity.set("second_ability_component", null)

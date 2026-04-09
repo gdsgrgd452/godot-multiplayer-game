@@ -13,7 +13,8 @@ var projectile_counter: int = 0
 func spawn_projectile(spawn_pos: Vector2, dir: Vector2, shooter_id: String, projectile_speed: int, projectile_damage: int, projectile_type: String) -> void:
 	if not multiplayer.is_server():
 		return
-
+	
+	
 	if not projectile_scenes.has(projectile_type):
 		projectile_type = "Arrow"
 	
@@ -32,5 +33,6 @@ func spawn_projectile(spawn_pos: Vector2, dir: Vector2, shooter_id: String, proj
 	
 	projectile.speed = float(projectile_speed)
 	projectile.damage = projectile_damage
+	
 	
 	add_child(projectile, true)

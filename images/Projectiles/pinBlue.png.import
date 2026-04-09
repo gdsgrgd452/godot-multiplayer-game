@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://ctvnw8o3mpewa"
-path="res://.godot/imported/pinBlue.png-b15ef7e1c5da3773b09bb07298b8b2d1.ctex"
+uid="uid://cquod3ct8wdc4"
+path="res://.godot/imported/pinBlue.png-2702c34e12234804746aaa57155bad2e.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Images/Projectiles/pinBlue.png"
-dest_files=["res://.godot/imported/pinBlue.png-b15ef7e1c5da3773b09bb07298b8b2d1.ctex"]
+source_file="res://images/Projectiles/pinBlue.png"
+dest_files=["res://.godot/imported/pinBlue.png-2702c34e12234804746aaa57155bad2e.ctex"]
 
 [params]
 

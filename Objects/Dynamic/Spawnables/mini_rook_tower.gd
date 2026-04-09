@@ -79,8 +79,8 @@ func _process_targeting(all_targets: Dictionary) -> bool:
 				towers[target_name] = target_info
 		
 	# Goes specifically for players or NPCs that can be killed in less htis
-	for dict in [players, npcs]:
-		for key in dict:
+	for dict: Dictionary in [players, npcs]:
+		for key: String in dict:
 			var potential_target: Dictionary = dict.get(key)
 			if TargetingUtils.less_than_x_hits_to_kill(hits_to_kill_to_target, potential_target.get("health"), null, ranged_weapon): # If it is low health increase the priority
 				potential_target.set("priority", potential_target.get("priority") + 30)
@@ -88,8 +88,8 @@ func _process_targeting(all_targets: Dictionary) -> bool:
 	# Finds the highest priority potential target around
 	var best_potential_target: Dictionary
 	var highest_priority: int = 0
-	for dict in [players, npcs, food, towers]:
-		for key in dict:
+	for dict: Dictionary in [players, npcs, food, towers]:
+		for key: String in dict:
 			var potential_target_info: Dictionary = dict.get(key)
 			var target_priority: int = potential_target_info.get("priority")
 			#print("Target: " + str(potential_target_info.get("entity")) + " Priority: " + str(target_priority))

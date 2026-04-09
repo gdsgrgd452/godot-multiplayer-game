@@ -1,7 +1,7 @@
 extends RangedWeaponComponent
 class_name FireballShooterComponent
 
-@export var fireball_shooter_audio: AudioStream = preload("res://Sound Effects/floraphonic-fireball-whoosh-2-179126.wav")
+@export var fireball_shooter_audio: AudioStream = preload("res://Sound Effects/fireball.wav")
 
 func _ready() -> void:
 	projectile_type = "Fireball"

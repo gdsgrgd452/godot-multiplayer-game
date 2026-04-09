@@ -4,6 +4,7 @@
 [ext_resource type="PackedScene" uid="uid://5mf4ol8pweaw" path="res://Components/Sprite Component/sprite_component.tscn" id="1_ge44a"]
 [ext_resource type="Script" uid="uid://d04412dn2ik0y" path="res://Objects/Dynamic/NPC/npcui.gd" id="2_eflwn"]
 [ext_resource type="AudioStream" uid="uid://bioof6hkuy2vl" path="res://Sound Effects/sword_slash.wav" id="3_ovvwt"]
+[ext_resource type="Texture2D" path="res://Images/chess-pieces/white-pawn.png" id="3_vmwl6"]
 [ext_resource type="PackedScene" uid="uid://bah68f313cuc3" path="res://Components/Health Component/health_component.tscn" id="4_7k8bs"]
 [ext_resource type="Script" uid="uid://be0de8m0h4ob5" path="res://Components/Audio Components/audio_component.gd" id="4_gbr31"]
 [ext_resource type="Script" uid="uid://bihqjl51yapha" path="res://Components/Movement Component/npc_movement.gd" id="4_l1orh"]
@@ -93,6 +94,7 @@ script = ExtResource("1_5yobt")
 
 [node name="SpriteComponent" parent="." unique_id=1204712433 instance=ExtResource("1_ge44a")]
 scale = Vector2(0.5, 0.5)
+pawn_texture = ExtResource("3_vmwl6")
 
 [node name="Hitbox" type="CollisionShape2D" parent="." unique_id=915123551]
 position = Vector2(0, 4.5)

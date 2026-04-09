@@ -1,10 +1,10 @@
 [gd_scene format=3 uid="uid://d24rjpu5nvya5"]
 
 [ext_resource type="Script" uid="uid://g1y4worsh5px" path="res://Objects/Projectiles/Arrow/arrow.gd" id="1_dmmsb"]
-[ext_resource type="Texture2D" uid="uid://cybpbc04uh3ny" path="res://images/Projectiles/arrow.png" id="2_p7jgi"]
+[ext_resource type="Texture2D" uid="uid://b6i5ilmjw1pdy" path="res://images/Projectiles/arrow.png" id="2_p7jgi"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_p7jgi"]
-size = Vector2(18, 135.74059)
+size = Vector2(18, 156)
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_p7jgi"]
 properties/0/path = NodePath(".:position")
@@ -20,14 +20,13 @@ scale = Vector2(0.5, 0.5)
 script = ExtResource("1_dmmsb")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=324698263]
-position = Vector2(-0.38, -0.585)
+position = Vector2(-0.37999997, -0.99999905)
 scale = Vector2(0.5, 0.5)
 shape = SubResource("RectangleShape2D_p7jgi")
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=828545934]
-position = Vector2(1, -1)
-rotation = -0.7313864
-scale = Vector2(0.05, 0.05)
+rotation = -1.5707964
+scale = Vector2(0.025, 0.025)
 texture = ExtResource("2_p7jgi")
 
 [node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="." unique_id=1190412956]

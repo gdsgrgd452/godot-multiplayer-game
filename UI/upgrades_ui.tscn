@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://djssbmfb7dwp8"]
 
-[ext_resource type="Texture2D" uid="uid://d2hkp2ptcm6l4" path="res://images/upgrade.png" id="1_q238g"]
+[ext_resource type="Texture2D" path="res://images/upgrade.png" id="1_q238g"]
 
 [node name="UpgradesUI" type="HBoxContainer" unique_id=2019017149]
 anchors_preset = 8

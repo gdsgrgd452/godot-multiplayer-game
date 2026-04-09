@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bcxlrovsrfhuv"
-path="res://.godot/imported/pinRed.png-09a0456f841ef5757ba77ca1370cb738.ctex"
+uid="uid://qi3wm6wmyrwx"
+path="res://.godot/imported/pinRed.png-5a72f71b041f94578677ed4cacf67dc0.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Images/Projectiles/pinRed.png"
-dest_files=["res://.godot/imported/pinRed.png-09a0456f841ef5757ba77ca1370cb738.ctex"]
+source_file="res://images/Projectiles/pinRed.png"
+dest_files=["res://.godot/imported/pinRed.png-5a72f71b041f94578677ed4cacf67dc0.ctex"]
 
 [params]
 

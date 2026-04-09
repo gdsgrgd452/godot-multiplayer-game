@@ -1,6 +1,7 @@
 extends Node2D
 class_name KillingUtils
 
+
 # Iterates through player and NPC containers to award points to the identified attacker.
 static func give_points_on_death(entity: Node2D, points_value: int) -> void:
 	var level_comp: Node = entity.get_node_or_null("Components/LevelingComponent")

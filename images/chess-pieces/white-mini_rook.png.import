@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://b5qwie3wvyyt5"
-path="res://.godot/imported/white-mini_rook.png-9112b9e982109ed8f543bd3290572016.ctex"
+uid="uid://d1a2hlx3d4u4d"
+path="res://.godot/imported/white-mini_rook.png-327f9121f7e56653eebc0133eda762c3.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Images/chess-pieces/white-mini_rook.png"
-dest_files=["res://.godot/imported/white-mini_rook.png-9112b9e982109ed8f543bd3290572016.ctex"]
+source_file="res://images/chess-pieces/white-mini_rook.png"
+dest_files=["res://.godot/imported/white-mini_rook.png-327f9121f7e56653eebc0133eda762c3.ctex"]
 
 [params]
 

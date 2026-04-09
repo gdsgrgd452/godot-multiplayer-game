@@ -9,10 +9,12 @@ extends UIComponent
 @onready var promotion_component: Node = $"../Components/PromotionComponent"
 @onready var sprite_component: Sprite2D = $"../SpriteComponent"
 
-@onready var melee_info_label: Label = $"../HUD/PromotionInfoLabel/MeleeWeapon"
-@onready var ranged_info_label: Label = $"../HUD/PromotionInfoLabel/RangedWeapon"
-@onready var ability_info_label: Label = $"../HUD/PromotionInfoLabel/Ability"
-@onready var second_ability_info_label: Label = $"../HUD/PromotionInfoLabel/Ability2"
+@onready var melee_info_label: Label = $"../HUD/PromotionInfoLabel/Melee"
+@onready var melee_info_label_image: TextureRect = $"../HUD/PromotionInfoLabel/Melee/Image"
+@onready var ranged_info_label: Label = $"../HUD/PromotionInfoLabel/Ranged"
+@onready var ranged_info_label_image: TextureRect = $"../HUD/PromotionInfoLabel/Ranged/Image"
+@onready var ability_info_label: Label = $"../HUD/FirstAbilityBar/FirstAbilityBarLabel"
+@onready var second_ability_info_label: Label = $"../HUD/SecondAbilityBar/SecondAbilityBarLabel"
 
 var melee_w_component: Node
 var ranged_w_component: Node
@@ -151,11 +153,11 @@ func update_leaderboard_ui(entries: Array) -> void:
 				entry.text = entry_text
 				label_to_color = entry
 			elif entry.has_node("Label"):
-				var lbl = entry.get_node("Label")
+				var lbl: Label = entry.get_node("Label")
 				lbl.text = entry_text
 				label_to_color = lbl
 			else:
-				var lbl = Label.new()
+				var lbl: Label = Label.new()
 				lbl.text = entry_text
 				entry.add_child(lbl)
 				label_to_color = lbl
@@ -230,6 +232,18 @@ func trigger_ability_ui(ability_name: String, max_cooldown: float, is_secondary:
 		
 		if bar.bar_tween:
 			bar.bar_tween.finished.connect(func() -> void: if is_instance_valid(bar): bar.hide())
+
+# Sets the UI on the left side of the screen for the melee and ranged weapons
+func update_weapon_ui(m_or_r: String, weapon_type: String) -> void:
+	var ui_text: String = weapon_type.replace("_", " ")
+	var weapon_img: Texture2D = ImageUtils.get_image_by_component_name(weapon_type)
+	print(str(weapon_img))
+	if m_or_r == "melee":
+		melee_info_label.text = ui_text
+		melee_info_label_image.texture = weapon_img
+	elif m_or_r == "ranged":
+		ranged_info_label.text = ui_text
+		ranged_info_label_image.texture = weapon_img
 
 # Processes server-side debug compilation and transmits formatted strings to the owner client.
 func _process(_delta: float) -> void:

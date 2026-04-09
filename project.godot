@@ -10,14 +10,20 @@ config_version=5
 
 [application]
 
-config/name="chess-2"
+config/name="Chess 2"
 run/main_scene="uid://d0hn1wbn7lp3l"
 config/features=PackedStringArray("4.6", "GL Compatibility")
-config/icon="uid://bt2kynq1b814t"
+config/icon="uid://b5joo3oy63jxq"
 
 [debug]
 
 gdscript/warnings/untyped_declaration=1
+
+[display]
+
+window/size/viewport_width=1400
+window/size/viewport_height=700
+window/size/borderless=true
 
 [input]
 
@@ -64,6 +70,16 @@ second_ability={
 shield={
 "deadzone": 0.2,
 "events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":0,"physical_keycode":82,"key_label":0,"unicode":114,"location":0,"echo":false,"script":null)
+]
+}
+pick_up={
+"deadzone": 0.2,
+"events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":0,"physical_keycode":69,"key_label":0,"unicode":101,"location":0,"echo":false,"script":null)
+]
+}
+drop={
+"deadzone": 0.2,
+"events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":0,"physical_keycode":81,"key_label":0,"unicode":113,"location":0,"echo":false,"script":null)
 ]
 }
 

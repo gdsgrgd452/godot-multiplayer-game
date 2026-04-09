@@ -1,6 +1,8 @@
 extends MeleeWeaponComponent
 class_name SwordComponent
 
+@onready var air_lines: GPUParticles2D = $AirLines
+
 @export var sword_audio: AudioStream = preload("res://Sound Effects/sword_slash.wav")
 
 @export var swing_angle: float = 120.0
@@ -35,11 +37,19 @@ func trigger_visual_attack(target_pos: Vector2) -> void:
 	var start_rot: float = base_aim_rotation - (half_arc * swing_direction)
 	var target_rot: float = base_aim_rotation + (half_arc * swing_direction)
 	
+	if is_instance_valid(air_lines):
+		air_lines.emitting = true
+	
 	rotation = start_rot
 	active_tween = create_tween()
 	#active_tween.set_process_mode(Tween.TWEEN_PROCESS_PHYSICS) # Stops tunelling
 	active_tween.tween_property(self, "rotation", target_rot, attack_duration).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
-
+	
+	active_tween.finished.connect(func() -> void:
+		if is_instance_valid(air_lines):
+			air_lines.emitting = false
+	)
+	
 	swing_direction *= -1
 
 	audio_comp.play_weapon_sound(sword_audio)
@@ -49,6 +59,9 @@ func trigger_visual_attack(target_pos: Vector2) -> void:
 func trigger_visual_retract() -> void:
 	if active_tween and active_tween.is_valid():
 		active_tween.kill()
+		
+	if is_instance_valid(air_lines):
+		air_lines.emitting = false
 		
 	active_tween = create_tween()
 	active_tween.tween_property(self, "rotation", base_aim_rotation, attack_duration * 0.2).set_trans(Tween.TRANS_BOUNCE).set_ease(Tween.EASE_OUT)

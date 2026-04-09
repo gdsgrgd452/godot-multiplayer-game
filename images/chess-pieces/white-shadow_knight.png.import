@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://de37fsx3c61x8"
-path="res://.godot/imported/white-shadow_knight.png-50760756ebaf0f0cd7988fe2d31a4411.ctex"
+uid="uid://key2o8vh1iqp"
+path="res://.godot/imported/white-shadow_knight.png-deded4b17d365aae383647559324f6b0.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Images/chess-pieces/white-shadow_knight.png"
-dest_files=["res://.godot/imported/white-shadow_knight.png-50760756ebaf0f0cd7988fe2d31a4411.ctex"]
+source_file="res://images/chess-pieces/white-shadow_knight.png"
+dest_files=["res://.godot/imported/white-shadow_knight.png-deded4b17d365aae383647559324f6b0.ctex"]
 
 [params]
 
