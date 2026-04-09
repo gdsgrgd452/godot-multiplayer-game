@@ -5,6 +5,9 @@
 # Desktop
 desktop.ini
 
+#import files
+*.import
+
 #Temp import files
 *.tmp
 
