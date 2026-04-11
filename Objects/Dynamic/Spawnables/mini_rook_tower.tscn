@@ -1,10 +1,11 @@
 [gd_scene format=3 uid="uid://b2rtodncqul3h"]
 
 [ext_resource type="Script" uid="uid://dm3wlrl0ecmr1" path="res://Objects/Dynamic/Spawnables/mini_rook_tower.gd" id="1_2373d"]
-[ext_resource type="Texture2D" path="res://images/chess-pieces/white-mini_rook.png" id="1_j1h6l"]
+[ext_resource type="Texture2D" uid="uid://d1a2hlx3d4u4d" path="res://images/chess-pieces/white-mini_rook.png" id="1_j1h6l"]
 [ext_resource type="PackedScene" uid="uid://bah68f313cuc3" path="res://Components/Health Component/health_component.tscn" id="1_jxjvf"]
 [ext_resource type="PackedScene" uid="uid://b0tv68ilswjsh" path="res://UI/Bars/Health Bar/health_bar.tscn" id="3_41amo"]
 [ext_resource type="PackedScene" uid="uid://drldjkjxrdrg" path="res://Components/Weapon Components/Ranged Weapon Components/Bow Component/bow_component.tscn" id="3_2373d"]
+[ext_resource type="Script" uid="uid://be0de8m0h4ob5" path="res://Components/Audio Components/audio_component.gd" id="5_ceh55"]
 [ext_resource type="PackedScene" uid="uid://c6y00jabt5ta6" path="res://Components/UI Components/ui_component.tscn" id="5_dssrb"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_j1h6l"]
@@ -53,6 +54,10 @@ debug_color = Color(0.5513601, 0.4082944, 0.9865976, 0.1764706)
 
 [node name="BowComponent" parent="Components" unique_id=73394275 instance=ExtResource("3_2373d")]
 position = Vector2(0, 4.9999995)
+
+[node name="AudioComponent" type="Node2D" parent="." unique_id=1939771261]
+scale = Vector2(0.99999994, 0.99999994)
+script = ExtResource("5_ceh55")
 
 [node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="." unique_id=168763180]
 replication_config = SubResource("SceneReplicationConfig_2373d")

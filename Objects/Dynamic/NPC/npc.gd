@@ -10,7 +10,6 @@ extends CharacterBody2D
 @export var team_id: int = -1:
 	set(value):
 		team_id = value
-		print(str(team_id))
 		if is_node_ready():
 			apply_team_color()
 		else:

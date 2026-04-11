@@ -38,6 +38,18 @@ const LAYER_WORLD_BOUNDARIES: int = 2
 		if is_node_ready():
 			sprite_component._on_promotion_applied(value)
 
+enum WeaponType {
+	Melee,
+	Ranged
+}
+
+@export var weapon_in_hand: WeaponType = WeaponType.Melee:
+	set(value):
+		weapon_in_hand = value
+		if is_node_ready():
+			manager_component.switch_weapon_in_hand(value)
+			
+
 @export var current_melee_weapon: String = "None":
 	set(value):
 		current_melee_weapon = value
@@ -126,6 +138,7 @@ func _physics_process(delta: float) -> void:
 		check_first_ability_input()
 		check_second_ability_input()
 		check_shield_input()
+		check_switch_weapon_input()
 
 	if multiplayer.is_server():
 		decrease_knockback(delta)
@@ -149,14 +162,20 @@ func check_player_input() -> void:
 		if not multiplayer.is_server():
 			movement_component.receive_input.rpc_id(1, new_dir)
 
-# Triggers a ranged attack
+# Charges up / Triggers a ranged attack
 func check_ranged_input() -> void:
-	if ranged_w_component and Input.is_action_pressed("shoot"):
-		ranged_w_component.shoot(get_global_mouse_position())
+	if not is_instance_valid(ranged_w_component) or weapon_in_hand != WeaponType.Ranged:
+		return
+		
+	if Input.is_action_just_pressed("shoot"):
+		ranged_w_component.request_start_charge.rpc_id(1)
+		
+	if Input.is_action_just_released("shoot"):
+		ranged_w_component.request_release_charge.rpc_id(1, get_global_mouse_position())
 
-# Triggers a melee strike
+# Triggers a melee attack
 func check_melee_input() -> void:
-	if melee_w_component and Input.is_action_pressed("meele"): # Map "melee" to Spacebar or Right Click in Project Settings
+	if melee_w_component and Input.is_action_pressed("meele") and weapon_in_hand == WeaponType.Melee:
 		var target_pos: Vector2 = get_global_mouse_position()
 		melee_w_component.request_melee_attack.rpc_id(1, target_pos)
 
@@ -212,7 +231,7 @@ func check_second_ability_input() -> void:
 # Evaluates continuous input to request shield activation and deactivation from the server.
 func check_shield_input() -> void:
 	if shield_component:
-		var shield_testing = false
+		var shield_testing: bool = false
 		if not shield_testing:
 			if Input.is_action_just_pressed("shield"):
 				print("Trying to activate shield")
@@ -223,6 +242,15 @@ func check_shield_input() -> void:
 			if Input.is_action_just_pressed("shield"):
 				print("Trying to activate shield")
 				shield_component.request_shield_activation.rpc_id(1)
+
+# Switches from melee to ranged and back again
+func check_switch_weapon_input() -> void:
+	if Input.is_action_just_pressed("switch_weapon") and is_instance_valid(melee_w_component) and is_instance_valid(ranged_w_component):
+		match weapon_in_hand:
+			WeaponType.Melee:
+				weapon_in_hand = WeaponType.Ranged
+			WeaponType.Ranged:
+				weapon_in_hand = WeaponType.Melee
 
 # Smoothly decays physical knockback momentum over time.
 func decrease_knockback(delta: float) -> void:
@@ -274,7 +302,7 @@ func _on_player_died(attacker_id: String) -> void:
 	hide()
 	$HUD.hide()
 
-func _update_points(new_points: int):
+func _update_points(new_points: int) -> void:
 	$HUD/LevelBar.queue_points(new_points)
 
 # Transmits the selected stat upgrade to the server.

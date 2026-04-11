@@ -36,7 +36,7 @@ var upgrade_increments: Dictionary = {
 	#Ranged
 	"projectile_damage": 4.0,
 	"projectile_speed": 10.0,
-	"reload_speed": -0.015,
+	"max_charge_time": -0.12,
 	"accuracy": 5.0,
 	
 	#Melee
@@ -89,7 +89,7 @@ var stat_levels: Dictionary = {
 	"regen_amount": 0,
 	"projectile_damage": 0,
 	"projectile_speed": 0,
-	"reload_speed": 0,
+	"max_charge_time": 0,
 	"accuracy": 0,
 	"melee_damage": 0,
 	"melee_knockback": 0,
@@ -188,7 +188,7 @@ func _npc_auto_upgrade() -> void:
 			
 	if not available_choices.is_empty():
 		var chosen: String = available_choices.pick_random()
-		print("NPC upgraded: " + chosen)
+		#print("NPC upgraded: " + chosen)
 		apply_upgrade(chosen)
 	else:
 		printerr("No valid")
@@ -224,7 +224,12 @@ func apply_upgrade(button_info: String) -> void:
 		var promo: PromotionComponent = entity.get_node("Components/PromotionComponent") as PromotionComponent
 		promo.apply_promotion_stats(entity.get("current_class"))
 		
-		var ui_comp = entity.get_node_or_null("UIComponent")
+		if stat_name == "accuracy":
+			var accuracy: int = entity.ranged_w_component.accuracy
+			if accuracy >= 100:
+				maxed_stats_list.append(stat_name)
+		
+		var ui_comp: UIComponent = entity.get_node_or_null("UIComponent")
 
 		if entity.is_in_group("player"):
 			if pending_upgrades > 0: 

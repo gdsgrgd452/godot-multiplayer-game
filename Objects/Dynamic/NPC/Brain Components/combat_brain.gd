@@ -183,13 +183,18 @@ func _ranged_attack(target: Node2D, chase: bool = true) -> bool:
 	if is_instance_valid(active_ranged) and is_instance_valid(target):
 		#print("Trying to ranged")
 		var dist: float = main_brain.npc.global_position.distance_to(target.global_position)
+
 		if dist <= max_shoot_range:
+			active_ranged.look_at(target.global_position)
 			move_comp.set_movement_direction(Vector2.ZERO)
-			# If in range, shoot and stop moving
-			if active_ranged.get("shot_cooldown") <= 0.0: 
-				active_ranged.shoot(target.global_position)
-				combat_state = "Ranged_Attack"
-			if dist <= min_shoot_range: # This is still moving towards the player _----------------------------
+			
+			# If the weapon is not busy charging, start a new attack cycle
+			if not active_ranged.get("is_charging"):
+				active_ranged.request_start_charge()
+			
+			combat_state = "Ranged_Attack"
+			
+			if dist <= min_shoot_range:
 				combat_state = "Ranged_Attack-TC"
 			return true
 		elif chase:

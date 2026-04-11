@@ -98,17 +98,17 @@ func take_damage(amount: int, attacker_id: String = "", non_entity_attacker: boo
 
 # Helper function to find the attacker node in the world
 func _find_attacker_node(id: String) -> Node2D:
-	var scene = get_tree().current_scene
+	var scene: Node2D = get_tree().current_scene
 	# Check players first
-	var p_container = scene.get_node_or_null("SpawnedPlayers")
+	var p_container: Node2D = scene.get_node_or_null("SpawnedPlayers")
 	if p_container:
-		var p = p_container.get_node_or_null(id)
+		var p: CharacterBody2D = p_container.get_node_or_null(id)
 		if p: return p
 		
 	# Check NPCs
-	var n_container = scene.get_node_or_null("SpawnedNPCs")
+	var n_container: Node2D = scene.get_node_or_null("SpawnedNPCs")
 	if n_container:
-		var n = n_container.get_node_or_null(id)
+		var n: CharacterBody2D = n_container.get_node_or_null(id)
 		if n: return n
 		
 	return null

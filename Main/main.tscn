@@ -18,6 +18,7 @@
 [ext_resource type="Texture2D" uid="uid://ddak8qolxfk1x" path="res://images/chess-pieces/white-knight.png" id="9_guo5i"]
 [ext_resource type="Texture2D" uid="uid://cmtej8rvrosdd" path="res://images/Weapons/sword.png" id="10_0gq1e"]
 [ext_resource type="Script" uid="uid://cyhwkk735ps0q" path="res://Spawning/spawning_npcs.gd" id="10_qac2q"]
+[ext_resource type="PackedScene" uid="uid://c7cu6gk13wi33" path="res://Objects/Dynamic/NPC/npc.tscn" id="19_wbdht"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_7mycd"]
 shader = ExtResource("2_lquwl")
@@ -562,6 +563,7 @@ spawn_path = NodePath("../SpawnedTraps")
 [node name="SpawnedNPCs" type="Node2D" parent="." unique_id=328143973]
 position = Vector2(0, -9)
 script = ExtResource("10_qac2q")
+npc_scene = ExtResource("19_wbdht")
 
 [node name="NPCSpawner" type="MultiplayerSpawner" parent="." unique_id=1943154530]
 _spawnable_scenes = PackedStringArray("uid://c7cu6gk13wi33")

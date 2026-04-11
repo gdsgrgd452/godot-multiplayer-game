@@ -26,8 +26,8 @@ const PRESETS: Dictionary = {
 	"FFA": { "game_type": "FFA", "arena_size": 6000.0, "food_per_player": 7500, "bots_per_player": 20, "bot_classes": ["Pawn", "Pawn_I"], "npc_points": true, "start_lvls": 0, "player_class": "Pawn", "player_levels_for_upgrade": 1, "player_levels_for_promotion": 3}, # Large game FFA
 	"2T": { "game_type": "2_Teams", "arena_size": 6000.0, "food_per_player": 7500, "bots_per_player": 20, "bot_classes": ["Pawn", "Pawn_I"], "npc_points": true, "start_lvls": 0, "player_class": "Pawn", "player_levels_for_upgrade": 1, "player_levels_for_promotion": 3}, # Large game 2 teams
 	
-	"FFA-L": { "game_type": "FFA", "arena_size": 12000.0, "food_per_player": 12000, "bots_per_player": 40, "bot_classes": ["Pawn", "Pawn_I"], "npc_points": true, "start_lvls": 0, "player_class": "Pawn", "player_levels_for_upgrade": 1, "player_levels_for_promotion": 3}, # Large game FFA
-	"2T-L": { "game_type": "2_Teams", "arena_size": 12000.0, "food_per_player": 12000, "bots_per_player": 40, "bot_classes": ["Pawn", "Pawn_I"], "npc_points": true, "start_lvls": 0, "player_class": "Pawn", "player_levels_for_upgrade": 1, "player_levels_for_promotion": 3} # Large game 2 teams
+	"FFA-L": { "game_type": "FFA", "arena_size": 12000.0, "food_per_player": 25000, "bots_per_player": 60, "bot_classes": ["Pawn", "Pawn_I", "Pawn_II"], "npc_points": true, "start_lvls": 0, "player_class": "Pawn", "player_levels_for_upgrade": 1, "player_levels_for_promotion": 3}, # Large game FFA
+	"2T-L": { "game_type": "2_Teams", "arena_size": 12000.0, "food_per_player": 25000, "bots_per_player": 60, "bot_classes": ["Pawn", "Pawn_I", "Pawn_II"], "npc_points": true, "start_lvls": 0, "player_class": "Pawn", "player_levels_for_upgrade": 1, "player_levels_for_promotion": 3} # Large game 2 teams
 }
 
 var leaderboard_timer: float = 0.0
@@ -257,7 +257,7 @@ func _on_join_pressed() -> void:
 	$TitleScreen.hide()
 
 # Increases the food and bots supply when a new player joins
-func new_player_joined():
+func new_player_joined() -> void:
 	max_food += food_per_player
 	max_bots += bots_per_player
 

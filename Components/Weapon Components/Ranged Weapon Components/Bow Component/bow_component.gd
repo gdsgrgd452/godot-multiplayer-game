@@ -3,7 +3,6 @@ class_name BowComponent
 
 func _ready() -> void:
 	projectile_type = "Arrow"
-	charging_weapon = true
 
 @export var orbit_distance: float = 30.0
 

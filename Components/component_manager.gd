@@ -32,6 +32,21 @@ func _hide_all_components() -> void:
 			child.hide()
 			child.set_deferred("process_mode", Node.PROCESS_MODE_DISABLED)
 
+# Switches between the melee and ranged weapons
+func switch_weapon_in_hand(type) -> void:
+	match type:
+		entity.WeaponType.Melee:
+			if is_instance_valid(entity.ranged_w_component):
+				entity.ranged_w_component.hide()
+			entity.melee_w_component.show()
+			ui_comp.toggle_weapon_ui(entity.WeaponType.Melee)
+		entity.WeaponType.Ranged:
+			if is_instance_valid(entity.melee_w_component):
+				entity.melee_w_component.hide()
+			entity.ranged_w_component.show()
+			ui_comp.toggle_weapon_ui(entity.WeaponType.Ranged)
+	
+
 #Swaps the active melee weapon component and updates UI labels while ensuring node validity before property access.
 func change_melee_weapon(weapon_type: String) -> void:
 	var spear: Node2D = components_container.get_node_or_null("SpearComponent")

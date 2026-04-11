@@ -67,7 +67,6 @@ func _ready() -> void:
 func toggle_external_ui(is_hidden: bool) -> void:
 	name_label.visible = not is_hidden
 	health_bar.hide_for_others = is_hidden
-	print("This needs checking: " + str(health_bar.visible))
 
 # Populates the upgrade UI with valid random stat choices based on equipped capabilities.
 func _show_upgrade_menu(upgrade_count: int, levels: Dictionary) -> void:
@@ -237,7 +236,7 @@ func trigger_ability_ui(ability_name: String, max_cooldown: float, is_secondary:
 func update_weapon_ui(m_or_r: String, weapon_type: String) -> void:
 	var ui_text: String = weapon_type.replace("_", " ")
 	var weapon_img: Texture2D = ImageUtils.get_image_by_component_name(weapon_type)
-	print(str(weapon_img))
+
 	if m_or_r == "melee":
 		melee_info_label.text = ui_text
 		melee_info_label_image.texture = weapon_img
@@ -245,6 +244,16 @@ func update_weapon_ui(m_or_r: String, weapon_type: String) -> void:
 		ranged_info_label.text = ui_text
 		ranged_info_label_image.texture = weapon_img
 
+# Switches between showing the ranged and melee components on the side
+func toggle_weapon_ui(type) -> void:
+	match type:
+		entity.WeaponType.Melee:
+			ranged_info_label.hide()
+			melee_info_label.show()
+		entity.WeaponType.Ranged:
+			melee_info_label.hide()
+			ranged_info_label.show()
+	
 # Processes server-side debug compilation and transmits formatted strings to the owner client.
 func _process(_delta: float) -> void:
 	if multiplayer.is_server():
@@ -272,8 +281,8 @@ func _server_compile_debug_info() -> void:
 	if is_instance_valid(ranged_w_component):
 		stats_1 += "Proj Dmg: " + str(ranged_w_component.projectile_damage) + "\n"
 		stats_1 += "Proj Spd: " + str(ranged_w_component.projectile_speed) + "\n"
-		stats_1 += "Reload: " + str(ranged_w_component.reload_speed) + "\n"
-		stats_1 += "Cooldown: " + str(snapped(ranged_w_component.shot_cooldown, 0.01)) + "\n"
+		stats_1 += "Charge Time: " + str(ranged_w_component.max_charge_time) + "\n"
+		stats_1 += "Charge: " + str(snapped(ranged_w_component.charge_timer, 0.01)) + "\n"
 		stats_1 += "Acc: " + str(snapped(ranged_w_component.accuracy, 0.01)) + "\n\n"
 	else:
 		stats_1 += "No Ranged Weapon\n\n"

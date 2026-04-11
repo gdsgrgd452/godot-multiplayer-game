@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://2owofpdyy6p8"]
 
 [ext_resource type="Script" uid="uid://dnx0qmm1qa2qt" path="res://Objects/Projectiles/Fireball/fireball.gd" id="1_883jx"]
-[ext_resource type="Texture2D" path="res://images/Projectiles/fireball.png" id="2_85771"]
+[ext_resource type="Texture2D" uid="uid://bs0omm0xp8fr1" path="res://images/Projectiles/fireball.png" id="2_85771"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_1xpyd"]
 
@@ -14,18 +14,16 @@ properties/1/spawn = true
 properties/1/replication_mode = 2
 
 [node name="Fireball" type="Area2D" unique_id=1842032804]
-scale = Vector2(2, 2)
 script = ExtResource("1_883jx")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1170523347]
-scale = Vector2(0.5, 0.5)
 shape = SubResource("CircleShape2D_1xpyd")
 debug_color = Color(0.6627451, 0.23921569, 0, 0.8392157)
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=998692623]
 modulate = Color(1, 0.44705883, 1, 1)
 rotation = -3.1415927
-scale = Vector2(0.005, 0.005)
+scale = Vector2(0.01, 0.01)
 texture = ExtResource("2_85771")
 
 [node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="." unique_id=133358865]

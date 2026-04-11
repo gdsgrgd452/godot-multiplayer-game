@@ -44,9 +44,12 @@ func _process(_delta: float) -> void:
 
 	if not _all_visible_entities.is_empty():
 		_process_targeting(_all_visible_entities)
-		if is_instance_valid(current_target) and is_instance_valid(ranged_weapon) and ranged_weapon.shot_cooldown <= 0.0:
-			var direction: Vector2 = global_position.direction_to(current_target.global_position)
-			ranged_weapon.shoot(global_position + direction)
+		if is_instance_valid(current_target) and is_instance_valid(ranged_weapon):
+			
+			ranged_weapon.look_at(current_target.global_position)
+			if not ranged_weapon.get("is_charging"):
+				var direction: Vector2 = global_position.direction_to(current_target.global_position)
+				ranged_weapon.shoot(global_position + direction)
 
 # Re target to higher priority targets, or get new target from the best visible ones
 func _process_targeting(all_targets: Dictionary) -> bool:

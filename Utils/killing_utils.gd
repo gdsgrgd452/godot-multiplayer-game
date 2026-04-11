@@ -12,7 +12,7 @@ static func give_points_on_death(entity: Node2D, points_value: int) -> void:
 		printerr("Attacker has no valid level component")
 
 # Displays a message to the player that killed
-static func give_kill_credit(entity: Node2D, victim_username: String, killer_username: String):
+static func give_kill_credit(entity: Node2D, victim_username: String, killer_username: String) -> void:
 	var ui_comp: Node = entity.get_node_or_null("UIComponent")
 	if is_instance_valid(ui_comp) and ui_comp.has_method("display_message"):
 		ui_comp.display_message.rpc_id(entity.name.to_int(), killer_username + " Killed " + victim_username)

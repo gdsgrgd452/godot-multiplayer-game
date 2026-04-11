@@ -75,7 +75,7 @@ static func get_entity_type(body: Node2D) -> String:
 
 # Retrieves the total score from an entity's LevelingComponent if available.
 static func get_entity_score(entity: Node2D) -> int:
-	var level_comp: LevelingComponent = entity.get_node_or_null("Components/LevelingComponent")
+	var level_comp: Node2D = entity.get_node_or_null("Components/LevelingComponent")
 	if is_instance_valid(level_comp) and "total_score" in level_comp:
 		return level_comp.total_score as int
 	elif entity.is_in_group("food"):

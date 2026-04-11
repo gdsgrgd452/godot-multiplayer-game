@@ -1,6 +1,8 @@
 extends Node2D
 class_name SpawningNPCs
 
+@export var npc_scene: PackedScene
+
 const NPC_NAMES: Array[String] = ["Bob", "Jack", "Lily", "Harvey", "Luke", "John", "Sam", "Ruby", "Jack", "Tom", "Mary", "Alf", "Mike", "Zara", "Kael", "Nyx", "Dusk", "Vex", "Oryn", "Thal", "Mira", "Blaze", "Crix", "Lyra", "Gorn", "Skye", "Rune", "Fael", "Zolt", "Wren", "Drax", "Sola", "Kira", "Ox", "Ryker", "Fen", "Talon", "Zed", "Casix", "Ivo", "Brynn", "Ace", "Voren"]
 
 # Periodically spawns NPCs on the server to maintain world population.
@@ -19,7 +21,6 @@ func _handle_npc_spawning(_delta: float) -> void:
 
 # Instantiates the NPC Pawn scene at the provided coordinates.
 func spawn_npc(spawn_pos: Vector2, force_class: String = "") -> void:
-	var npc_scene: PackedScene = load("res://Objects/Dynamic/NPC/npc.tscn")
 	var npc_instance: CharacterBody2D = npc_scene.instantiate() as CharacterBody2D
 	npc_instance.name = NPC_NAMES.pick_random() + "-" + str(randi_range(1, 999))
 	npc_instance.global_position = spawn_pos
@@ -41,7 +42,7 @@ func spawn_npc(spawn_pos: Vector2, force_class: String = "") -> void:
 	if force_class != "":
 		npc_instance.current_class = force_class
 	elif main_scene.get("bot_spawn_classes"):
-		print("Changing npc class")
+		#print("Changing npc class")
 		npc_instance.current_class = main_scene.bot_spawn_classes.pick_random()
 	
 	npc_instance.force_promotion_refresh()

@@ -10,6 +10,10 @@ func _ready() -> void:
 	super._ready()
 	retractable = false
 
+func _physics_process(_delta: float) -> void:
+	if not active_tween:
+		look_at(get_global_mouse_position())
+
 # Commands all local clients to execute the physical spear lunge and reset animation.
 @rpc("authority", "call_local", "reliable")
 func trigger_visual_attack(target_pos: Vector2) -> void:
@@ -28,6 +32,7 @@ func trigger_visual_attack(target_pos: Vector2) -> void:
 	active_tween.tween_property(self, "position", forward_pos, attack_duration * 0.3).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 	active_tween.tween_property(self, "position", default_position, attack_duration * 0.4).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
 	audio_comp.play_weapon_sound(spear_audio)
+	active_tween.tween_callback(func(): active_tween = null)
 	
 # Commands all local clients to cleanly interrupt the spear lunge and instantly retract.
 @rpc("authority", "call_local", "reliable")

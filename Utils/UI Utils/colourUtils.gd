@@ -8,7 +8,7 @@ static func get_colour_based_on_type(stat: String) -> Color:
 			return Color(0.553, 0.902, 0.196, 0.6)
 		"max_health", "regen_speed", "regen_amount":
 			return Color(0.184, 0.498, 0.165, 0.6)
-		"projectile_damage", "projectile_speed", "reload_speed", "accuracy":
+		"projectile_damage", "projectile_speed", "max_charge_time", "accuracy":
 			return Color(0.506, 0.157, 0.941, 0.6)
 		"melee_damage", "melee_knockback", "melee_cooldown":
 			return Color(0.682, 0.212, 0.059, 0.6)

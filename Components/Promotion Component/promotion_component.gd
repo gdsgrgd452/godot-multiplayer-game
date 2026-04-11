@@ -75,6 +75,11 @@ func player_promotion_UI_and_reroll(choice: String) -> void:
 	if level_comp and level_comp.is_inside_tree() and level_comp.pending_upgrades > 0:
 		level_comp.trigger_upgrade_ui.rpc_id(entity.name.to_int(), level_comp.pending_upgrades, level_comp.stat_levels)
 
+enum WeaponType {
+	Melee,
+	Ranged
+}
+
 # Updates weapon and ability strings based on the selected class template.
 func change_weapon(class_choice: String) -> void:
 	var comps: Dictionary = PromoUtils.get_components_for_class(class_choice)
@@ -93,11 +98,16 @@ func change_weapon(class_choice: String) -> void:
 	entity.set("current_second_ability", new_a_2)
 	entity.set("current_shield", new_s)
 
+	if new_m != "None" and new_r != "None": # When both weapons, switch to meleee
+		entity.set("weapon_in_hand", WeaponType.Melee)
+	elif new_m != "None":
+		entity.set("weapon_in_hand", WeaponType.Melee)
+	elif new_r != "None":
+		entity.set("weapon_in_hand", WeaponType.Ranged)
 
 # Calculates and applies stat values to the entity's active components using additive level scaling.
 func apply_promotion_stats(class_choice: String) -> void:
 	if not PromoUtils.promotion_base_stats_contains(class_choice):
-		printerr("NO")
 		return
 	
 	var base: Dictionary = PromoUtils.get_base_stats_for_class(class_choice)
@@ -152,7 +162,7 @@ func apply_promotion_stats(class_choice: String) -> void:
 	if r_w_comp:
 		if base.has("projectile_damage"): r_w_comp.projectile_damage = int(calc.call("projectile_damage"))
 		if base.has("projectile_speed"): r_w_comp.projectile_speed = int(calc.call("projectile_speed"))
-		if base.has("reload_speed"): r_w_comp.reload_speed = calc.call("reload_speed")
+		if base.has("max_charge_time"): r_w_comp.max_charge_time = calc.call("max_charge_time")
 		if base.has("accuracy"): r_w_comp.accuracy = calc.call("accuracy")
 	
 	if a_comp:

@@ -1,4 +1,5 @@
 extends Node2D
+class_name ProjectileSpawner
 
 # A dictionary holding all your different projectile scenes
 @export var projectile_scenes: Dictionary = {

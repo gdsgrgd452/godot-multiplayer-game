@@ -16,17 +16,16 @@ properties/1/replication_mode = 2
 
 [node name="Arrow" type="Area2D" unique_id=1096120534]
 rotation = 1.5707964
-scale = Vector2(0.5, 0.5)
 script = ExtResource("1_dmmsb")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=324698263]
 position = Vector2(-0.37999997, -0.99999905)
-scale = Vector2(0.5, 0.5)
+scale = Vector2(0.25, 0.25)
 shape = SubResource("RectangleShape2D_p7jgi")
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=828545934]
 rotation = -1.5707964
-scale = Vector2(0.025, 0.025)
+scale = Vector2(0.013, 0.013)
 texture = ExtResource("2_p7jgi")
 
 [node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="." unique_id=1190412956]
