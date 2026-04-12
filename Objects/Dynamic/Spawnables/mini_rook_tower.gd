@@ -49,7 +49,7 @@ func _process(_delta: float) -> void:
 			ranged_weapon.look_at(current_target.global_position)
 			if not ranged_weapon.get("is_charging"):
 				var direction: Vector2 = global_position.direction_to(current_target.global_position)
-				ranged_weapon.shoot(global_position + direction)
+				ranged_weapon.request_start_charge()
 
 # Re target to higher priority targets, or get new target from the best visible ones
 func _process_targeting(all_targets: Dictionary) -> bool:

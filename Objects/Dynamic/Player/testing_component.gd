@@ -54,7 +54,7 @@ func execute_server_command(command_text: String) -> void:
 		return
 		
 	var cmd: String = args[0].to_lower()
-	if cmd[0] != c_s:
+	if cmd.is_empty() or cmd[0] != c_s:
 		printerr("Wrong code")
 		return
 	else:

@@ -34,6 +34,9 @@ func _hide_all_components() -> void:
 
 # Switches between the melee and ranged weapons
 func switch_weapon_in_hand(type) -> void:
+	if not entity.is_in_group("player"):
+		printerr("NPCs cant switch weapons yet")
+		return
 	match type:
 		entity.WeaponType.Melee:
 			if is_instance_valid(entity.ranged_w_component):

@@ -31,11 +31,22 @@ func _physics_process(delta: float) -> void:
 		
 		# Auto-fire if the player holds past the maximum charge time
 		if multiplayer.is_server() and charge_timer >= max_charge_time:
-			print(str(charge_timer))
-			print(str(max_charge_time))
-			last_aim_pos = get_global_mouse_position()
+			last_aim_pos = get_shoot_at_position()
 			_execute_fire()
 
+func get_shoot_at_position() -> Vector2:
+	if entity.is_in_group("player"):
+		return get_global_mouse_position()
+	elif entity.is_in_group("npc"):
+		if is_instance_valid(entity.main_brain.combat_brain.current_target):
+			return entity.main_brain.combat_brain.current_target.global_position
+		else:
+			printerr("NPC tried to shoot with no target")
+	elif entity.is_in_group("tower"):
+		if is_instance_valid(entity.current_target):
+			return entity.current_target.global_position
+	printerr("No position to shoot at")
+	return Vector2.ZERO
 
 # Initiates the charging sequence and spawns a local visual ghost of the projectile.
 @rpc("any_peer", "call_local", "reliable")
@@ -57,7 +68,6 @@ func request_start_charge() -> void:
 func request_release_charge(click_pos: Vector2) -> void:
 	if not is_charging:
 		return
-	print(str(click_pos))
 	last_aim_pos = click_pos
 	_execute_fire()
 
@@ -96,7 +106,8 @@ func _spawn_projectile_and_recoil(dir: Vector2, final_speed: int, final_damage: 
 	get_tree().current_scene.get_node("SpawnedProjectiles").spawn_projectile(entity.global_position, dir, shooter_identity, final_speed, final_damage, projectile_type)
 	
 	# TODO Make this an rpc
-	entity.apply_recoil.rpc_id(1, -dir * (recoil_strength * (final_speed / projectile_speed)))
+	if entity.has_method("apply_recoil"):
+		entity.apply_recoil.rpc_id(1, -dir * (recoil_strength * (final_speed / projectile_speed)))
 
 	play_audio()
 

@@ -244,7 +244,6 @@ replication_config = SubResource("SceneReplicationConfig_sweqy")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=436632609]
 position = Vector2(8, -8)
-zoom = Vector2(2, 2)
 position_smoothing_enabled = true
 
 [node name="UIComponent" type="Node2D" parent="." unique_id=308885794]
@@ -298,6 +297,7 @@ offset_top = 10.0
 offset_right = 75.0
 offset_bottom = 25.0
 grow_horizontal = 2
+mouse_filter = 2
 metadata/_edit_use_anchors_ = true
 
 [node name="LevelLabel" type="Label" parent="HUD/LevelBar" unique_id=1665485200]
@@ -316,6 +316,7 @@ offset_top = 11.0
 offset_right = 55.0
 offset_bottom = 88.0
 grow_vertical = 2
+mouse_filter = 2
 theme_override_constants/separation = 50
 alignment = 1
 
@@ -375,6 +376,7 @@ offset_right = -15.0
 offset_bottom = -33.0
 grow_horizontal = 0
 grow_vertical = 0
+mouse_filter = 2
 theme_override_constants/separation = 25
 alignment = 1
 
@@ -448,6 +450,7 @@ offset_right = 195.5
 offset_bottom = 99.429924
 grow_horizontal = 2
 grow_vertical = 0
+mouse_filter = 2
 alignment = 1
 
 [node name="PromotionButton" parent="HUD/PromotionUILabel/PromotionUI" unique_id=788578532 instance=ExtResource("5_n7ghd")]
@@ -470,9 +473,11 @@ offset_left = 5.0
 offset_top = 5.0
 offset_right = 45.0
 offset_bottom = 45.0
+mouse_filter = 2
 
 [node name="Leaderboard" type="VBoxContainer" parent="HUD/LBContainer" unique_id=423456464]
 layout_mode = 2
+mouse_filter = 2
 alignment = 1
 
 [node name="FirstAbilityBar" type="ProgressBar" parent="HUD" unique_id=980408302]
@@ -487,6 +492,7 @@ offset_right = 101.0
 offset_bottom = -40.0
 grow_horizontal = 2
 grow_vertical = 0
+mouse_filter = 2
 theme_override_styles/background = SubResource("StyleBoxFlat_xyotm")
 theme_override_styles/fill = SubResource("StyleBoxFlat_ootfv")
 show_percentage = false
@@ -518,6 +524,7 @@ offset_right = 100.0
 offset_bottom = -4.0
 grow_horizontal = 2
 grow_vertical = 0
+mouse_filter = 2
 theme_override_styles/background = SubResource("StyleBoxFlat_4ge2x")
 theme_override_styles/fill = SubResource("StyleBoxFlat_ktvaa")
 show_percentage = false
@@ -550,6 +557,7 @@ offset_right = 20.0
 offset_bottom = 20.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 
 [node name="HealthBar" parent="UI" unique_id=1748738400 instance=ExtResource("3_i3pqv")]
 layout_mode = 1

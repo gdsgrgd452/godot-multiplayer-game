@@ -1,4 +1,5 @@
-extends CharacterBody2D
+extends DynamicEntity
+class_name Player
 
 # Synchronizes the cosmetic username and updates the overhead label on all clients.
 @export var player_username: String = "Guest":
@@ -7,80 +8,10 @@ extends CharacterBody2D
 		if is_node_ready() and has_node("UI/Name"):
 			var name_label: Label = get_node("UI/Name") as Label
 			name_label.text = value
-
-@onready var movement_component: Node = $Components/MovementComponent
-@onready var health_component: Node = $Components/HealthComponent
-@onready var leveling_component: LevelingComponent = $Components/LevelingComponent
-@onready var promotion_component: PromotionComponent = $Components/PromotionComponent
-@onready var manager_component: ComponentManager = $Components/ComponentManager
-@onready var sprite_component: Sprite2D = $SpriteComponent
-
-var ranged_w_component: RangedWeaponComponent
-var melee_w_component: MeleeWeaponComponent
-var area_w_component: AreaWeaponComponent
-var first_ability_component: Node2D
-var shield_component: Node2D
-
-var team_id: int = 0
-var shielding: bool = false
-var knockback: Vector2 = Vector2.ZERO
-var knockback_force: int = 200
-var body_damage: int
 var input_needed: bool = false # An input is needed, block everything until then
 
-#Physics layers TODO use these
-const LAYER_NPC_PLAYER_AND_FOOD: int = 1
-const LAYER_WORLD_BOUNDARIES: int = 2
 
-@export var current_class: String = "Pawn":
-	set(value):
-		current_class = value
-		if is_node_ready():
-			sprite_component._on_promotion_applied(value)
-
-enum WeaponType {
-	Melee,
-	Ranged
-}
-
-@export var weapon_in_hand: WeaponType = WeaponType.Melee:
-	set(value):
-		weapon_in_hand = value
-		if is_node_ready():
-			manager_component.switch_weapon_in_hand(value)
-			
-
-@export var current_melee_weapon: String = "None":
-	set(value):
-		current_melee_weapon = value
-		if is_node_ready():
-			manager_component.change_melee_weapon(value)
-
-@export var current_ranged_weapon: String = "None":
-	set(value):
-		current_ranged_weapon = value
-		if is_node_ready():
-			manager_component.change_ranged_weapon(value)
-			
-@export var current_first_ability: String = "None":
-	set(value):
-		current_first_ability = value
-		if is_node_ready():
-			manager_component.change_first_ability(value)
-
-# Defines the secondary ability slot and its associated tracking variables.
-var second_ability_component: Node
-@export var current_second_ability: String = "None":
-	set(value):
-		current_second_ability = value
-		if is_node_ready():
-			manager_component.change_second_ability(value)
-
-@export var current_shield: String = "None":
-	set(value):
-		current_shield = value
-		if is_node_ready():
-			manager_component.change_shield(value)
+@export var team_id: int = 0
 
 # Initializes UI, colors, and connects component signals.
 func _ready() -> void:
@@ -94,9 +25,6 @@ func _ready() -> void:
 	# Initialises the weapons and class, uses call_deferred to give the MultiplayerSpawner time to sync sub-nodes
 	if multiplayer.is_server() or name == str(multiplayer.get_unique_id()):
 		promotion_component.request_promotion.rpc_id.call_deferred(1, current_class)
-	
-	health_component.died.connect(_on_player_died)
-
 	if name == str(multiplayer.get_unique_id()):
 		$SpriteComponent.modulate = Color(0, 1, 0)
 		$Camera2D.make_current()
@@ -139,13 +67,16 @@ func _physics_process(delta: float) -> void:
 		check_second_ability_input()
 		check_shield_input()
 		check_switch_weapon_input()
-
+		
+		kill_if_outside_bounds()
+	
 	if multiplayer.is_server():
 		decrease_knockback(delta)
 		var move_velocity: Vector2 = movement_component.get_movement_velocity(delta)
 		velocity = move_velocity + knockback
 		move_and_slide()
 		handle_collisions()
+
 
 # Reads WASD input and transmits the movement direction to the server.
 func check_player_input() -> void:
@@ -166,16 +97,21 @@ func check_player_input() -> void:
 func check_ranged_input() -> void:
 	if not is_instance_valid(ranged_w_component) or weapon_in_hand != WeaponType.Ranged:
 		return
+	if get_viewport().gui_get_hovered_control() != null: # Prevents clicking a button from triggering this
+		return
 		
-	if Input.is_action_just_pressed("shoot"):
+	if Input.is_action_just_pressed("attack"):
 		ranged_w_component.request_start_charge.rpc_id(1)
 		
-	if Input.is_action_just_released("shoot"):
+	if Input.is_action_just_released("attack"):
 		ranged_w_component.request_release_charge.rpc_id(1, get_global_mouse_position())
 
 # Triggers a melee attack
 func check_melee_input() -> void:
-	if melee_w_component and Input.is_action_pressed("meele") and weapon_in_hand == WeaponType.Melee:
+	if melee_w_component and Input.is_action_pressed("attack") and weapon_in_hand == WeaponType.Melee:
+		if get_viewport().gui_get_hovered_control() != null: # Prevents clicking a button from triggering this
+			return
+		
 		var target_pos: Vector2 = get_global_mouse_position()
 		melee_w_component.request_melee_attack.rpc_id(1, target_pos)
 
@@ -252,38 +188,7 @@ func check_switch_weapon_input() -> void:
 			WeaponType.Ranged:
 				weapon_in_hand = WeaponType.Melee
 
-# Smoothly decays physical knockback momentum over time.
-func decrease_knockback(delta: float) -> void:
-	knockback = knockback.move_toward(Vector2.ZERO, delta * 1500)
 
-# Evaluates collisions for bouncing and contact damage.
-func handle_collisions() -> void:
-	for i: int in get_slide_collision_count():
-		var collision: KinematicCollision2D = get_slide_collision(i)
-		var collider: Object = collision.get_collider()
-		var normal: Vector2 = collision.get_normal()
-		
-		velocity = Vector2.ZERO
-		knockback = normal * 500
-		
-		if collider: 
-			if collider.has_method("apply_bounce"):
-				collider.apply_bounce(-normal * knockback_force)
-				if collider.is_in_group("food"):
-					CandDUtils.knockback_and_damage(collider, body_damage, name, -normal, knockback_force)
-					var damage_to_self: int = maxi(1, int(float(body_damage) / 8.0))
-					health_component.take_damage(damage_to_self, "", true) #This needs to be fixed to use the body damage of the other thing
-
-# Applies an external physics impulse force to the player.
-func apply_bounce(force: Vector2) -> void:
-	if multiplayer.is_server():
-		knockback = force
-		
-# Adds recoil momentum from weapon firing.
-@rpc("authority", "call_local", "reliable")
-func apply_recoil(force: Vector2) -> void:
-	print("Recoil applied: " + str(force))
-	knockback += force
 
 # Awards points to the attacker, disables the player, and triggers the death UI.
 func _on_player_died(attacker_id: String) -> void:

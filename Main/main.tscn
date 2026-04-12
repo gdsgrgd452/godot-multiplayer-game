@@ -99,6 +99,7 @@ offset_top = -2500.0
 offset_right = 2500.0
 offset_bottom = 2500.0
 rotation = -0.00014920316
+mouse_filter = 2
 
 [node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="." unique_id=1058365266]
 replication_config = SubResource("SceneReplicationConfig_0gq1e")
