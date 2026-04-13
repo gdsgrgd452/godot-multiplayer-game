@@ -54,6 +54,7 @@ func trigger_shield_visuals(activate: bool) -> void:
 	player.shielding = activate
 	if activate:
 		show()
+		queue_redraw()
 	else:
 		hide()
 

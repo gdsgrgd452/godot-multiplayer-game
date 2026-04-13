@@ -14,6 +14,8 @@ var team_id: int = -1:
 # Initializes the NPC, sets the starting class configuration, and connects death signals.
 func _ready() -> void:
 	add_to_group("npc")
+	collision_layer = LAYER_NPC_PLAYER_AND_FOOD # Resides on
+	collision_mask = LAYER_NPC_PLAYER_AND_FOOD | LAYER_WORLD_BOUNDARIES # Collides with
 	
 	if not has_node("MultiplayerSynchronizer"):
 		printerr("NPC ", multiplayer.get_unique_id(), " missing Synchronizer on ", name)
@@ -22,7 +24,7 @@ func _ready() -> void:
 		apply_team_color()
 		
 	health_component.died.connect(_on_npc_died)
-		
+
 # Force initialization of weapons, sprite and abilities based on the default class.
 func force_promotion_refresh() -> void:
 	if is_instance_valid(promotion_component):
@@ -63,6 +65,9 @@ func apply_team_color() -> void:
 func _physics_process(delta: float) -> void:
 	kill_if_outside_bounds()
 	
+	if is_queued_for_deletion():
+		return
+		
 	decrease_knockback(delta)
 	var move_velocity: Vector2 = movement_component.get_movement_velocity(delta)
 	velocity = move_velocity + knockback
@@ -71,6 +76,7 @@ func _physics_process(delta: float) -> void:
 
 # Grants points to the attacker and removes the NPC from the scene tree.
 func _on_npc_died(attacker_id: String) -> void:
+	set_process(false)
 	KillingUtils.route_kill_credits_and_points(get_tree().current_scene, attacker_id, leveling_component.total_score + kill_value, name)
 	manager_component.cleanup_all_abilities() # Triggers the component manager to remove lingering ability visuals
 	process_mode = Node.PROCESS_MODE_DISABLED# Disable collisions and processing so the dead body doesn't interact with the world

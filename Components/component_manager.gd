@@ -33,21 +33,28 @@ func _hide_all_components() -> void:
 			child.set_deferred("process_mode", Node.PROCESS_MODE_DISABLED)
 
 # Switches between the melee and ranged weapons
-func switch_weapon_in_hand(type) -> void:
-	if not entity.is_in_group("player"):
-		printerr("NPCs cant switch weapons yet")
-		return
-	match type:
-		entity.WeaponType.Melee:
-			if is_instance_valid(entity.ranged_w_component):
-				entity.ranged_w_component.hide()
-			entity.melee_w_component.show()
-			ui_comp.toggle_weapon_ui(entity.WeaponType.Melee)
-		entity.WeaponType.Ranged:
-			if is_instance_valid(entity.melee_w_component):
-				entity.melee_w_component.hide()
-			entity.ranged_w_component.show()
-			ui_comp.toggle_weapon_ui(entity.WeaponType.Ranged)
+func switch_weapon_in_hand(weapon_slot) -> void:
+	var melee: Node2D = entity.get("melee_w_component")
+	var ranged: Node2D = entity.get("ranged_w_component")
+	
+	# Disables both components initially to ensure a clean state transition.
+	if is_instance_valid(melee):
+		melee.hide()
+		melee.set_deferred("process_mode", Node.PROCESS_MODE_DISABLED)
+	if is_instance_valid(ranged):
+		ranged.hide()
+		ranged.set_deferred("process_mode", Node.PROCESS_MODE_DISABLED)
+		
+	# Enables the requested component based on the Enum/Integer index provided.
+	match weapon_slot:
+		entity.WeaponType.Melee: # 
+			if is_instance_valid(melee):
+				melee.show()
+				melee.set_deferred("process_mode", Node.PROCESS_MODE_INHERIT)
+		entity.WeaponType.Ranged: 
+			if is_instance_valid(ranged):
+				ranged.show()
+				ranged.set_deferred("process_mode", Node.PROCESS_MODE_INHERIT)
 	
 
 #Swaps the active melee weapon component and updates UI labels while ensuring node validity before property access.

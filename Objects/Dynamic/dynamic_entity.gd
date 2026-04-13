@@ -74,11 +74,6 @@ var kill_value: int = 200
 const LAYER_NPC_PLAYER_AND_FOOD: int = 1
 const LAYER_WORLD_BOUNDARIES: int = 2
 
-# Initializes Collisions
-func _ready() -> void:
-	collision_layer = LAYER_NPC_PLAYER_AND_FOOD # Resides on
-	collision_mask = LAYER_NPC_PLAYER_AND_FOOD | LAYER_WORLD_BOUNDARIES # Collides with
-
 # Smoothly decays physical knockback momentum over time.
 func decrease_knockback(delta: float) -> void:
 	knockback = knockback.move_toward(Vector2.ZERO, delta * 1500)

@@ -41,8 +41,10 @@ static func find_killer(main: Node, killer_id: String) -> Node2D:
 
 # Finds the killer, displays a message for them if they are a player and gives them the points
 static func route_kill_credits_and_points(main: Node, killer_id: String, points_value: int, victim_username: String = "", killer_username: String = "") -> void:
+	if killer_id == "":
+		return
+		
 	var killer: Node2D = find_killer(main, killer_id)
-	
 
 	if killer != null:
 		if points_value > 0:

@@ -66,8 +66,9 @@ func _compute_context_steering(delta: float) -> void:
 		var dist: float = to_obstacle.length()
 		var dir_to_obstacle: Vector2 = to_obstacle.normalized()
 		
-		var danger_weight: float = 1.5 if body.is_in_group("boundary") else 1.0
-		var danger_arc: float = atan2(entity_radius * 1.5, max(dist, 1.0))
+		var is_boundary: bool = body.is_in_group("boundary")
+		var danger_weight: float = 4.0 if is_boundary else 1.0
+		var danger_arc: float = atan2(entity_radius * (2.5 if is_boundary else 1.5), max(dist, 1.0))
 
 		for i: int in range(NUM_RAYS):
 			var angle_to_ray: float = abs(directions[i].angle_to(dir_to_obstacle))

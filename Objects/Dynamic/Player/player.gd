@@ -19,6 +19,8 @@ func _ready() -> void:
 	if is_node_ready():
 		sprite_component._on_promotion_applied(current_class)
 		$UI/Name.text = player_username
+	
+	add_to_group("player")
 	collision_layer = LAYER_NPC_PLAYER_AND_FOOD # Resides on
 	collision_mask = LAYER_NPC_PLAYER_AND_FOOD | LAYER_WORLD_BOUNDARIES # Collides with
 	
@@ -54,6 +56,9 @@ func apply_team_color() -> void:
 
 # Processes server-side physics and calls local client input gathering.
 func _physics_process(delta: float) -> void:
+	if is_queued_for_deletion():
+		return
+		
 	if name == str(multiplayer.get_unique_id()):
 		if input_needed:
 			check_second_input_wof()
@@ -167,15 +172,15 @@ func check_second_ability_input() -> void:
 # Evaluates continuous input to request shield activation and deactivation from the server.
 func check_shield_input() -> void:
 	if shield_component:
-		var shield_testing: bool = false
-		if not shield_testing:
+		var shield_testing: bool = true
+		if shield_testing:
 			if Input.is_action_just_pressed("shield"):
 				print("Trying to activate shield")
 				shield_component.request_shield_activation.rpc_id(1)
 			elif Input.is_action_just_released("shield"):
 				shield_component.request_shield_deactivation.rpc_id(1)
 		else:
-			if Input.is_action_just_pressed("shield"):
+			if Input.is_action_pressed("shield"):
 				print("Trying to activate shield")
 				shield_component.request_shield_activation.rpc_id(1)
 

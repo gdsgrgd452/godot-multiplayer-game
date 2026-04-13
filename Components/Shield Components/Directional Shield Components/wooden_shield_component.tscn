@@ -1,12 +1,18 @@
 [gd_scene format=3 uid="uid://3y2gt1rbgeo3"]
 
 [ext_resource type="Script" uid="uid://cni8ihob2gt7d" path="res://Components/Shield Components/Directional Shield Components/wooden_shield_component.gd" id="1_vpbaj"]
+[ext_resource type="Texture2D" uid="uid://36s1amagrsw4" path="res://images/HowToPlay/s-key.png" id="2_sx7kd"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_3itx8"]
 size = Vector2(46, 17)
 
 [node name="WoodenShieldComponent" type="Node2D" unique_id=975093531]
 script = ExtResource("1_vpbaj")
+
+[node name="SpriteComponent" type="Sprite2D" parent="." unique_id=262998126]
+position = Vector2(0.21582794, 0.46896744)
+scale = Vector2(0.5683453, 0.062068947)
+texture = ExtResource("2_sx7kd")
 
 [node name="Hitbox" type="Area2D" parent="." unique_id=2082028233]
 scale = Vector2(1.8, 0.6)

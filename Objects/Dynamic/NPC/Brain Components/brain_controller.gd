@@ -60,14 +60,16 @@ func _physics_process(delta: float) -> void:
 		if fleeing_brain._process_fleeing(threat):
 			state = "Fleeing"
 			
+			
 			var has_target_whilst_fleeing: bool = false
 			# Attacks whilst fleeing, (Wont chase)
-			if combat_brain._ranged_attack(threat, false):
-				state += "_" + combat_brain.combat_state
-				has_target_whilst_fleeing = true
-			if combat_brain._melee_attack(threat, false):
-				state += "_" + combat_brain.combat_state
-				has_target_whilst_fleeing = true
+			if is_instance_valid(threat):
+				if combat_brain._ranged_attack(threat, false):
+					state += "_" + combat_brain.combat_state
+					has_target_whilst_fleeing = true
+				if combat_brain._melee_attack(threat, false):
+					state += "_" + combat_brain.combat_state
+					has_target_whilst_fleeing = true
 			
 			if not has_target_whilst_fleeing:
 				combat_brain.current_target = null

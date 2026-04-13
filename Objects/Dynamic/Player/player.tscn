@@ -170,7 +170,7 @@ corner_radius_top_right = 5
 corner_radius_bottom_right = 5
 corner_radius_bottom_left = 5
 
-[node name="Player" type="CharacterBody2D" unique_id=328923263 groups=["player"]]
+[node name="Player" type="CharacterBody2D" unique_id=328923263]
 script = ExtResource("1_onrkg")
 current_melee_weapon = "Spear"
 

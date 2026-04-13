@@ -1,7 +1,7 @@
 extends ShieldComponent
 class_name DirectionalShieldComponent
 
-@export var orbit_distance: float = 200.0
+@export var orbit_distance: float = 50.0
 
 # Updates the shield orbit position locally and syncs it across the network.
 func _physics_process(_delta: float) -> void:
