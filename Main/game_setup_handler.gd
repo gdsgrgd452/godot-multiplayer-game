@@ -40,15 +40,17 @@ var player_starts_as: String = "Pawn"
 var player_levels_for_upgrade: int = 1
 var player_levels_for_promotion: int = 2
 
-var game_type: String = "2_Teams"
+var game_type: String = "Alone"
 
 @onready var main: Node = get_parent().get_parent()
 
+
 # Parses the preset input field and applies matching or custom settings.
-func _apply_preset_or_custom() -> void:
-	var input: String = main.get_node("TitleScreen/HostPanel/Preset").text.strip_edges()
+func apply_preset_or_custom(input: String) -> void:
 	if input == "":
-		input = "1-Bot"
+		input = "FFA"
+		printerr("Invalid game preset, defaulting")
+		
 	var parts: Array = input.split(",")
 	print("GAME PRESETS: " + str(parts))
 	# If a single token matches a preset key, apply it directly
@@ -78,6 +80,11 @@ func _apply_preset_or_custom() -> void:
 	bots_per_player = int(parts[3].strip_edges())
 	bot_spawn_classes = Array(parts[4].strip_edges())
 	npc_gains_points = bool(parts[5].strip_edges())
+	
+	_create_boundaries()
+	
+	main.get_node("Tiles").size = Vector2(main.setup_handler.arena_size, main.setup_handler.arena_size)
+	main.get_node("Tiles").position = Vector2(-main.setup_handler.arena_size/2, -main.setup_handler.arena_size/2)
 
 # Creates the boundry walls of the arena
 func _create_boundaries() -> void:

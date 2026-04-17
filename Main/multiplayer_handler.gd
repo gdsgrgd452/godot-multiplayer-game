@@ -8,6 +8,11 @@ const PORT: int = 8910
 var player_names_dict: Dictionary = {}
 
 @onready var main: Node = get_parent().get_parent()
+@onready var ip_label: Label = main.get_node_or_null("OverlayLayer/SharingIPLabel")
+
+func _ready() -> void:
+	main.get_node_or_null("MultiplayerMenu/JoinButton").pressed.connect(join_game)
+
 
 # Registers a player's cosmetic name and triggers the spawning process on the server.
 @rpc("any_peer", "call_local", "reliable")
@@ -37,45 +42,46 @@ func setup_upnp() -> void:
 	# Ask the network to find the local router (This will be blocked by many networks)
 	var discover_result: int = upnp.discover()
 	if discover_result != UPNP.UPNP_RESULT_SUCCESS:
-		print("UPNP Discover Failed! Error: %s" % discover_result)
-		main.ip_label.text = "UPNP Discover Failed! Error: %s" % discover_result
+		printerr("UPNP Discover Failed! Error: %s" % discover_result)
+		ip_label.text = "Router Not Found! Error: %s" % discover_result
 		return
 
 	# Verify the router is a valid gateway that accepts commands
 	if not upnp.get_gateway() or not upnp.get_gateway().is_valid_gateway():
-		print("UPNP Invalid Gateway!")
-		main.ip_label.text = "UPNP Invalid Gateway!"
+		printerr("UPNP Router Invalid Gateway!")
+		ip_label.text = "Your router is an Invalid Gateway!"
 		return
 
 	# Ask the router to open the UDP port (ENet uses UDP)
 	var map_result: int = upnp.add_port_mapping(PORT, PORT, "My Godot Game", "UDP")
 	if map_result != UPNP.UPNP_RESULT_SUCCESS:
 		print("UPNP Port Mapping Failed! Error: %s" % map_result)
-		main.ip_label.text = "UPNP Port Mapping Failed! Error: %s" % map_result
+		ip_label.text = "Port Mapping Failed! Error: %s" % map_result
 		return
 		
 	# Prints the public IP so the host can share it
 	print("UPNP Success! Port %s is open." % PORT)
 	print("Your public IP to give to friends is: %s" % upnp.query_external_address())
-	main.ip_label.text = "Your public IP to give to friends is: %s" % upnp.query_external_address()
+	ip_label.text = "Your public IP to give to friends is: %s" % upnp.query_external_address()
 	
-	main.ip_label.show()
+	ip_label.show()
 
 # Initiates the server and spawns the host player
 func host_game() -> void:
+	
+	# Sets up the unpn first if it is an open port game
+	if main.open_port:
+		setup_upnp()
+	else:
+		ip_label.text = "Players on your local network can join"
+		ip_label.show()
+	
 	peer.create_server(PORT) 
 	multiplayer.multiplayer_peer = peer
 		
-	var username: String = main.get_node("TitleScreen/JoinPanel/UsernameInput").text
+	var username: String = main.temp_username
 	register_player_name(username)
 	
-	# Set up the game
-	main.setup_handler._apply_preset_or_custom()
-	main.get_node("TitleScreen").hide()
-	main.setup_handler._create_boundaries()
-	main.get_node("Tiles").size = Vector2(main.setup_handler.arena_size, main.setup_handler.arena_size)
-	main.get_node("Tiles").position = Vector2(-main.setup_handler.arena_size/2, -main.setup_handler.arena_size/2)
-	main.is_hosting = true	
 	new_player_joined()
 	
 	# Spawn the host
@@ -83,8 +89,8 @@ func host_game() -> void:
 
 # Attempts to connect to a server IP
 func join_game() -> void:
-	var username: String = main.get_node("TitleScreen/JoinPanel/UsernameInput").text
-	var ip_to_join: String = main.get_node("TitleScreen/JoinPanel/InputIP").text
+	var username: String = main.temp_username
+	var ip_to_join: String = ip_label.text
 	if ip_to_join == "":
 		ip_to_join = "127.0.0.1"
 		
@@ -96,8 +102,6 @@ func join_game() -> void:
 		new_player_joined()
 	)
 	
-	main.get_node("TitleScreen").hide()
-
 # Increases the food and bots supply when a new player joins
 func new_player_joined() -> void:
 	main.setup_handler.max_food += main.setup_handler.food_per_player

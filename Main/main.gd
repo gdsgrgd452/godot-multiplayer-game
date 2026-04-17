@@ -1,6 +1,5 @@
 extends Node2D
 
-@export var is_hosting: bool = false # Remove this?
 
 var spectate_target: Node2D = null
 var respawn_timer: float = 0.0
@@ -8,7 +7,23 @@ var respawn_timer: float = 0.0
 @onready var respawn_button: Button = $RespawnLayer/RespawnPanel/RespawnButton
 @onready var respawn_label: Label = $RespawnLayer/RespawnPanel/RespawnTimerLabel
 
-@onready var ip_label: Label = $OverlayLayer/SharingIPLabel
+@onready var main_menu: CanvasLayer = $MainMenu
+@onready var game_selection_menu: CanvasLayer = $GameSelectionMenu
+@onready var multiplayer_menu: CanvasLayer = $MultiplayerMenu
+@onready var how_to_play: CanvasLayer = $HowToPlay
+
+@onready var current_layer: CanvasLayer:
+	set(value):
+		if current_layer:
+			current_layer.hide()
+		current_layer = value
+		current_layer.show()
+
+var solo_game: bool = true
+var hosting: bool = false
+var open_port: bool = false
+
+var temp_username: String
 
 @onready var setup_handler: GameSetupHandler = $Handlers/GameSetupHandler
 @onready var player_handler: PlayerHandler = $Handlers/PlayerHandler
@@ -17,12 +32,62 @@ var respawn_timer: float = 0.0
 
 # Connects buttons and initializes the game boundary
 func _ready() -> void:
-	$TitleScreen/HostPanel/HostButton.pressed.connect(_on_host_pressed)
-	$TitleScreen/HostPanel/HostOPButton.pressed.connect(_on_host_OP_pressed)
-	$TitleScreen/JoinPanel/JoinButton.pressed.connect(_on_join_pressed)
+	current_layer = main_menu
+	connect_htp_buttons()
+	connect_back_buttons()
+	connect_game_buttons()
+	$MainMenu/SoloButton.pressed.connect(on_solo_pressed)
+	$MainMenu/MultButton.pressed.connect(on_multiplayer_pressed)
 	respawn_button.pressed.connect(_on_respawn_pressed)
-	$RespawnLayer.hide()
-	ip_label.hide()
+	$MultiplayerMenu/HostButton.pressed.connect(on_host_pressed)
+	$OverlayLayer.hide()
+
+func connect_htp_buttons() -> void:
+	$MainMenu/HowToPlayButton.pressed.connect(on_htp_pressed)
+	$MultiplayerMenu/HowToPlayButton.pressed.connect(on_htp_pressed)
+	$GameSelectionMenu/HowToPlayButton.pressed.connect(on_htp_pressed)
+
+func on_htp_pressed() -> void:
+	current_layer = how_to_play
+
+func connect_back_buttons() -> void:
+	$GameSelectionMenu/BackButton.pressed.connect(on_back_pressed.bind(main_menu))
+	$MultiplayerMenu/BackButton.pressed.connect(on_back_pressed.bind(main_menu))
+	$HowToPlay/BackButton.pressed.connect(on_back_pressed.bind(main_menu))
+
+func on_back_pressed(back_to: CanvasLayer) -> void:
+	current_layer = back_to
+
+func connect_game_buttons() -> void:
+	$GameSelectionMenu/GameModeButtons/AloneButton.pressed.connect(start_game.bind("Alone"))
+	$"GameSelectionMenu/GameModeButtons/1BotButton".pressed.connect(start_game.bind("1-Bot"))
+	$GameSelectionMenu/GameModeButtons/FFAButton.pressed.connect(start_game.bind("FFA"))
+	$"GameSelectionMenu/GameModeButtons/2TeamsButton".pressed.connect(start_game.bind("2T"))
+
+func start_game(game_preset: String) -> void:
+	if hosting or solo_game:
+		multiplayer_handler.host_game()
+	else:
+		multiplayer_handler.join_game()
+	setup_handler.apply_preset_or_custom(game_preset)
+	print(current_layer.name)
+	current_layer.hide()
+	$OverlayLayer.show()
+
+func on_solo_pressed() -> void:
+	temp_username = $"MainMenu/UsernameInput".text
+	current_layer = game_selection_menu
+
+func on_multiplayer_pressed() -> void:
+	temp_username = $"MainMenu/UsernameInput".text
+	current_layer = multiplayer_menu
+
+func on_host_pressed() -> void:
+	hosting = true
+	var op_check: CheckBox = get_node_or_null("MultiplayerMenu/HostButton/OpenPortCheck")
+	if op_check and op_check.button_pressed:
+		open_port = true
+	current_layer = game_selection_menu
 
 # Handles the countdown timer and smoothly pans the spectator camera to the killer.
 func _process(delta: float) -> void:
@@ -77,16 +142,3 @@ func _on_respawn_pressed() -> void:
 	respawn_button.hide()
 	$RespawnLayer.hide()
 	player_handler.request_respawn.rpc_id(1)
-
-func _on_host_OP_pressed() -> void:
-	# Run the UPNP port forwarding before starting the server
-	multiplayer_handler.setup_upnp()
-	multiplayer_handler.host_game()
-
-# Initiates the server and spawns the host player
-func _on_host_pressed() -> void:
-	multiplayer_handler.host_game()
-
-# Attempts to connect to a server IP
-func _on_join_pressed() -> void:
-	multiplayer_handler.join_game()
